@@ -1,15 +1,13 @@
-import styled from '@emotion/styled';
-import NxWelcome from './nx-welcome';
-
-const StyledApp = styled.div`
-  // Your style here
-`;
+import { Route, Routes } from 'react-router';
+import Login from './Pages/Login';
+import Register from './Pages/Register';
 
 export function App() {
   return (
-    <StyledApp>
-      <NxWelcome title="frontend" />
-    </StyledApp>
+    <Routes>
+      <Route path="login" element={<Login />}></Route>
+      <Route path="register" element={<Register />}></Route>
+    </Routes>
   );
 }
 

@@ -4,16 +4,26 @@ import { Container, IconButton, InputAdornment } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import React, { useRef, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
+
+interface IRegisterInputs {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  phoneNumber: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 function Copyright(props: any) {
   return (
@@ -32,21 +42,27 @@ function Copyright(props: any) {
 }
 
 export default function Register() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IRegisterInputs>();
+  const { authState } = useAuthentication();
+
+  const onSubmit: SubmitHandler<IRegisterInputs> = (data) => {
+    axios.post('api/auth/register', data).then(() => {
+      console.log('user registered!');
     });
   };
-
   const [showPassword, setshowPassword] = useState<boolean>(false);
   const handleClickShowPassword = () => {
     setshowPassword(!showPassword);
   };
+  const password = useRef({});
+  password.current = watch('password');
 
+  if (authState === 'loggedIn') return <Navigate to="/" />;
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
       <CssBaseline />
@@ -85,60 +101,70 @@ export default function Register() {
             </Typography>
             <Box
               component="form"
+              onSubmit={handleSubmit(onSubmit)}
               noValidate
-              onSubmit={handleSubmit}
               sx={{ mt: 3 }}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     size="small"
-                    name="firstName"
-                    required
                     fullWidth
-                    id="firstName"
+                    error={!!errors.firstName}
+                    helperText={errors.firstName?.message}
+                    {...register('firstName', {
+                      required: 'firstName is required',
+                    })}
                     label="First Name"
                     autoFocus
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    required
+                    error={!!errors.lastName}
+                    helperText={errors.lastName?.message}
+                    {...register('lastName', {
+                      required: 'lastName is required',
+                    })}
                     fullWidth
-                    id="lastName"
                     size="small"
                     label="Last Name"
-                    name="lastName"
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    error={!!errors.userName}
+                    helperText={errors.userName?.message}
+                    {...register('userName', {
+                      required: 'userName is required',
+                    })}
                     fullWidth
-                    id="Username"
                     size="small"
                     label="Username"
-                    name="Username"
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    error={!!errors.phoneNumber}
+                    helperText={errors.phoneNumber?.message}
+                    {...register('phoneNumber', {
+                      required: 'phoneNumber is required',
+                    })}
                     fullWidth
-                    id="Phone No."
                     size="small"
                     label="Phone No. "
-                    name="Phone No."
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    {...register('email', {
+                      required: 'email is required',
+                    })}
                     fullWidth
-                    id="email"
                     size="small"
                     label="Email Address"
-                    name="email"
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -147,6 +173,15 @@ export default function Register() {
                     label="Password"
                     fullWidth
                     size="small"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    {...register('password', {
+                      required: 'Password is required',
+                      minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters',
+                      },
+                    })}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -167,6 +202,18 @@ export default function Register() {
                     label="Confirm Password"
                     fullWidth
                     size="small"
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                    {...register('confirmPassword', {
+                      required: 'password is required',
+                      validate: (value) =>
+                        value === password.current ||
+                        'The passwords do not match',
+                      minLength: {
+                        value: 8,
+                        message: 'password must be at least 8 characters',
+                      },
+                    })}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -195,7 +242,7 @@ export default function Register() {
                   <Link to="../login">Already have an account? Sign in</Link>
                 </Grid>
               </Grid>
-            </Box>
+            </Box>{' '}
           </Box>
           <Copyright sx={{ mt: 5 }} />
         </Container>

@@ -2,6 +2,7 @@
   "root": "apps/frontend",
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
+  "proxy": "localhost:3333",
   "targets": {
     "build": {
       "executor": "@nrwl/web:webpack",

@@ -116,3 +116,15 @@ export const refreshTokenController: express.RequestHandler = async (
     newToken,
   });
 };
+
+export const logoutController: express.RequestHandler = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.log('this is error', error);
+      return res.send(error);
+    } else return res.json('Logged Out');
+  });
+};

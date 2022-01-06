@@ -64,10 +64,14 @@ export default function Login() {
   } = useForm<ILoginInputs>();
 
   const onSubmit: SubmitHandler<ILoginInputs> = (data) => {
-    axios.post('api/auth/login', data).then(() => {
-      console.log('login successfull');
-      setAuthState('loggedIn');
-    });
+    axios
+      .post('api/auth/login', data)
+      .then((res) => {
+        console.log(res);
+        setAuthState('loggedIn');
+      })
+      .catch((err) => console.log(err));
+    console.log(data);
   };
 
   if (authState === 'loggedIn') return <Navigate to="/" />;

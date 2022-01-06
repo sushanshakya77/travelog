@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 interface IRegisterInputs {
@@ -50,9 +50,12 @@ export default function Register() {
   } = useForm<IRegisterInputs>();
   const { authState } = useAuthentication();
 
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<IRegisterInputs> = (data) => {
     axios.post('api/auth/register', data).then(() => {
       console.log('user registered!');
+      navigate('/login');
     });
   };
   const [showPassword, setshowPassword] = useState<boolean>(false);

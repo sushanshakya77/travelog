@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Container } from '@mui/material';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import Dashboard from './Pages/Dashboard';
@@ -30,9 +30,11 @@ export function App() {
         <Route
           path="/"
           element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
+            <Container maxWidth="lg">
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            </Container>
           }
         ></Route>
         <Route path="login" element={<Login />} />

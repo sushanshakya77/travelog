@@ -2,7 +2,6 @@
   "root": "apps/frontend",
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
-  "proxy": "localhost:3333",
   "targets": {
     "build": {
       "executor": "@nrwl/web:webpack",
@@ -42,7 +41,8 @@
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "frontend:build",
-        "hmr": true
+        "hmr": true,
+        "proxyConfig": "apps/frontend/proxy.config.json"
       },
       "configurations": {
         "production": {

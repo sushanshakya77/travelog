@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -10,14 +11,18 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  OutlinedInputProps,
   Paper,
   TextField,
+  TextFieldProps,
   Typography,
 } from '@mui/material';
+import { alpha, styled as style } from '@mui/material/styles';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router-dom';
+import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 function Copyright(props: any) {
@@ -51,6 +56,7 @@ interface ILoginInputs {
 }
 
 export default function Login() {
+  const [hasError, setHasError] = useState(false);
   const [showPassword, setshowPassword] = useState<boolean>(false);
   const handleClickShowPassword = () => {
     setshowPassword(!showPassword);
@@ -58,6 +64,7 @@ export default function Login() {
   const { authState, setAuthState } = useAuthentication();
   const {
     register,
+    control,
     handleSubmit,
     watch,
     formState: { errors },
@@ -69,10 +76,36 @@ export default function Login() {
       .then((res) => {
         console.log(res);
         setAuthState('loggedIn');
+        setHasError(false);
       })
-      .catch((err) => console.log(err));
-    console.log(data);
+      .catch(() => setHasError(true));
   };
+  const RedditTextField = style((props: TextFieldProps) => (
+    <TextField
+      InputProps={{ disableUnderline: true } as Partial<OutlinedInputProps>}
+      {...props}
+    />
+  ))(({ theme }) => ({
+    '& .MuiFilledInput-root': {
+      border: '1px solid #e2e2e1',
+      overflow: 'hidden',
+      borderRadius: 4,
+      backgroundColor: theme.palette.mode === 'light' ? '#fcfcfb' : '#2b2b2b',
+      transition: theme.transitions.create([
+        'border-color',
+        'background-color',
+        'box-shadow',
+      ]),
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
+      '&.Mui-focused': {
+        backgroundColor: 'transparent',
+        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  }));
 
   if (authState === 'loggedIn') return <Navigate to="/" />;
   return (
@@ -116,17 +149,31 @@ export default function Login() {
             onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 1 }}
           >
-            <TextField
+            {hasError && (
+              <Grid item>
+                <Alert severity="error">
+                  Username or password was typed incorrectly.
+                </Alert>
+              </Grid>
+            )}
+            <ControlledTextField
               margin="normal"
               fullWidth
               label="Username"
-              error={!!errors.userName}
-              helperText={errors.userName?.message}
-              {...register('userName', {
-                required: 'userName is required',
-              })}
+              name="userName"
+              control={control}
               autoFocus
+              rules={{ required: 'username is required' }}
+              error={!!errors.userName}
+              helperText={errors.userName && errors.userName.message}
             />
+            {/* <RedditTextField
+              label="Username"
+              variant="filled"
+              fullWidth
+              autoFocus
+              style={{ marginTop: 11 }}
+            /> */}
             <TextField
               type={showPassword ? 'text' : 'password'}
               label="Password"
@@ -160,8 +207,8 @@ export default function Login() {
             />
             <Button
               type="submit"
-              fullWidth
               variant="contained"
+              fullWidth
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In

@@ -13,6 +13,9 @@ import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import ControlledPasswordField from '../ControlledComponent/ControlledPasswordField';
+import ControlledTextField from '../ControlledComponent/ControlledTextField';
+import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 interface IRegisterInputs {
@@ -46,6 +49,7 @@ export default function Register() {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<IRegisterInputs>();
   const { authState } = useAuthentication();
@@ -110,131 +114,113 @@ export default function Register() {
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField
+                  <ControlledTextField
+                    Component={RedditTextField}
                     size="small"
                     fullWidth
                     error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    {...register('firstName', {
-                      required: 'firstName is required',
-                    })}
+                    helperText={errors.firstName && errors.firstName.message}
+                    control={control}
+                    name="firstName"
+                    rules={{ required: 'First Name is required' }}
                     label="First Name"
                     autoFocus
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    {...register('lastName', {
-                      required: 'lastName is required',
-                    })}
-                    fullWidth
+                  <ControlledTextField
+                    Component={RedditTextField}
                     size="small"
+                    fullWidth
+                    error={!!errors.lastName}
+                    helperText={errors.lastName && errors.lastName.message}
+                    control={control}
+                    name="lastName"
+                    rules={{ required: 'Last Name is required' }}
                     label="Last Name"
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
+                  <ControlledTextField
+                    Component={RedditTextField}
+                    size="small"
+                    fullWidth
                     error={!!errors.userName}
-                    helperText={errors.userName?.message}
-                    {...register('userName', {
-                      required: 'userName is required',
-                    })}
-                    fullWidth
-                    size="small"
-                    label="Username"
+                    helperText={errors.userName && errors.userName.message}
+                    control={control}
+                    name="userName"
+                    rules={{ required: 'User Name is required' }}
+                    label="User Name"
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
+                  <ControlledTextField
+                    Component={RedditTextField}
+                    size="small"
+                    fullWidth
                     error={!!errors.phoneNumber}
-                    helperText={errors.phoneNumber?.message}
-                    {...register('phoneNumber', {
-                      required: 'phoneNumber is required',
-                    })}
-                    fullWidth
-                    size="small"
-                    label="Phone No. "
+                    helperText={
+                      errors.phoneNumber && errors.phoneNumber.message
+                    }
+                    control={control}
+                    name="phoneNumber"
+                    rules={{ required: 'Phone Number is required' }}
+                    label="Phone Number"
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
+                  <ControlledTextField
+                    Component={RedditTextField}
+                    size="small"
+                    fullWidth
                     error={!!errors.email}
-                    helperText={errors.email?.message}
-                    {...register('email', {
-                      required: 'email is required',
-                    })}
-                    fullWidth
-                    size="small"
-                    label="Email Address"
+                    helperText={errors.email && errors.email.message}
+                    control={control}
+                    name="email"
+                    rules={{ required: 'Email is required' }}
+                    label="Email"
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    type={showPassword ? 'text' : 'password'}
+                  <ControlledPasswordField
+                    Component={RedditTextField}
+                    size="small"
+                    fullWidth
                     label="Password"
-                    fullWidth
-                    size="small"
+                    name="password"
+                    control={control}
+                    rules={{ required: 'Password is required' }}
                     error={!!errors.password}
-                    helperText={errors.password?.message}
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Password must be at least 8 characters',
-                      },
-                    })}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                          >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
+                    helperText={errors.password && errors.password.message}
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    type={showPassword ? 'text' : 'password'}
-                    label="Confirm Password"
-                    fullWidth
+                  <ControlledPasswordField
+                    Component={RedditTextField}
                     size="small"
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword?.message}
-                    {...register('confirmPassword', {
-                      required: 'password is required',
+                    fullWidth
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    control={control}
+                    rules={{
+                      required: 'Password is required',
                       validate: (value) =>
                         value === password.current ||
                         'The passwords do not match',
                       minLength: {
                         value: 8,
-                        message: 'password must be at least 8 characters',
+                        message: 'Password must be at least 8 characters',
                       },
-                    })}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                          >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
                     }}
+                    error={!!errors.password}
+                    helperText={errors.password && errors.password.message}
                   />
                 </Grid>
               </Grid>
               <Button
                 type="submit"
                 fullWidth
+                disableElevation
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >

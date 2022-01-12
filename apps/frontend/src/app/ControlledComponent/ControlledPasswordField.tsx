@@ -1,7 +1,7 @@
-import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { useState } from 'react';
-import { FieldValues, FieldPath, Controller } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues } from 'react-hook-form';
 import { ControlledTextFieldProps } from './ControlledTextField';
 
 export function ControlledPasswordField<
@@ -11,6 +11,7 @@ export function ControlledPasswordField<
   control,
   rules,
   name,
+  Component = TextField,
   ...props
 }: ControlledTextFieldProps<TFieldValues, TName>) {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,11 +22,10 @@ export function ControlledPasswordField<
       control={control}
       rules={rules}
       render={({ field }) => (
-        <TextField
-          {...props}
-          {...field}
+        <Component
           type={showPassword ? 'text' : 'password'}
           InputProps={{
+            disableUnderline: true,
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
@@ -41,6 +41,8 @@ export function ControlledPasswordField<
               </InputAdornment>
             ),
           }}
+          {...props}
+          {...field}
         />
       )}
     />

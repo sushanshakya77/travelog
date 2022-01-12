@@ -1,15 +1,22 @@
-import { TextFieldProps, TextField } from '@mui/material';
+import { TextField, TextFieldProps } from '@mui/material';
+import { ComponentType } from 'react';
 import {
-  FieldValues,
-  FieldPath,
-  ControllerProps,
   Controller,
+  ControllerProps,
+  FieldPath,
+  FieldValues,
 } from 'react-hook-form';
 
 export type ControlledTextFieldProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>
-> = TextFieldProps & Omit<ControllerProps<TFieldValues, TName>, 'render'>;
+> = TextFieldProps &
+  Omit<ControllerProps<TFieldValues, TName>, 'render'> &
+  ControlledTextFieldOwnProps;
+
+export interface ControlledTextFieldOwnProps {
+  Component?: ComponentType<TextFieldProps>;
+}
 
 export function ControlledTextField<
   TFieldValues extends FieldValues = FieldValues,
@@ -18,6 +25,7 @@ export function ControlledTextField<
   control,
   rules,
   name,
+  Component = TextField,
   ...props
 }: ControlledTextFieldProps<TFieldValues, TName>) {
   return (
@@ -25,7 +33,7 @@ export function ControlledTextField<
       name={name}
       control={control}
       rules={rules}
-      render={({ field }) => <TextField {...props} {...field} />}
+      render={({ field }) => <Component {...props} {...field} />}
     />
   );
 }

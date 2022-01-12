@@ -22,7 +22,9 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router-dom';
+import ControlledPasswordField from '../ControlledComponent/ControlledPasswordField';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
+import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 function Copyright(props: any) {
@@ -80,32 +82,6 @@ export default function Login() {
       })
       .catch(() => setHasError(true));
   };
-  const RedditTextField = style((props: TextFieldProps) => (
-    <TextField
-      InputProps={{ disableUnderline: true } as Partial<OutlinedInputProps>}
-      {...props}
-    />
-  ))(({ theme }) => ({
-    '& .MuiFilledInput-root': {
-      border: '1px solid #e2e2e1',
-      overflow: 'hidden',
-      borderRadius: 4,
-      backgroundColor: theme.palette.mode === 'light' ? '#fcfcfb' : '#2b2b2b',
-      transition: theme.transitions.create([
-        'border-color',
-        'background-color',
-        'box-shadow',
-      ]),
-      '&:hover': {
-        backgroundColor: 'transparent',
-      },
-      '&.Mui-focused': {
-        backgroundColor: 'transparent',
-        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
-        borderColor: theme.palette.primary.main,
-      },
-    },
-  }));
 
   if (authState === 'loggedIn') return <Navigate to="/" />;
   return (
@@ -156,7 +132,7 @@ export default function Login() {
                 </Alert>
               </Grid>
             )}
-            <ControlledTextField
+            {/* <ControlledTextField
               margin="normal"
               fullWidth
               label="Username"
@@ -166,41 +142,33 @@ export default function Login() {
               rules={{ required: 'username is required' }}
               error={!!errors.userName}
               helperText={errors.userName && errors.userName.message}
-            />
-            {/* <RedditTextField
-              label="Username"
-              variant="filled"
-              fullWidth
-              autoFocus
-              style={{ marginTop: 11 }}
             /> */}
-            <TextField
-              type={showPassword ? 'text' : 'password'}
-              label="Password"
+            <ControlledTextField
+              Component={RedditTextField}
+              margin="normal"
               fullWidth
-              margin="dense"
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters',
-                },
-              })}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              label="Username"
+              name="userName"
+              control={control}
+              autoFocus
+              rules={{ required: 'username is required' }}
+              error={!!errors.userName}
+              helperText={errors.userName && errors.userName.message}
+              style={{ marginTop: 11 }}
             />
+            <ControlledPasswordField
+              Component={RedditTextField}
+              margin="normal"
+              fullWidth
+              label="Password"
+              name="password"
+              control={control}
+              rules={{ required: 'password is required' }}
+              error={!!errors.password}
+              helperText={errors.password && errors.password.message}
+              style={{ marginTop: 11 }}
+            />
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -209,6 +177,7 @@ export default function Login() {
               type="submit"
               variant="contained"
               fullWidth
+              disableElevation
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In

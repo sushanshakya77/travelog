@@ -6,7 +6,8 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import PrivateRoute from './Routes/PrivateRoute';
 import { useAuthentication } from './useAuthentication/useAuthentication';
-
+import 'swiper/css/bundle';
+import './Components/styles.css';
 export function App() {
   //recoil fetch
   const { authState, fetchAuthState } = useAuthentication();

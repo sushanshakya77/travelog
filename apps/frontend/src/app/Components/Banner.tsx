@@ -1,135 +1,128 @@
-import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import SwipeableViews from 'react-swipeable-views';
-import { autoPlay } from 'react-swipeable-views-utils';
-import { Grid } from '@mui/material';
+import React from 'react';
+// import Swiper core and required modules
+import SwiperCore, { Autoplay, Navigation, Pagination } from 'swiper';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/autoplay';
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { InputAdornment, TextField, Typography } from '@mui/material';
+import { Search } from '@mui/icons-material';
 
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+// install Swiper modules
+SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 const images = [
   {
-    label: 'San Francisco  Oakland Bay Bridge, United States',
-    imgPath: 'https://source.unsplash.com/random',
+    label: 'stars',
+    imgPath:
+      'https://images.unsplash.com/photo-1641752084801-80dc709cdf28?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1228&q=80',
   },
   {
-    label: 'Bird',
-    imgPath: 'https://source.unsplash.com/random',
+    label: 'desert',
+    imgPath:
+      'https://images.unsplash.com/photo-1639402479478-f5e7881c0ccc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
   },
   {
     label: 'Bali, Indonesia',
-    imgPath: 'https://source.unsplash.com/random',
+    imgPath:
+      'https://images.unsplash.com/photo-1619947583507-a407bed90513?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
   },
   {
-    label: 'Goč, Serbia',
-    imgPath: 'https://source.unsplash.com/random',
+    label: 'green',
+    imgPath:
+      'https://images.unsplash.com/photo-1641555130479-473595f33bd2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1331&q=80',
+  },
+  {
+    label: 'forest',
+    imgPath:
+      'https://images.unsplash.com/photo-1634728627693-bc388bd2b3d4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1260&q=80',
+  },
+  {
+    label: 'f&f',
+    imgPath:
+      'https://images.unsplash.com/photo-1639402476132-77c147aa2078?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1331&q=80',
+  },
+  {
+    label: 'random',
+    imgPath:
+      'https://images.unsplash.com/photo-1493540447904-49763eecf55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
   },
 ];
 
-function SwipeableTextMobileStepper() {
-  const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = images.length;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  };
-
+export default function Banner() {
   return (
-    <Box sx={{ maxWidth: 1200, flexGrow: 1, mt: '20px', borderRadius: '10px' }}>
-      {/* <AutoPlaySwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={activeStep}
-        onChangeIndex={handleStepChange}
-        enableMouseEvents
+    <>
+      <Swiper
+        autoHeight={true}
+        loop={true}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
+        pagination={{
+          dynamicBullets: true,
+        }}
+        className="mySwiper"
       >
-        {images.map((step, index) => (
-          <div key={step.label}>
-            {Math.abs(activeStep - index) <= 2 ? (
-              <Box
-                component="img"
-                sx={{
-                  backgroundRepeat: 'no-repeat',
-                  backgroundColor: (t) =>
-                    t.palette.mode === 'light'
-                      ? t.palette.grey[50]
-                      : t.palette.grey[900],
-                  // height: 500,
-                  // display: 'block',
-                  // overflow: 'hidden',
-                  width: 1150,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderRadius: '10px',
-                }}
-                src={step.imgPath}
-                alt={step.label}
-              />
-            ) : null}
-          </div>
+        {images.map((status) => (
+          <SwiperSlide style={{ height: 480 }}>
+            <img src={`${status.imgPath}`} alt={`${status.label}`} />
+          </SwiperSlide>
         ))}
-      </AutoPlaySwipeableViews>
-      <MobileStepper
-        steps={maxSteps}
-        position="static"
-        activeStep={activeStep}
-        nextButton={
-          <Button
-            size="small"
-            onClick={handleNext}
-            disabled={activeStep === maxSteps - 1}
-          >
-            Next
-            {theme.direction === 'rtl' ? (
-              <KeyboardArrowLeft />
-            ) : (
-              <KeyboardArrowRight />
-            )}
-          </Button>
-        }
-        backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === 'rtl' ? (
-              <KeyboardArrowRight />
-            ) : (
-              <KeyboardArrowLeft />
-            )}
-            Back
-          </Button>
-        }
-      /> */}
-      <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
+      </Swiper>
+      <Typography
         sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light'
-              ? t.palette.grey[50]
-              : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '64px',
+          position: 'absolute',
+          color: 'white',
+          bottom: 450,
+          right: 650,
+          zIndex: 999,
+        }}
+      >
+        travelog.
+      </Typography>
+      <Typography
+        sx={{
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '18px',
+          position: 'absolute',
+          color: 'white',
+          bottom: 430,
+          right: 670,
+          zIndex: 999,
+        }}
+      >
+        -make memories as you go-
+      </Typography>
+      <TextField
+        placeholder="Search something..."
+        size="small"
+        sx={{
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '64px',
+          position: 'absolute',
+          bgcolor: 'white',
+          width: '280px',
+          bottom: 380,
+          right: 640,
+          borderRadius: '25px',
+          border: 'none',
+          outline: 'none',
+          zIndex: 999,
+        }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search />
+            </InputAdornment>
+          ),
         }}
       />
-    </Box>
+    </>
   );
 }
-
-export default SwipeableTextMobileStepper;

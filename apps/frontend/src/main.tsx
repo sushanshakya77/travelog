@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import App from './app/app';
+import './styles.css';
 
 ReactDOM.render(
   <StrictMode>

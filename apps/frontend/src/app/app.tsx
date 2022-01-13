@@ -1,13 +1,15 @@
 import { CircularProgress, Container } from '@mui/material';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
-import Dashboard from './Pages/Dashboard';
+import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import PrivateRoute from './Routes/PrivateRoute';
 import { useAuthentication } from './useAuthentication/useAuthentication';
 import 'swiper/css/bundle';
 import './Components/styles.css';
+import BaseLayout from './Pages/BaseLayout';
+import UserInfo from './Pages/UserInfo';
 export function App() {
   //recoil fetch
   const { authState, fetchAuthState } = useAuthentication();
@@ -22,7 +24,7 @@ export function App() {
     return (
       <CircularProgress
         color="secondary"
-        sx={{ marginTop: '200px', marginRight: '200px' }}
+        sx={{ marginTop: '200px', marginLeft: '200px' }}
       />
     );
   else
@@ -33,11 +35,14 @@ export function App() {
           element={
             <Container maxWidth="lg">
               <PrivateRoute>
-                <Dashboard />
+                <BaseLayout />
               </PrivateRoute>
             </Container>
           }
-        ></Route>
+        >
+          <Route index element={<Home />} />
+          <Route path="user/info" element={<UserInfo />} />
+        </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
       </Routes>

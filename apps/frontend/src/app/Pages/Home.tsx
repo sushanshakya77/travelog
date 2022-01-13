@@ -1,14 +1,12 @@
 import React from 'react';
-import Navbar from '../Components/Navbar';
 import Banner from '../Components/Banner';
 
-const Dashboard = () => {
+const Home = () => {
   return (
     <div>
-      <Navbar />
       <Banner />
     </div>
   );
 };
 
-export default Dashboard;
+export default Home;

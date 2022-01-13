@@ -6,16 +6,19 @@ import {
   Box,
   Button,
   Checkbox,
+  Collapse,
   CssBaseline,
   FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
+  LinearProgress,
   OutlinedInputProps,
   Paper,
   TextField,
   TextFieldProps,
   Typography,
+  Zoom,
 } from '@mui/material';
 import { alpha, styled as style } from '@mui/material/styles';
 import axios from 'axios';
@@ -53,34 +56,41 @@ const StyledBox = styled(Box)`
 `;
 
 interface ILoginInputs {
-  userName: string;
+  username: string;
   password: string;
 }
 
 export default function Login() {
   const [hasError, setHasError] = useState(false);
-  const [showPassword, setshowPassword] = useState<boolean>(false);
-  const handleClickShowPassword = () => {
-    setshowPassword(!showPassword);
-  };
   const { authState, setAuthState } = useAuthentication();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
-    register,
     control,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<ILoginInputs>();
+  } = useForm<ILoginInputs>({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
 
-  const onSubmit: SubmitHandler<ILoginInputs> = (data) => {
-    axios
+  const onSubmit: SubmitHandler<ILoginInputs> = async (data: ILoginInputs) => {
+    setIsLoading(true);
+    await axios
       .post('api/auth/login', data)
-      .then((res) => {
-        console.log(res);
-        setAuthState('loggedIn');
+      .then(() => {
         setHasError(false);
+        setAuthState('loggedIn');
       })
-      .catch(() => setHasError(true));
+      .catch(() => {
+        setHasError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   if (authState === 'loggedIn') return <Navigate to="/" />;
@@ -125,35 +135,27 @@ export default function Login() {
             onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 1 }}
           >
-            {hasError && (
-              <Grid item>
-                <Alert severity="error">
-                  Username or password was typed incorrectly.
-                </Alert>
-              </Grid>
-            )}
-            {/* <ControlledTextField
-              margin="normal"
-              fullWidth
-              label="Username"
-              name="userName"
-              control={control}
-              autoFocus
-              rules={{ required: 'username is required' }}
-              error={!!errors.userName}
-              helperText={errors.userName && errors.userName.message}
-            /> */}
+            <Collapse in={hasError}>
+              <Zoom in={hasError}>
+                <Grid item>
+                  <Alert severity="error">
+                    username or password was typed incorrectly.
+                  </Alert>
+                </Grid>
+              </Zoom>
+            </Collapse>
+
             <ControlledTextField
               Component={RedditTextField}
               margin="normal"
               fullWidth
-              label="Username"
-              name="userName"
+              label="username"
+              name="username"
               control={control}
               autoFocus
               rules={{ required: 'username is required' }}
-              error={!!errors.userName}
-              helperText={errors.userName && errors.userName.message}
+              error={!!errors.username}
+              helperText={errors.username && errors.username.message}
               style={{ marginTop: 11 }}
             />
             <ControlledPasswordField
@@ -173,21 +175,24 @@ export default function Login() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+
             <Button
               type="submit"
               variant="contained"
               fullWidth
               disableElevation
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? 'Signing In' : 'Sign In'}
             </Button>
+
             <Grid container>
               <Grid item xs>
-                <Link to="login">Forgot password?</Link>
+                <Link to="/login">Forgot password?</Link>
               </Grid>
               <Grid item>
-                <Link to="../register">{"Don't have an account? Sign Up"}</Link>
+                <Link to="/register">{"Don't have an account? Sign Up"}</Link>
               </Grid>
             </Grid>
             <Copyright sx={{ mt: 5 }} />

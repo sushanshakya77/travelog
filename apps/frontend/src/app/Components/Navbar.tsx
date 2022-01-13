@@ -8,6 +8,7 @@ import {
   AppBar,
   Avatar,
   Button,
+  Container,
   IconButton,
   Toolbar,
   Tooltip,
@@ -20,30 +21,25 @@ import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const StyledAppBar = styled(AppBar)`
   background: rgba(222, 242, 241, 0.25);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  /* background: white;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18); */
+  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* border-radius: 10px; */
+  border-bottom: 1px solid rgba(153, 149, 149, 0.18);
 `;
 const NavButton = styled(Button)`
-  margin-left: 25px;
   color: black;
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 25px;
   text-decoration: none;
-  &:hover {
-    color: green;
-  }
+  border-radius: '25px';
 `;
 
 function Navbar() {
   const { token, setAuthState } = useAuthentication();
   console.log(token);
   const navigate = useNavigate();
-  const handleLogut = () => {
+  const handleLogout = () => {
     axios
       .post(
         '/api/auth/logout',
@@ -58,52 +54,38 @@ function Navbar() {
 
   return (
     <div>
-      <StyledAppBar
-        elevation={0}
-        position="static"
-        color="transparent"
-        style={{ height: '85px' }}
-      >
-        <Toolbar sx={{ mt: '10px' }}>
-          {/* <IconButton edge="start" color="inherit" aria-label="menu">
-            <Menu />
-          </IconButton> */}
-          <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
-            <Typography variant="h5" sx={{ fontFamily: 'monospace' }}>
-              travelog.
-            </Typography>
-          </Link>
-
-          <div style={{ flexGrow: 1 }} />
-          <div>
-            {/* <Link to="/" style={{ textDecoration: 'none' }}>
-              <NavButton variant="text">HOME</NavButton>
+      <StyledAppBar elevation={0} color="transparent">
+        <Container maxWidth="lg">
+          <Toolbar>
+            <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
+              <Typography variant="h5" sx={{ fontFamily: 'monospace' }}>
+                travelog.
+              </Typography>
             </Link>
-            <Link to="/shop" style={{ textDecoration: 'none' }}>
-              <NavButton variant="text">SHOP</NavButton>
-            </Link>
-            <NavButton variant="text">SHOP Details</NavButton>
-            <NavButton variant="text">BLOG</NavButton> */}
-          </div>
-          <div style={{ flexGrow: 1 }} />
-          <Tooltip title="Notifications">
-            <IconButton color="inherit">
-              <CircleNotifications sx={{ fontSize: '25px' }} />
-            </IconButton>
-          </Tooltip>
 
-          <Tooltip title="Account">
-            <IconButton color="inherit">
-              <AccountCircle sx={{ fontSize: '25px' }} />
-            </IconButton>
-          </Tooltip>
+            <div style={{ flexGrow: 1 }} />
 
-          <Tooltip title="Logout">
-            <IconButton edge="end" color="inherit" onClick={handleLogut}>
-              <ExitToApp sx={{ fontSize: '25px' }} />
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
+            <Tooltip title="Notifications">
+              <NavButton color="inherit">
+                <CircleNotifications />
+              </NavButton>
+            </Tooltip>
+
+            <Tooltip title="Account">
+              <Link to="/user/info">
+                <NavButton color="inherit">
+                  <AccountCircle />
+                </NavButton>
+              </Link>
+            </Tooltip>
+
+            <Tooltip title="Logout">
+              <NavButton color="inherit" onClick={handleLogout}>
+                <ExitToApp />
+              </NavButton>
+            </Tooltip>
+          </Toolbar>
+        </Container>
       </StyledAppBar>
     </div>
   );

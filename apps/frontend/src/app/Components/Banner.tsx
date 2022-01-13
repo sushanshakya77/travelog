@@ -8,7 +8,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { InputAdornment, TextField, Typography } from '@mui/material';
+import { InputAdornment, TextField, Toolbar, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
 // install Swiper modules
@@ -16,15 +16,16 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 const images = [
   {
-    label: 'stars',
-    imgPath:
-      'https://images.unsplash.com/photo-1641752084801-80dc709cdf28?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1228&q=80',
-  },
-  {
     label: 'desert',
     imgPath:
       'https://images.unsplash.com/photo-1639402479478-f5e7881c0ccc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
   },
+  {
+    label: 'stars',
+    imgPath:
+      'https://images.unsplash.com/photo-1641752084801-80dc709cdf28?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1228&q=80',
+  },
+
   {
     label: 'Bali, Indonesia',
     imgPath:
@@ -48,15 +49,15 @@ const images = [
   {
     label: 'random',
     imgPath:
-      'https://images.unsplash.com/photo-1493540447904-49763eecf55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+      'https://images.unsplash.com/photo-1506606401543-2e73709cebb4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
   },
 ];
 
 export default function Banner() {
   return (
     <>
+      <Toolbar sx={{ mt: 2 }} />
       <Swiper
-        autoHeight={true}
         loop={true}
         autoplay={{
           delay: 2500,

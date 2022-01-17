@@ -21,7 +21,7 @@ import {
   Zoom,
 } from '@mui/material';
 import { alpha, styled as style } from '@mui/material/styles';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router-dom';
@@ -68,7 +68,6 @@ export default function Login() {
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<ILoginInputs>({
     defaultValues: {
@@ -139,7 +138,7 @@ export default function Login() {
               <Zoom in={hasError}>
                 <Grid item>
                   <Alert severity="error">
-                    username or password was typed incorrectly.
+                    Username or password was typed incorrectly.
                   </Alert>
                 </Grid>
               </Zoom>
@@ -149,7 +148,7 @@ export default function Login() {
               Component={RedditTextField}
               margin="normal"
               fullWidth
-              label="username"
+              label="Username*"
               name="username"
               control={control}
               autoFocus
@@ -162,7 +161,7 @@ export default function Login() {
               Component={RedditTextField}
               margin="normal"
               fullWidth
-              label="Password"
+              label="Password*"
               name="password"
               control={control}
               rules={{ required: 'password is required' }}

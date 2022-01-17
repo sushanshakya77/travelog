@@ -8,7 +8,13 @@ import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { InputAdornment, TextField, Toolbar, Typography } from '@mui/material';
+import {
+  Box,
+  InputAdornment,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { Search } from '@mui/icons-material';
 
 // install Swiper modules
@@ -55,8 +61,7 @@ const images = [
 
 export default function Banner() {
   return (
-    <>
-      <Toolbar sx={{ mt: 2 }} />
+    <div>
       <Swiper
         loop={true}
         autoplay={{
@@ -68,20 +73,35 @@ export default function Banner() {
         }}
         className="mySwiper"
       >
+        {/* <Typography
+          sx={{
+            zIndex: 999999,
+            color: 'white',
+            fontSize: '64px',
+            position: 'fixed',
+            margin: 'auto',
+            transform: 'translate(175%,-350%)',
+          }}
+        >
+          travelog.
+        </Typography> */}
         {images.map((status) => (
           <SwiperSlide style={{ height: 480 }}>
             <img src={`${status.imgPath}`} alt={`${status.label}`} />
           </SwiperSlide>
         ))}
       </Swiper>
+
       <Typography
         sx={{
-          fontFamily: 'Poppins, sans-serif',
           fontSize: '64px',
           position: 'absolute',
           color: 'white',
           bottom: 450,
           right: 650,
+
+          justifyContent: 'center',
+          alignItems: 'center',
           zIndex: 999,
         }}
       >
@@ -89,32 +109,42 @@ export default function Banner() {
       </Typography>
       <Typography
         sx={{
-          fontFamily: 'Poppins, sans-serif',
+          zIndex: 99999,
           fontSize: '18px',
-          position: 'absolute',
-          color: 'white',
+          position: 'fixed',
           bottom: 430,
           right: 670,
-          zIndex: 999,
+          // margin: 'auto',
+          // translate: 'transform(0%,-90%)',
+          color: 'white',
         }}
       >
-        -make memories as you go-
+        "make memories as you go"
       </Typography>
       <TextField
-        placeholder="Search something..."
+        // variant="standard"
         size="small"
+        placeholder="Search something..."
         sx={{
-          fontFamily: 'Poppins, sans-serif',
           fontSize: '64px',
           position: 'absolute',
           bgcolor: 'white',
           width: '280px',
+          // height: '40px',
           bottom: 380,
           right: 640,
           borderRadius: '25px',
           border: 'none',
           outline: 'none',
           zIndex: 999,
+          '& .MuiOutlinedInput-root:hover': {
+            '& > fieldset': {
+              border: 'none',
+            },
+          },
+          '.MuiOutlinedInput-root': {
+            border: 'none',
+          },
         }}
         InputProps={{
           startAdornment: (
@@ -122,8 +152,10 @@ export default function Banner() {
               <Search />
             </InputAdornment>
           ),
+
+          // disableUnderline: true,
         }}
       />
-    </>
+    </div>
   );
 }

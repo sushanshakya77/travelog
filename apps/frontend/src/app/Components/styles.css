@@ -32,4 +32,5 @@
   object-fit: cover;
   border-radius: 10px;
   margin-top: 10px;
+  background-position: center;
 }

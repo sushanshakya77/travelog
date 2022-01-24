@@ -37,7 +37,7 @@ const NavButton = styled(Button)`
 
 function Navbar() {
   const { token, setAuthState } = useAuthentication();
-  console.log(token);
+
   const navigate = useNavigate();
   const handleLogout = () => {
     axios

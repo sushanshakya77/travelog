@@ -1,5 +1,12 @@
+import { AlternateEmail } from '@mui/icons-material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Alert, Collapse, Container, Zoom } from '@mui/material';
+import {
+  Alert,
+  Collapse,
+  Container,
+  InputAdornment,
+  Zoom,
+} from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -167,6 +174,12 @@ export default function Register() {
                     name="username"
                     rules={{ required: 'User Name is required' }}
                     label="User Name*"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">@</InputAdornment>
+                      ),
+                      disableUnderline: true,
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>

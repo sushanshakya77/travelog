@@ -146,7 +146,7 @@ export default function Login() {
 
             <ControlledTextField
               Component={RedditTextField}
-              margin="normal"
+              margin="dense"
               fullWidth
               label="Username*"
               name="username"
@@ -155,11 +155,16 @@ export default function Login() {
               rules={{ required: 'username is required' }}
               error={!!errors.username}
               helperText={errors.username && errors.username.message}
-              style={{ marginTop: 11 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">@</InputAdornment>
+                ),
+                disableUnderline: true,
+              }}
             />
             <ControlledPasswordField
               Component={RedditTextField}
-              margin="normal"
+              margin="dense"
               fullWidth
               label="Password*"
               name="password"
@@ -167,7 +172,6 @@ export default function Login() {
               rules={{ required: 'password is required' }}
               error={!!errors.password}
               helperText={errors.password && errors.password.message}
-              style={{ marginTop: 11 }}
             />
 
             <FormControlLabel

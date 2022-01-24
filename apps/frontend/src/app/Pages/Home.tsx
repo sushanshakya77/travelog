@@ -1,10 +1,13 @@
+import { Container } from '@mui/material';
 import React from 'react';
 import Banner from '../Components/Banner';
 
 const Home = () => {
   return (
     <div>
-      <Banner />
+      <Container maxWidth="lg">
+        <Banner />
+      </Container>
     </div>
   );
 };

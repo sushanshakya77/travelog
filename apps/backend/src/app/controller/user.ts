@@ -2,7 +2,7 @@ import * as argon2 from 'argon2';
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import { jwtConstants } from '../constants/constants';
-import User from '../model/Model';
+import User from '../model/userModel';
 
 declare module 'express-session' {
   export interface Session {
@@ -11,7 +11,7 @@ declare module 'express-session' {
   }
 }
 
-interface payloadData {
+export interface payloadData {
   username: string;
 }
 
@@ -20,23 +20,23 @@ export const loginController: express.RequestHandler = async (
   res: express.Response
 ) => {
   try {
-    const { userName, password } = req.body;
+    const { username, password } = req.body;
 
-    const user = await User.findOne({ userName });
+    const user = await User.findOne({ username });
 
     if (user && (await argon2.verify(user.password, password))) {
       const accessToken = jwt.sign(
-        { userName: user.userName },
+        { username: user.username },
         jwtConstants.ACCESS_TOKEN as string,
         {
-          expiresIn: '1h',
+          expiresIn: '3h',
         }
       );
       const refreshToken = jwt.sign(
-        { userName: user.userName },
+        { username: user.username },
         jwtConstants.REFRESH_TOKEN as string,
         {
-          expiresIn: '1h',
+          expiresIn: '3h',
         }
       );
       req.session.accessToken = accessToken;
@@ -55,15 +55,15 @@ export const registerController: express.RequestHandler = async (
   res: express.Response
 ) => {
   try {
-    const { firstName, lastName, phoneNumber, email, userName, password } =
+    const { firstName, lastName, phoneNumber, email, username, password } =
       req.body;
-    console.log(userName);
-    const oldUser = await User.findOne({ userName });
+    console.log(username);
+    const oldUser = await User.findOne({ username });
 
     if (oldUser) {
       return res
         .status(403)
-        .send('User Already Exist. Please Use a Different userName');
+        .send('User Already Exist. Please Use a Different username');
     }
 
     const encryptedPassword = await argon2.hash(password);
@@ -73,11 +73,11 @@ export const registerController: express.RequestHandler = async (
       lastName,
       phoneNumber,
       email,
-      userName,
+      username,
       password: encryptedPassword,
     });
 
-    const token = jwt.sign({ userName: user.userName }, 'test', {
+    const token = jwt.sign({ username: user.username }, 'test', {
       expiresIn: '1hr',
     });
 

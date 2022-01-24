@@ -24,7 +24,7 @@ export function App() {
     return (
       <CircularProgress
         color="secondary"
-        sx={{ marginTop: '200px', marginLeft: '200px' }}
+        sx={{ marginLeft: '700px', marginTop: '350px' }}
       />
     );
   else
@@ -33,11 +33,9 @@ export function App() {
         <Route
           path="/"
           element={
-            <Container maxWidth="lg">
-              <PrivateRoute>
-                <BaseLayout />
-              </PrivateRoute>
-            </Container>
+            <PrivateRoute>
+              <BaseLayout />
+            </PrivateRoute>
           }
         >
           <Route index element={<Home />} />

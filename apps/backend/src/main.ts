@@ -4,6 +4,7 @@ import * as express from 'express';
 import * as session from 'express-session';
 import '../src/app/config/database';
 import users from '../src/app/routes/usersRoute';
+import userInfo from '../src/app/routes/userInfo';
 import { jwtConstants } from './app/constants/constants';
 const app = express();
 
@@ -21,6 +22,7 @@ const sess: session.SessionOptions = {
 
 app.use(session(sess));
 app.use('/api/auth', users);
+app.use('/api/userInfo', userInfo);
 
 const port = 3333;
 const server = app.listen(port, () => {

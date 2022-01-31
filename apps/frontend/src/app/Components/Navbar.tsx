@@ -66,23 +66,23 @@ function Navbar() {
             <div style={{ flexGrow: 1 }} />
 
             <Tooltip title="Notifications">
-              <NavButton color="inherit">
+              <IconButton color="inherit">
                 <CircleNotifications />
-              </NavButton>
+              </IconButton>
             </Tooltip>
 
             <Tooltip title="Account">
               <Link to="/user/info">
-                <NavButton color="inherit">
+                <IconButton color="inherit">
                   <AccountCircle />
-                </NavButton>
+                </IconButton>
               </Link>
             </Tooltip>
 
             <Tooltip title="Logout">
-              <NavButton color="inherit" onClick={handleLogout}>
+              <IconButton color="inherit" onClick={handleLogout}>
                 <ExitToApp />
-              </NavButton>
+              </IconButton>
             </Tooltip>
           </Toolbar>
         </Container>

@@ -15,11 +15,16 @@ const usersSchema = new mongoose.Schema(
     currentCity: String,
     description: String,
     password: { type: String, required: true },
-  },
-  {
-    timestamps: true,
   }
+  // {
+  //   timestamps: true,
+  // }
 );
+
+usersSchema.set('timestamps', {
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+});
 
 const User = mongoose.model('User', usersSchema);
 

@@ -9,12 +9,13 @@ import {
   Grid,
   IconButton,
   Paper,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import EditProfile from '../Components/EditProfile';
@@ -24,15 +25,15 @@ const Input = styled.input`
 `;
 
 export interface IUserInfo {
-  _id?: any;
+  _id: any;
   firstName: string;
   lastName: string;
   username: string;
-  email?: string;
-  createdAt?: Date;
-  currentCity?: string;
-  description?: string;
-  profilePicture?: string;
+  email: string;
+  createdAt: Date;
+  currentCity: string;
+  description: string;
+  profilePicture: string;
 }
 const theme = createTheme({
   palette: {
@@ -44,12 +45,16 @@ const theme = createTheme({
     fontFamily: 'Poppins, sans-serif',
   },
 });
+
 const UserInfo = () => {
   const { data: userInfoData } = useQuery<IUserInfo>('userInfo', () =>
     axios.get('api/userInfo').then((res) => res.data)
   );
+
   const [open, setOpen] = React.useState(false);
-  // const [edit, setEdit] = React.useState<IUserInfo>();
+  // const [loading, setloading] = React.useState(true);
+
+  // if (userInfoData) setloading(false);
 
   const { reset } = useForm<IUserInfo>();
 
@@ -64,7 +69,7 @@ const UserInfo = () => {
     reset();
   };
 
-  console.log('this is ', userInfoData?.profilePicture);
+  console.log('this is ', userInfoData?.createdAt);
 
   return (
     <Grid container component="main">
@@ -72,8 +77,8 @@ const UserInfo = () => {
         item
         xs={12}
         sx={{
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1641728769008-efa71a62a49f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80)',
+          // backgroundImage: 'url(https://source.unsplash.com/random)',
+          backgroundImage: 'url(https://wallpaperaccess.com/full/36307.jpg)',
           backgroundRepeat: 'no-repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light'
@@ -96,7 +101,7 @@ const UserInfo = () => {
               width: '1232px',
               transform: 'translate(0%,-30%)',
               padding: '25px',
-              bgcolor: '#fff6f6',
+              bgcolor: '#fcf0f0',
             }}
             elevation={0}
             component={Paper}
@@ -132,7 +137,9 @@ const UserInfo = () => {
                   }
                 >
                   <Avatar
-                    src={userInfoData?.profilePicture}
+                    // src={userInfoData?.profilePicture}
+                    src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
+                    // src="https://source.unsplash.com/random"
                     sx={{
                       height: '128px',
                       width: '128px',
@@ -140,25 +147,34 @@ const UserInfo = () => {
                   />
                 </Badge>
               </Grid>
+
               <Grid item xs={8.5}>
-                <Typography
-                  sx={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    lineHeight: '28px',
-                  }}
-                >
-                  {userInfoData?.firstName} {userInfoData?.lastName}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    lineHeight: '18px',
-                  }}
-                >
-                  @{userInfoData?.username}
-                </Typography>
+                {/* {loading ? (
+                  <Skeleton animation="wave" />
+                ) : ( */}
+                <>
+                  <Typography
+                    sx={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      lineHeight: '28px',
+                    }}
+                  >
+                    {userInfoData?.firstName} {userInfoData?.lastName}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      lineHeight: '18px',
+                    }}
+                  >
+                    {userInfoData?.username && `@${userInfoData?.username}`}
+                  </Typography>
+                </>
+                {/* )} */}
               </Grid>
+
               <Grid item xs={1.4}>
                 <ThemeProvider theme={theme}>
                   <Button
@@ -172,12 +188,14 @@ const UserInfo = () => {
                     Edit Profile
                   </Button>
                 </ThemeProvider>
-                <EditProfile
-                  open={open}
-                  handleClose={handleClose}
-                  userInfo={userInfoData}
-                  setOpen={setOpen}
-                />
+                {userInfoData && (
+                  <EditProfile
+                    open={open}
+                    handleClose={handleClose}
+                    userInfo={userInfoData}
+                    setOpen={setOpen}
+                  />
+                )}
               </Grid>
               <Grid item xs>
                 <IconButton>

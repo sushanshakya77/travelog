@@ -1,32 +1,36 @@
-import * as React from 'react';
+import styled from '@emotion/styled';
+import { Edit } from '@mui/icons-material';
+import {
+  Avatar,
+  Badge,
+  Grid,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
+  Paper,
+  Skeleton,
+} from '@mui/material';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Avatar, Box, Grid, InputAdornment } from '@mui/material';
+import axios from 'axios';
+import * as React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { SubmitHandler, useForm } from 'react-hook-form';
 import { IUserInfo } from '../Pages/UserInfo';
-import axios from 'axios';
 
 interface IProps {
   open: boolean;
   handleClose: () => void;
-  userInfo: IUserInfo | undefined;
+  userInfo: IUserInfo;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-// interface IEditInputs {
-//   firstName: string;
-//   lastName: string;
-//   username: string;
-//   currentCity: string;
-//   description: string;
-// }
+const Input = styled.input`
+  display: none;
+`;
 
 export default function EditProfile({
   open,
@@ -34,7 +38,6 @@ export default function EditProfile({
   userInfo,
   setOpen,
 }: IProps) {
-  // console.log('this is userInfo:', userInfo?.firstName);
   const {
     control,
     handleSubmit,
@@ -43,21 +46,28 @@ export default function EditProfile({
     formState: { errors },
   } = useForm<IUserInfo>({
     defaultValues: {
-      firstName: userInfo?.firstName ?? undefined,
-      lastName: userInfo?.lastName ?? undefined,
-      username: userInfo?.username ?? undefined,
-      currentCity: userInfo?.currentCity ?? undefined,
-      description: userInfo?.description ?? undefined,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      username: userInfo.username,
+      currentCity: userInfo.currentCity,
+      description: userInfo.description,
     },
   });
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const onSubmit: SubmitHandler<IUserInfo> = async (data) => {
-    console.log(data?._id);
-    await axios.patch(`/api/userInfo/${data._id}`, data).then((response) => {
-      console.log(response);
-      setOpen(false);
-      reset();
-    });
+    setIsLoading(true);
+    // if (data._id)
+    // return
+    await axios
+      .patch(`/api/userInfo/${userInfo._id}`, data)
+      .then((response) => {
+        console.log(response);
+        setOpen(false);
+
+        reset();
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   };
 
   const props = React.useMemo<Record<string, unknown>>(
@@ -69,12 +79,46 @@ export default function EditProfile({
     []
   );
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Edit Profile</DialogTitle>
-        <DialogContent>
-          <Grid container>
-            {/* <Grid item xs={12} sm={6}>
+    <Dialog
+      PaperComponent={(props) => (
+        <Paper {...(props as never)} component={'form'}></Paper>
+      )}
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      {isLoading && <LinearProgress />}
+      <DialogTitle>Edit Profile</DialogTitle>
+      <DialogContent>
+        <Grid container>
+          <Grid item xs={12} sx={{ mb: '25px', ml: '210px' }}>
+            <Badge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              badgeContent={
+                <label htmlFor="icon-button-file">
+                  <Input accept="image/*" id="icon-button-file" type="file" />
+                  <IconButton
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      border: `2px solid #ffffff`,
+                      bgcolor: '#EEEEEE',
+                      color: '#222831',
+                      transition: '0.2s ease-in-out',
+                      '&:hover': {
+                        bgcolor: '#222831',
+                        color: '#EEEEEE',
+                      },
+                    }}
+                    component="span"
+                  >
+                    <Edit sx={{ fontSize: '20px' }} />
+                  </IconButton>
+                </label>
+              }
+            >
               <Avatar
                 src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
                 sx={{
@@ -82,83 +126,82 @@ export default function EditProfile({
                   width: '120px',
                 }}
               />
-            </Grid> */}
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <ControlledTextField
-                  Component={RedditTextField}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName && errors.firstName.message}
-                  name="firstName"
-                  rules={{ required: 'First Name is required' }}
-                  label="First Name"
-                  autoFocus
-                  {...props}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <ControlledTextField
-                  Component={RedditTextField}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName && errors.lastName.message}
-                  name="lastName"
-                  rules={{ required: 'Last Name is required' }}
-                  label="Last Name"
-                  {...props}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <ControlledTextField
-                  Component={RedditTextField}
-                  error={!!errors.username}
-                  helperText={errors.username && errors.username.message}
-                  name="username"
-                  rules={{ required: 'User Name is required' }}
-                  label="User Name"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">@</InputAdornment>
-                    ),
-                    disableUnderline: true,
-                  }}
-                  {...props}
-                />
-              </Grid>
+            </Badge>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <ControlledTextField
+                Component={RedditTextField}
+                error={!!errors.firstName}
+                helperText={errors.firstName && errors.firstName.message}
+                name="firstName"
+                rules={{ required: 'First Name is required' }}
+                label="First Name"
+                autoFocus
+                {...props}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <ControlledTextField
+                Component={RedditTextField}
+                error={!!errors.lastName}
+                helperText={errors.lastName && errors.lastName.message}
+                name="lastName"
+                rules={{ required: 'Last Name is required' }}
+                label="Last Name"
+                {...props}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <ControlledTextField
+                Component={RedditTextField}
+                error={!!errors.username}
+                helperText={errors.username && errors.username.message}
+                name="username"
+                rules={{ required: 'User Name is required' }}
+                label="User Name"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">@</InputAdornment>
+                  ),
+                  disableUnderline: true,
+                }}
+                {...props}
+              />
+            </Grid>
 
-              <Grid item xs={12}>
-                <ControlledTextField
-                  Component={RedditTextField}
-                  error={!!errors.currentCity}
-                  helperText={errors.currentCity && errors.currentCity.message}
-                  name="currentCity"
-                  label="Current City"
-                  {...props}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <ControlledTextField
-                  Component={RedditTextField}
-                  fullWidth
-                  error={!!errors.description}
-                  helperText={errors.description && errors.description.message}
-                  control={control}
-                  name="description"
-                  rules={{ required: 'Last Name is required' }}
-                  label="Description"
-                  multiline
-                  rows={4}
-                />
-              </Grid>
+            <Grid item xs={12}>
+              <ControlledTextField
+                Component={RedditTextField}
+                error={!!errors.currentCity}
+                helperText={errors.currentCity && errors.currentCity.message}
+                name="currentCity"
+                label="Current City"
+                {...props}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <ControlledTextField
+                Component={RedditTextField}
+                fullWidth
+                error={!!errors.description}
+                helperText={errors.description && errors.description.message}
+                control={control}
+                name="description"
+                label="Description"
+                multiline
+                rows={4}
+              />
             </Grid>
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" type="submit">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button variant="contained" type="submit">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

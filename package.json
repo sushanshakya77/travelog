@@ -45,6 +45,7 @@
     "recoil": "^0.5.2",
     "regenerator-runtime": "0.13.7",
     "swiper": "^7.4.1",
+    "swr": "^1.2.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

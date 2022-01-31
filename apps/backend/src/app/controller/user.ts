@@ -29,14 +29,14 @@ export const loginController: express.RequestHandler = async (
         { username: user.username },
         jwtConstants.ACCESS_TOKEN as string,
         {
-          expiresIn: '3h',
+          expiresIn: '20m',
         }
       );
       const refreshToken = jwt.sign(
         { username: user.username },
         jwtConstants.REFRESH_TOKEN as string,
         {
-          expiresIn: '3h',
+          expiresIn: '20m',
         }
       );
       req.session.accessToken = accessToken;
@@ -78,7 +78,7 @@ export const registerController: express.RequestHandler = async (
     });
 
     const token = jwt.sign({ username: user.username }, 'test', {
-      expiresIn: '1hr',
+      expiresIn: '15m',
     });
 
     res.status(201).send(token);
@@ -108,7 +108,7 @@ export const refreshTokenController: express.RequestHandler = async (
   const user = await User.findOne({ username });
 
   const newToken = jwt.sign({ username }, jwtConstants.ACCESS_TOKEN as string, {
-    expiresIn: '1h',
+    expiresIn: '30d',
   });
 
   res.status(200).json({

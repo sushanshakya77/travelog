@@ -25,6 +25,8 @@ export const getUserInfo: express.RequestHandler = async (
     'lastName',
     'email',
     'username',
+    'currentCity',
+    'description',
   ]);
   return res.status(200).json(user);
 };
@@ -36,16 +38,21 @@ export const updateUserInfo: express.RequestHandler = async (
   const refreshToken = req.session.refreshToken;
   if (!refreshToken) return res.status(401).json('You are not authenticated');
 
-  jwt.verify(refreshToken, jwtConstants.REFRESH_TOKEN as string);
+  const refreshTokenCheck = jwt.verify(
+    refreshToken,
+    jwtConstants.REFRESH_TOKEN as string
+  );
 
-  const { id } = req.params;
-  User.findByIdAndUpdate(id, req.body)
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+  if (refreshTokenCheck) {
+    const { id } = req.params;
+    User.findByIdAndUpdate(id, req.body)
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((err) => {
+        res.send(err);
+      });
+  }
 
   // compare with old password
   // argon2.verify(

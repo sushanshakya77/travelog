@@ -20,9 +20,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const StyledAppBar = styled(AppBar)`
-  background: rgba(222, 242, 241, 0.25);
+  background: rgba(255, 255, 255, 0.25);
   /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); */
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(20px);
   /* border-radius: 10px; */
   border-bottom: 1px solid rgba(153, 149, 149, 0.18);
@@ -64,13 +64,11 @@ function Navbar() {
             </Link>
 
             <div style={{ flexGrow: 1 }} />
-
             <Tooltip title="Notifications">
               <IconButton color="inherit">
                 <CircleNotifications />
               </IconButton>
             </Tooltip>
-
             <Tooltip title="Account">
               <Link to="/user/info">
                 <IconButton color="inherit">

@@ -109,9 +109,9 @@ export default function Banner() {
       </Typography>
       <Typography
         sx={{
-          zIndex: 99999,
+          zIndex: 999,
           fontSize: '18px',
-          position: 'fixed',
+          position: 'absolute',
           bottom: 430,
           right: 670,
           // margin: 'auto',

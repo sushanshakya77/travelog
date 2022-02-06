@@ -1,6 +1,5 @@
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { jwtConstants } from '../constants/constants';
 import User from '../model/userModel';
 import { payloadData } from './user';
 // import * as argon2 from 'argon2';
@@ -13,10 +12,7 @@ export const getUserInfo: express.RequestHandler = async (
   if (!refreshToken) return res.status(401).json('You are not authenticated');
 
   // verify old refreshToken
-  const decoded = jwt.verify(
-    refreshToken,
-    jwtConstants.REFRESH_TOKEN as string
-  );
+  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string);
   const username = (decoded as payloadData).username;
 
   // find user in db
@@ -27,6 +23,7 @@ export const getUserInfo: express.RequestHandler = async (
     'username',
     'currentCity',
     'description',
+    'createdAt',
   ]);
   return res.status(200).json(user);
 };
@@ -40,7 +37,7 @@ export const updateUserInfo: express.RequestHandler = async (
 
   const refreshTokenCheck = jwt.verify(
     refreshToken,
-    jwtConstants.REFRESH_TOKEN as string
+    process.env.REFRESH_TOKEN as string
   );
 
   if (refreshTokenCheck) {

@@ -5,7 +5,7 @@ import * as session from 'express-session';
 import '../src/app/config/database';
 import users from '../src/app/routes/usersRoute';
 import userInfo from '../src/app/routes/userInfo';
-import { jwtConstants } from './app/constants/constants';
+import destination from '../src/app/routes/destination';
 const app = express();
 
 app.use(cors());
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const sess: session.SessionOptions = {
-  secret: jwtConstants.SESSION_SECRET as string,
+  secret: process.env.SESSION_SECRET as string,
   resave: true,
   saveUninitialized: true,
   cookie: { maxAge: 30000000000 },
@@ -23,6 +23,7 @@ const sess: session.SessionOptions = {
 app.use(session(sess));
 app.use('/api/auth', users);
 app.use('/api/userInfo', userInfo);
+app.use('/api/destinations', destination);
 
 const port = 3333;
 const server = app.listen(port, () => {

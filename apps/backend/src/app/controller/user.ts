@@ -1,7 +1,6 @@
 import * as argon2 from 'argon2';
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { jwtConstants } from '../constants/constants';
 import User from '../model/userModel';
 
 declare module 'express-session' {
@@ -26,17 +25,19 @@ export const loginController: express.RequestHandler = async (
 
     if (user && (await argon2.verify(user.password, password))) {
       const accessToken = jwt.sign(
-        { username: user.username },
-        jwtConstants.ACCESS_TOKEN as string,
+        {
+          username: user.username,
+        },
+        process.env.ACCESS_TOKEN as string,
         {
           expiresIn: '20m',
         }
       );
       const refreshToken = jwt.sign(
         { username: user.username },
-        jwtConstants.REFRESH_TOKEN as string,
+        process.env.REFRESH_TOKEN as string,
         {
-          expiresIn: '20m',
+          expiresIn: '30d',
         }
       );
       req.session.accessToken = accessToken;
@@ -77,9 +78,13 @@ export const registerController: express.RequestHandler = async (
       password: encryptedPassword,
     });
 
-    const token = jwt.sign({ username: user.username }, 'test', {
-      expiresIn: '15m',
-    });
+    const token = jwt.sign(
+      { username: user.username },
+      process.env.ACCESS_TOKEN as string,
+      {
+        expiresIn: '15m',
+      }
+    );
 
     res.status(201).send(token);
   } catch (err) {
@@ -98,16 +103,13 @@ export const refreshTokenController: express.RequestHandler = async (
   //send error if there is no token or it's invalid
   if (!refreshToken) return res.status(401).json('You are not authenticated!');
 
-  const decoded = jwt.verify(
-    refreshToken,
-    jwtConstants.REFRESH_TOKEN as string
-  );
+  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string);
 
   const username = (decoded as payloadData).username;
 
   const user = await User.findOne({ username });
 
-  const newToken = jwt.sign({ username }, jwtConstants.ACCESS_TOKEN as string, {
+  const newToken = jwt.sign({ username }, process.env.ACCESS_TOKEN as string, {
     expiresIn: '30d',
   });
 

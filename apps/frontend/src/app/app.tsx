@@ -10,6 +10,7 @@ import 'swiper/css/bundle';
 import './Components/styles.css';
 import BaseLayout from './Pages/BaseLayout';
 import UserInfo from './Pages/UserInfo';
+import Destination from './Pages/Destination';
 export function App() {
   //recoil fetch
   const { authState, fetchAuthState } = useAuthentication();
@@ -40,6 +41,7 @@ export function App() {
         >
           <Route index element={<Home />} />
           <Route path="user/info" element={<UserInfo />} />
+          <Route path="destinations/:id" element={<Destination />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />

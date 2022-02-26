@@ -6,6 +6,8 @@ import '../src/app/config/database';
 import users from '../src/app/routes/usersRoute';
 import userInfo from '../src/app/routes/userInfo';
 import destination from '../src/app/routes/destination';
+import post from '../src/app/routes/post';
+import trip from '../src/app/routes/trip';
 const app = express();
 
 app.use(cors());
@@ -24,6 +26,8 @@ app.use(session(sess));
 app.use('/api/auth', users);
 app.use('/api/userInfo', userInfo);
 app.use('/api/destinations', destination);
+app.use('/api/post', post);
+app.use('/api/trip', trip);
 
 const port = 3333;
 const server = app.listen(port, () => {

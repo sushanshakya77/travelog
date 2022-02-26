@@ -1,16 +1,20 @@
-import { CircularProgress, Container } from '@mui/material';
+import { CircularProgress } from '@mui/material';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
-import Home from './Pages/Home';
-import Login from './Pages/Login';
-import Register from './Pages/Register';
-import PrivateRoute from './Routes/PrivateRoute';
-import { useAuthentication } from './useAuthentication/useAuthentication';
 import 'swiper/css/bundle';
 import './Components/styles.css';
 import BaseLayout from './Pages/BaseLayout';
-import UserInfo from './Pages/UserInfo';
 import Destination from './Pages/Destination';
+import Explore from './Pages/Explore';
+import Home from './Pages/Home';
+import Login from './Pages/Login';
+import Register from './Pages/Register';
+import Trips from './Pages/Trips';
+import UserInfo from './Pages/UserInfo';
+import PrivateRoute from './Routes/PrivateRoute';
+import { useAuthentication } from './useAuthentication/useAuthentication';
+
 export function App() {
   //recoil fetch
   const { authState, fetchAuthState } = useAuthentication();
@@ -42,6 +46,8 @@ export function App() {
           <Route index element={<Home />} />
           <Route path="user/info" element={<UserInfo />} />
           <Route path="destinations/:id" element={<Destination />} />
+          <Route path="explore" element={<Explore />} />
+          <Route path="trips" element={<Trips />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />

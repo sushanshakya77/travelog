@@ -1,8 +1,13 @@
 import * as express from 'express';
-import { getUserInfo, updateUserInfo } from '../controller/userInfo';
+import {
+  createUserInfo,
+  getUserInfo,
+  updateUserInfo,
+} from '../controller/userInfo';
 
 const router = express.Router();
 
+router.post('/', createUserInfo);
 router.get('/', getUserInfo);
 router.patch('/:id', updateUserInfo);
 

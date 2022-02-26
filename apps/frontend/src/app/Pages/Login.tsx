@@ -152,7 +152,7 @@ export default function Login() {
               name="username"
               control={control}
               autoFocus
-              rules={{ required: 'username is required' }}
+              rules={{ required: 'Username is required' }}
               error={!!errors.username}
               helperText={errors.username && errors.username.message}
               InputProps={{

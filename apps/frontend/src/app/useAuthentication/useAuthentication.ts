@@ -18,7 +18,7 @@ export const useAuthentication = () => {
 
   const fetchAuthState = useCallback(() => {
     axios
-      .post('/api/auth/refreshtoken')
+      .get('/api/auth/refreshtoken')
       .then((response) => {
         console.log('this is response');
         console.log(response);

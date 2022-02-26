@@ -5,7 +5,10 @@ const destinationsSchema = new mongoose.Schema({
   imgAlt: String,
   rating: Number,
   description: String,
-  comments: String,
+  comments: {
+    type: Array,
+    default: [],
+  },
 });
 
 const Destinations = mongoose.model('Destinations', destinationsSchema);

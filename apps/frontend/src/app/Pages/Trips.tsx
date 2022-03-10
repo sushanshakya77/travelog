@@ -1,19 +1,25 @@
-import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import { AddCircleOutlineOutlined, MoreVert } from '@mui/icons-material';
 import {
   Button,
   Card,
   CardActionArea,
+  CardActions,
   CardContent,
+  CardHeader,
   CardMedia,
   Container,
   Grid,
+  IconButton,
   Typography,
 } from '@mui/material';
 import axios from 'axios';
 import React, { useRef, useEffect, useState } from 'react';
 import Map from 'react-map-gl';
 import { useQuery } from 'react-query';
+import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import TripNameDialog, { ITrip } from '../Components/TripNameDialog';
+import dayjs from 'dayjs';
 
 const MAPBOX_TOKEN =
   'pk.eyJ1Ijoic3VzaGFuc2hha3lhIiwiYSI6ImNreHNxbWEzbDJjNHYyb2tveWs2dWJ1Y2QifQ.hduTJTq1uzs51_XTQQ8CXA';
@@ -27,10 +33,11 @@ const Trips = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const { id } = useParams();
   const { data: tripData } = useQuery<ITrip[]>('trips', () =>
-    axios.get('api/trip').then((res) => res.data)
+    axios.get(`api/trip/user/${id}`).then((res) => res.data)
   );
+  console.log(tripData);
 
   return (
     <div>
@@ -88,27 +95,34 @@ const Trips = () => {
           </Grid>
           {tripData?.map((trip) => (
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '250px' }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://source.unsplash.com/random"
-                  alt="green iguana"
-                  sx={{
-                    backgroundSize: 'cover',
-                    height: '140px',
-                    backgroundPosition: 'center',
-                  }}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {trip.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {trip.desc}
-                  </Typography>
-                </CardContent>
-              </Card>
+              <Link to={`/trip/${trip._id}`}>
+                <Card sx={{ height: '250px' }}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image="https://source.unsplash.com/random"
+                    alt="green iguana"
+                    sx={{
+                      backgroundSize: 'cover',
+                      height: '120px',
+                      backgroundPosition: 'center',
+                    }}
+                  />
+
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {trip.title}
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary">
+                      {dayjs(trip.createdAt).format('MMMM DD, YYYY')}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      {trip.desc}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
             </Grid>
           ))}
         </Grid>

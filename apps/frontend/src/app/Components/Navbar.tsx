@@ -27,7 +27,9 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import React from 'react';
+import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { IUserInfo } from '../Pages/UserInfo';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const StyledAppBar = styled(AppBar)`
@@ -70,6 +72,10 @@ function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { data: userInfoData } = useQuery<IUserInfo>('userInfo', () =>
+    axios.get('api/userInfo').then((res) => res.data)
+  );
   return (
     <div>
       <StyledAppBar elevation={0} color="transparent">
@@ -90,7 +96,7 @@ function Navbar() {
               </Link>
             </Tooltip>
             <Tooltip title="Trips">
-              <Link to="/trips">
+              <Link to={`/trips/${userInfoData?._id}`}>
                 <IconButton color="inherit">
                   <Book />
                 </IconButton>

@@ -10,6 +10,7 @@ import Explore from './Pages/Explore';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import SingleTrip from './Pages/SingleTrip';
 import Trips from './Pages/Trips';
 import UserInfo from './Pages/UserInfo';
 import PrivateRoute from './Routes/PrivateRoute';
@@ -47,7 +48,8 @@ export function App() {
           <Route path="user/info" element={<UserInfo />} />
           <Route path="destinations/:id" element={<Destination />} />
           <Route path="explore" element={<Explore />} />
-          <Route path="trips" element={<Trips />} />
+          <Route path="trips/:id" element={<Trips />} />
+          <Route path="trip/:id" element={<SingleTrip />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />

@@ -1,5 +1,12 @@
 import styled from '@emotion/styled';
-import { Edit, Event, Settings } from '@mui/icons-material';
+import {
+  Add,
+  DescriptionOutlined,
+  Edit,
+  Event,
+  LocationOnOutlined,
+  Settings,
+} from '@mui/icons-material';
 import {
   Avatar,
   Badge,
@@ -13,6 +20,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  Link as TextLink,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -142,7 +150,8 @@ const UserInfo = () => {
                 width: '100%',
                 padding: '25px',
                 pb: '0px',
-                bgcolor: '#fcf0f0',
+                // bgcolor: '#fcf0f0',
+                borderRadius: '8px',
               }}
               elevation={0}
               component={Paper}
@@ -268,15 +277,48 @@ const UserInfo = () => {
                 elevation={0}
                 component={Paper}
                 maxWidth="sm"
-                sx={{ padding: '25px' }}
+                sx={{ padding: '25px', borderRadius: '8px' }}
               >
                 <Typography sx={{ fontSize: '20px', lineHeight: '40px' }}>
                   Intro
                 </Typography>
-                <Typography sx={{ fontSize: '14px', margin: 'none' }}>
-                  <Event sx={{ fontSize: '15px' }} /> Joined in{' '}
+                <Typography sx={{ fontSize: '14px', my: '6px' }}>
+                  <Event sx={{ fontSize: '16px' }} /> Joined in{'   '}
                   {dayjs(userInfoData?.createdAt).format('MMM DD, YYYY')}
                 </Typography>
+
+                {userInfoData?.currentCity ? (
+                  <Typography sx={{ fontSize: '14px', my: '6px' }}>
+                    <LocationOnOutlined sx={{ fontSize: '16px' }} />{' '}
+                    {userInfoData?.currentCity}
+                  </Typography>
+                ) : (
+                  <Typography sx={{ fontSize: '14px', my: '6px' }}>
+                    <TextLink
+                      color="#000000"
+                      onClick={handleClickOpen}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <Add sx={{ fontSize: '16px' }} /> Add a Country
+                    </TextLink>
+                  </Typography>
+                )}
+                {userInfoData?.description ? (
+                  <Typography sx={{ fontSize: '14px', my: '6px' }}>
+                    <DescriptionOutlined sx={{ fontSize: '16px' }} />{' '}
+                    {userInfoData?.description}
+                  </Typography>
+                ) : (
+                  <Typography sx={{ fontSize: '14px', my: '6px' }}>
+                    <TextLink
+                      color="#000000"
+                      onClick={handleClickOpen}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <Add sx={{ fontSize: '16px' }} /> Add a Description
+                    </TextLink>
+                  </Typography>
+                )}
               </Box>
             </Grid>
             <Grid item xs={9.5}>

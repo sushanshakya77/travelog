@@ -29,7 +29,10 @@ interface IProps {
 
 export interface ITrip {
   title: string;
+  createdAt: Date;
   desc: string;
+  _id: string;
+  destinations: [];
 }
 
 export default function TripNameDialog({ open, handleClose }: IProps) {

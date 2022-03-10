@@ -26,6 +26,7 @@ import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
+import LocationPickerDialog from '../Components/LocationPicker';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IUserInfo } from './UserInfo';
@@ -45,6 +46,15 @@ const Explore = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const {
     control,
@@ -80,7 +90,6 @@ const Explore = () => {
                     Component={RedditTextField}
                     label="Write something about the picture"
                     size="small"
-                    // InputLabelProps={{ shrink: true }}
                     fullWidth
                     control={control}
                     name="caption"
@@ -103,7 +112,11 @@ const Explore = () => {
                       </Avatar>
                     </label>
                   </IconButton>
-                  <IconButton disableRipple sx={{ padding: '2px' }}>
+                  <IconButton
+                    disableRipple
+                    sx={{ padding: '2px' }}
+                    onClick={handleClickOpen}
+                  >
                     <Avatar
                       sx={{
                         bgcolor: yellow[900],
@@ -121,6 +134,7 @@ const Explore = () => {
                 </Toolbar>
               </Card>
             </Grid>
+            <LocationPickerDialog open={open} handleClose={handleClose} />
             <Grid item xs={4}>
               <Card sx={{ width: '100%', height: '150px' }} elevation={0}>
                 <CardHeader
@@ -144,7 +158,7 @@ const Explore = () => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} md={8} sm={2}>
+          <Grid item xs={12} md={8}>
             <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
               <CardHeader
                 avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
@@ -164,7 +178,45 @@ const Explore = () => {
               <CardMedia
                 component="img"
                 height="20"
-                image="https://images.unsplash.com/photo-1618082645188-ab82f7a9a990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+                image="https://source.unsplash.com/random"
+                alt="random"
+                sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
+              />
+              <CardContent>
+                {userInfoData?.username}
+                <Typography variant="body2">pray</Typography>
+              </CardContent>
+              <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                  <Favorite />
+                </IconButton>
+                <IconButton aria-label="share">
+                  <ChatOutlined />
+                </IconButton>
+              </CardActions>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
+              <CardHeader
+                avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
+                action={
+                  <IconButton aria-label="settings">
+                    <MoreVert />
+                  </IconButton>
+                }
+                title={
+                  userInfoData?.firstName +
+                  ' ' +
+                  userInfoData?.lastName +
+                  ' was in '
+                }
+                subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
+              />
+              <CardMedia
+                component="img"
+                height="20"
+                image="https://source.unsplash.com/random"
                 alt="random"
                 sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
               />

@@ -12,6 +12,10 @@ const tripSchema = new mongoose.Schema(
       type: String,
       max: 500,
     },
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { timestamps: true }
 );

@@ -1,9 +1,10 @@
 import * as express from 'express';
-import { createTrip, getAllTrips } from '../controller/trips';
+import { createTrip, getTripById, getUserTrips } from '../controller/trips';
 
 const router = express.Router();
 
 router.post('/', createTrip);
-router.get('/', getAllTrips);
+router.get('/user/:id', getUserTrips);
+router.get('/:id', getTripById);
 
 export default router;

@@ -7,6 +7,19 @@ declare module 'express-session' {
   export interface Session {
     refreshToken: string;
     accessToken: string;
+    user: IUserInfo;
+  }
+
+  export interface IUserInfo {
+    _id: any;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+    createdAt: Date;
+    currentCity: string;
+    description: string;
+    profilePicture: string;
   }
 }
 
@@ -42,6 +55,7 @@ export const loginController: express.RequestHandler = async (
       );
       req.session.accessToken = accessToken;
       req.session.refreshToken = refreshToken;
+      req.session.user = user;
       return res.status(200).json({ accessToken, refreshToken });
     } else {
       res.status(401).send('Invalid Credentials');

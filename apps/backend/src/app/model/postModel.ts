@@ -18,7 +18,7 @@ const postSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    destination: {
+    location: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Destination',
     },

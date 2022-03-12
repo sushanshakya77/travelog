@@ -23,6 +23,13 @@ export interface IDestination {
   rating: number;
   imgDesc: string;
   categories: string[];
+  reviews: IReview[];
+}
+
+interface IReview {
+  _id: string;
+  postedBy: any;
+  reviewText: string;
 }
 
 const StyledCard = styled(Card)`

@@ -134,7 +134,10 @@ const Explore = () => {
                 </Toolbar>
               </Card>
             </Grid>
-            <LocationPickerDialog open={open} handleClose={handleClose} />
+            {open && (
+              <LocationPickerDialog open={open} handleClose={handleClose} />
+            )}
+
             <Grid item xs={4}>
               <Card sx={{ width: '100%', height: '150px' }} elevation={0}>
                 <CardHeader

@@ -9,8 +9,8 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { useForm } from 'react-hook-form';
-import { Autocomplete, Box } from '@mui/material';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Autocomplete, Box, Paper } from '@mui/material';
 import { useQuery } from 'react-query';
 import { IDestination } from '../Pages/Home';
 import axios from 'axios';
@@ -30,46 +30,65 @@ interface IProps {
 }
 
 interface IData {
-  destination: string;
+  destination: any;
 }
 
 export default function LocationPickerDialog({ open, handleClose }: IProps) {
-  const { register, handleSubmit, reset } = useForm<IData>();
+  const { register, handleSubmit, control, watch, setValue } = useForm<IData>();
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
     () => axios.get('api/destinations').then((res) => res.data)
   );
-  console.log(destinationData);
+  const onSubmit: SubmitHandler<IData> = (data) => {
+    console.log(data);
+  };
+
   return (
     <div>
       <Dialog
         open={open}
         TransitionComponent={Transition}
+        keepMounted
         onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description"
+        PaperComponent={(props) => (
+          <Paper {...(props as never)} component={'form'}></Paper>
+        )}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <DialogTitle>Add Destination</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             {destinationData && (
-              <Autocomplete
-                disablePortal
-                options={destinationData.map(
-                  (destination) => destination.imgAlt
+              <Controller
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={destinationData}
+                    getOptionLabel={(option) => option.imgAlt}
+                    freeSolo
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <RedditTextField
+                        {...params}
+                        label="Search"
+                        inputProps={{
+                          ...params.inputProps,
+                          autoComplete: 'disabled',
+                        }}
+                      />
+                    )}
+                    onChange={(_, data) => field.onChange(data)}
+                  />
                 )}
-                freeSolo
-                sx={{ width: 300 }}
-                {...register('destination')}
-                renderInput={(params) => (
-                  <RedditTextField {...params} label="Search" />
-                )}
+                control={control}
+                name="destination"
               />
             )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" onClick={handleClose}>
+          <Button variant="contained" type="submit">
             Add
           </Button>
         </DialogActions>

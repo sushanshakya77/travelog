@@ -12,6 +12,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import useSWR, { useSWRConfig } from 'swr';
+import { useQuery } from 'react-query';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -42,16 +43,13 @@ export default function TripNameDialog({ open, handleClose }: IProps) {
     watch,
     reset,
     formState: { errors },
-  } = useForm<ITrip>({
-    defaultValues: {},
-  });
-  const { mutate } = useSWRConfig();
+  } = useForm<ITrip>({});
+  const { refetch } = useQuery<ITrip[]>('trips');
   const onSubmit: SubmitHandler<ITrip> = async (data) => {
     await axios.post('/api/trip', data).then((res) => {
-      // mutate('/api/trip');
       console.log(res);
+      refetch();
       handleClose();
-      reset();
     });
   };
   return (

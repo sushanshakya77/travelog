@@ -18,6 +18,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useQuery } from 'react-query';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IUserInfo } from '../Pages/UserInfo';
@@ -53,6 +54,7 @@ export default function EditProfile({
       description: userInfo.description,
     },
   });
+  const { refetch } = useQuery<IUserInfo>('userInfo');
   const [isLoading, setIsLoading] = React.useState(false);
   const onSubmit: SubmitHandler<IUserInfo> = async (data) => {
     setIsLoading(true);
@@ -62,8 +64,8 @@ export default function EditProfile({
       .patch(`/api/userInfo/${userInfo._id}`, data)
       .then((response) => {
         console.log(response);
+        refetch();
         setOpen(false);
-
         reset();
       })
       .catch((err) => console.log(err))

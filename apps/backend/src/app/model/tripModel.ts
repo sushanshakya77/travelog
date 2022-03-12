@@ -16,6 +16,16 @@ const tripSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    days: [
+      {
+        title: String,
+        description: String,
+        destination: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Destination',
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

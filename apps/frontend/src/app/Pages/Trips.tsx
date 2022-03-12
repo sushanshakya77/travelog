@@ -34,8 +34,9 @@ const Trips = () => {
     setOpen(false);
   };
   const { id } = useParams();
-  const { data: tripData } = useQuery<ITrip[]>('trips', () =>
-    axios.get(`api/trip/user/${id}`).then((res) => res.data)
+  const { data: tripData } = useQuery<ITrip[]>(
+    'trips',
+    async () => await axios.get(`api/trip/user/${id}`).then((res) => res.data)
   );
   console.log(tripData);
 
@@ -113,8 +114,10 @@ const Trips = () => {
                     <Typography gutterBottom variant="h5" component="div">
                       {trip.title}
                     </Typography>
-
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      sx={{ fontSize: '12px' }}
+                      color="text.secondary"
+                    >
                       {dayjs(trip.createdAt).format('MMMM DD, YYYY')}
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
@@ -126,7 +129,7 @@ const Trips = () => {
             </Grid>
           ))}
         </Grid>
-        <TripNameDialog open={open} handleClose={handleClose} />
+        {open && <TripNameDialog open={open} handleClose={handleClose} />}
       </Container>
     </div>
   );

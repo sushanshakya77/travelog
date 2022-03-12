@@ -85,8 +85,9 @@ function a11yProps(index: number) {
 }
 
 const UserInfo = () => {
-  const { data: userInfoData } = useQuery<IUserInfo>('userInfo', () =>
-    axios.get('api/userInfo').then((res) => res.data)
+  const { data: userInfoData, refetch } = useQuery<IUserInfo>(
+    'userInfo',
+    async () => await axios.get('api/userInfo').then((res) => res.data)
   );
   const [open, setOpen] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);

@@ -6,5 +6,6 @@ const router = express.Router();
 router.post('/', createTrip);
 router.get('/user/:id', getUserTrips);
 router.get('/:id', getTripById);
+router.delete('/delete/:id', getTripById);
 
 export default router;

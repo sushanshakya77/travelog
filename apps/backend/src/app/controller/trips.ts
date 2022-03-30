@@ -45,12 +45,11 @@ export const getUserTrips: RequestHandler = async (req, res) => {
 
 //delete a trip
 export const deleteTrip: RequestHandler = async (req, res) => {
-  if (refreshTokenCheck) {
-    try {
-      const trip = await Trip.findByIdAndDelete(req.params.id);
-      res.status(200).json(trip);
-    } catch (err) {
-      res.status(500).json(err);
-    }
+  try {
+    await Trip.findByIdAndDelete(req.params.id).then((res) =>
+      res.status(200).json(res)
+    );
+  } catch (err) {
+    res.status(500).json(err);
   }
 };

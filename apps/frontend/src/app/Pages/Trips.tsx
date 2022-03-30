@@ -1,4 +1,8 @@
-import { AddCircleOutlineOutlined, MoreVert } from '@mui/icons-material';
+import {
+  AddCircleOutlineOutlined,
+  Delete,
+  MoreVert,
+} from '@mui/icons-material';
 import {
   Button,
   Card,
@@ -21,8 +25,6 @@ import { Link } from 'react-router-dom';
 import TripNameDialog, { ITrip } from '../Components/TripNameDialog';
 import dayjs from 'dayjs';
 
-const MAPBOX_TOKEN =
-  'pk.eyJ1Ijoic3VzaGFuc2hha3lhIiwiYSI6ImNreHNxbWEzbDJjNHYyb2tveWs2dWJ1Y2QifQ.hduTJTq1uzs51_XTQQ8CXA';
 const Trips = () => {
   const [open, setOpen] = React.useState(false);
 
@@ -34,6 +36,10 @@ const Trips = () => {
     setOpen(false);
   };
   const { id } = useParams();
+
+  const handleDelete = (id: string) => {
+    axios.delete(`api/trip/delete/${id}`).then((res) => res.data);
+  };
   const { data: tripData } = useQuery<ITrip[]>(
     'trips',
     async () => await axios.get(`api/trip/user/${id}`).then((res) => res.data)
@@ -42,16 +48,6 @@ const Trips = () => {
 
   return (
     <div>
-      {/* <Map
-        initialViewState={{
-          longitude: 85.333336,
-          latitude: 27.700001,
-          zoom: 12,
-        }}
-        style={{ width: '100%', height: '670px' }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-        mapboxAccessToken={MAPBOX_TOKEN}
-      /> */}
       <Typography variant="h4" align="center">
         Trips
       </Typography>
@@ -96,8 +92,8 @@ const Trips = () => {
           </Grid>
           {tripData?.map((trip) => (
             <Grid item xs={12} sm={6} md={4}>
-              <Link to={`/trip/${trip._id}`}>
-                <Card sx={{ height: '250px' }}>
+              <Card sx={{ height: '250px' }}>
+                <Link to={`/trip/${trip._id}`}>
                   <CardMedia
                     component="img"
                     height="140"
@@ -109,23 +105,26 @@ const Trips = () => {
                       backgroundPosition: 'center',
                     }}
                   />
-
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {trip.title}
-                    </Typography>
-                    <Typography
-                      sx={{ fontSize: '12px' }}
-                      color="text.secondary"
+                </Link>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {trip.title}
+                    <IconButton
+                      onClick={() => handleDelete(trip._id)}
+                      sx={{ float: 'right' }}
                     >
-                      {dayjs(trip.createdAt).format('MMMM DD, YYYY')}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      {trip.desc}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Link>
+                      <Delete />
+                    </IconButton>
+                  </Typography>
+                  <Typography sx={{ fontSize: '12px' }} color="text.secondary">
+                    {dayjs(trip.createdAt).format('MMMM DD, YYYY')}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {trip.desc}
+                  </Typography>
+                </CardContent>
+                <CardActions></CardActions>
+              </Card>
             </Grid>
           ))}
         </Grid>

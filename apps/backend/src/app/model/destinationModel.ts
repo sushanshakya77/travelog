@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import * as mongoose from 'mongoose';
 
 const destinationsSchema = new mongoose.Schema(
@@ -10,16 +9,13 @@ const destinationsSchema = new mongoose.Schema(
     userRating: [
       {
         text: Number,
-        ratedBy: { type: ObjectId, ref: 'User' },
+        ratedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],
     reviews: [
       {
         reviewText: String,
-        postedBy: { type: ObjectId, ref: 'User' },
-      },
-      {
-        timestamps: true,
+        postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],
   },

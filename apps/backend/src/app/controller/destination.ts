@@ -28,20 +28,18 @@ export const reviewDestination: RequestHandler = async (req, res) => {
       new: true,
     }
   )
-    .populate('reviews.postedBy', '_id name')
-    .populate('postedBy', '_id name')
-    .exec((err, result) => {
-      if (err) {
-        return res.status(422).json(err);
-      } else {
-        res.json(result);
-      }
+    .then((res) => {
+      return res.status(500).json(res);
+    })
+    .catch((err) => {
+      return res.status(422).json(err);
     });
 };
 
 export const getDestinationById: RequestHandler = async (req, res) => {
   const { id } = req.params;
   await Destinations.findById(id)
+    .populate('reviews.postedBy', '_id username')
     .then((data) => {
       res.json(data);
     })

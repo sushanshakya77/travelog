@@ -45,10 +45,9 @@ interface IProps {
 
 const SubDestinationForm = (props: IProps) => {
   const { open, handleClose, fromEdit } = props;
-  const [destinations, setDestinations] = React.useState<string>();
   const { token } = useAuthentication();
 
-  const { handleSubmit, control, watch, setValue } = useForm({
+  const { handleSubmit, register, control, watch, setValue } = useForm({
     mode: 'onChange',
     defaultValues: {
       title: fromEdit?.title ?? '',
@@ -56,24 +55,21 @@ const SubDestinationForm = (props: IProps) => {
       description: fromEdit?.description ?? '',
       longitude: fromEdit?.longitude ?? 0,
       latitude: fromEdit?.latitude ?? 0,
-      parentDestination: fromEdit?.parentDestination ?? '',
+      parentDestination: fromEdit?.parentDestination?._id ?? '',
       categories: fromEdit?.categories ?? '',
     },
   });
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('parentDestination', event.target.value);
-    console.log(event.target.value);
-  };
+
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinationss',
-    () => axios.get('api/destinations').then((res) => res.data)
+    () => axios.get('/api/destinations').then((res) => res.data)
   );
 
   const onSubmit: SubmitHandler<ISubDestination> = async (data) => {
     console.log(data);
     if (fromEdit) {
       axios
-        .patch(`api/subDestinations/update/${fromEdit._id}`, data, {
+        .patch(`/api/subDestinations/update/${fromEdit._id}`, data, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +83,7 @@ const SubDestinationForm = (props: IProps) => {
         });
     } else
       return await axios
-        .post('api/subDestinations', data)
+        .post('/api/subDestinations', data)
         .then((res) => {
           console.log(res);
           handleClose();
@@ -138,12 +134,10 @@ const SubDestinationForm = (props: IProps) => {
             name="description"
             label="Description"
           />
-          <TextField
+          <RedditTextField
             select
-            value={destinations}
-            onChange={handleChange}
+            {...register('parentDestination')}
             label="Parent Destination"
-            name="parentDestination"
             {...baseInputProps}
           >
             {destinationData?.map((destination) => (
@@ -151,14 +145,31 @@ const SubDestinationForm = (props: IProps) => {
                 {destination.title}
               </MenuItem>
             ))}
-          </TextField>
+          </RedditTextField>
 
-          <ControlledTextField
-            Component={RedditTextField}
-            name="categories"
+          <RedditTextField
+            select
             label="Categories"
+            {...register('categories')}
             {...baseInputProps}
-          ></ControlledTextField>
+          >
+            {[
+              'Religous Sites',
+              'Historical Sites',
+              'Bodies of Water',
+              'Historical Ruins',
+              'Natural Sites',
+              'Neighbourhoods',
+              'Points of Interest',
+              'Landmarks',
+              'Monuments',
+              'Museums',
+            ].map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </RedditTextField>
 
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={6}>

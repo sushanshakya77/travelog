@@ -38,7 +38,7 @@ interface IProps {
 const DestinationForm = (props: IProps) => {
   const { open, handleClose, fromEdit } = props;
 
-  const { handleSubmit, control, watch } = useForm({
+  const { handleSubmit, control, watch, setValue } = useForm({
     mode: 'onChange',
     defaultValues: {
       title: fromEdit?.title ?? '',
@@ -50,18 +50,22 @@ const DestinationForm = (props: IProps) => {
     },
   });
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue('categories', event.target.value);
+  };
+
   const onSubmit: SubmitHandler<IDestination> = async (data) => {
     console.log(data);
     if (fromEdit) {
       axios
-        .patch(`api/destinations/update/${fromEdit._id}`, data)
+        .patch(`/api/destinations/update/${fromEdit._id}`, data)
         .then((res) => {
           console.log(res);
           handleClose();
         });
     } else
       return await axios
-        .post('api/destinations', data)
+        .post('/api/destinations', data)
         .then((res) => {
           console.log(res);
           handleClose();
@@ -112,12 +116,37 @@ const DestinationForm = (props: IProps) => {
             name="description"
             label="Description"
           />
-          <ControlledTextField
+          {/* <ControlledTextField
             Component={RedditTextField}
             name="categories"
             label="Categories"
             {...baseInputProps}
-          ></ControlledTextField>
+          ></ControlledTextField> */}
+          <RedditTextField
+            select
+            name="categories"
+            label="Categories"
+            onChange={handleChange}
+            {...baseInputProps}
+          >
+            {[
+              'Religous Sites',
+              'Bodies of Water',
+              'Historical Ruins',
+              'Natural Sites',
+              'Neighbourhoods',
+              'Points of Interest',
+              'Landmarks',
+              'Monuments',
+              'Museums',
+              'Natural Parks',
+              'Mountains',
+            ].map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </RedditTextField>
 
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={6}>

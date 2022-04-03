@@ -2,11 +2,11 @@ import { RequestHandler } from 'express';
 import Destinations from '../model/destinationModel';
 
 //create new destination
-export const createDestination: RequestHandler = (req, res) => {
+export const createDestination: RequestHandler = async (req, res) => {
   try {
     const destination = new Destinations(req.body);
 
-    const savedDestination = destination.save();
+    const savedDestination = await destination.save();
     res.status(201).json(savedDestination);
   } catch (err) {
     res.status(500).json(err);
@@ -14,11 +14,11 @@ export const createDestination: RequestHandler = (req, res) => {
 };
 
 //update destination
-export const updateDestination: RequestHandler = (req, res) => {
+export const updateDestination: RequestHandler = async (req, res) => {
   try {
     const destination = req.body;
     console.log(destination);
-    const updatedDestination = Destinations.findByIdAndUpdate(
+    const updatedDestination = await Destinations.findByIdAndUpdate(
       req.params.id,
       destination
     );

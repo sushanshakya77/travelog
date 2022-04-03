@@ -22,8 +22,9 @@ import Map from 'react-map-gl';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import TripNameDialog, { ITrip } from '../Components/TripNameDialog';
+import TripNameDialog from '../Components/TripNameDialog';
 import dayjs from 'dayjs';
+import { ITrip } from '../models/Trips';
 
 const Trips = () => {
   const [open, setOpen] = React.useState(false);
@@ -38,9 +39,9 @@ const Trips = () => {
   const { id } = useParams();
 
   const handleDelete = (id: string) => {
-    axios.delete(`api/trip/delete/${id}`).then((res) => res.data);
+    axios.delete(`api/trip/delete/${id}`).then(() => tripRefetch());
   };
-  const { data: tripData } = useQuery<ITrip[]>(
+  const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
     'trips',
     async () => await axios.get(`api/trip/user/${id}`).then((res) => res.data)
   );

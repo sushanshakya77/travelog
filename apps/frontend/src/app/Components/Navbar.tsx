@@ -29,6 +29,7 @@ import axios from 'axios';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { Roles } from '../models/User';
 import { IUserInfo } from '../Pages/UserInfo';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
@@ -49,7 +50,7 @@ const NavButton = styled(Button)`
 `;
 
 function Navbar() {
-  const { token, setAuthState } = useAuthentication();
+  const { token, setAuthState, user } = useAuthentication();
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -61,6 +62,7 @@ function Navbar() {
       )
       .then(() => {
         setAuthState('loggedOut');
+        // window.location.reload();
         navigate('/login');
       });
   };
@@ -88,25 +90,87 @@ function Navbar() {
             </Link>
 
             <div style={{ flexGrow: 1 }} />
-            <Tooltip title="Explore">
-              <Link to="/explore">
-                <IconButton color="inherit">
-                  <Feed />
-                </IconButton>
-              </Link>
-            </Tooltip>
-            <Tooltip title="Trips">
-              <Link to={`/trips/${userInfoData?._id}`}>
-                <IconButton color="inherit">
-                  <Book />
-                </IconButton>
-              </Link>
-            </Tooltip>
-            <Tooltip title="Notifications">
-              <IconButton color="inherit">
-                <CircleNotifications />
-              </IconButton>
-            </Tooltip>
+            <Link to="/explore">
+              <Button
+                color="inherit"
+                sx={{ borderRadius: '14px' }}
+                startIcon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-license"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="#2c3e50"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />
+                    <line x1="9" y1="7" x2="13" y2="7" />
+                    <line x1="9" y1="11" x2="13" y2="11" />
+                  </svg>
+                }
+              >
+                Explore
+              </Button>
+            </Link>
+            <Link to={`/trips/${userInfoData?._id}`}>
+              <Button
+                color="inherit"
+                sx={{ borderRadius: '14px' }}
+                startIcon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-car"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="#2c3e50"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <circle cx="7" cy="17" r="2" />
+                    <circle cx="17" cy="17" r="2" />
+                    <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5" />
+                  </svg>
+                }
+              >
+                {' '}
+                Trips
+              </Button>
+            </Link>
+            <Button
+              color="inherit"
+              sx={{ borderRadius: '14px' }}
+              startIcon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-bell-ringing"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="#2c3e50"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                  <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                  <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+                  <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+                </svg>
+              }
+            >
+              Notification
+            </Button>
             <Tooltip title="Account">
               <IconButton
                 color="inherit"
@@ -166,6 +230,36 @@ function Navbar() {
                     <ListItemText primary="My Profile" />
                   </ListItem>
                 </Link>
+                {user?.role === Roles.ADMIN && (
+                  <Link
+                    to="admin"
+                    style={{ textDecoration: 'none', color: 'black' }}
+                  >
+                    <ListItem button>
+                      <ListItemIcon>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-dashboard"
+                          width="25"
+                          height="25"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="#2c3e50"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <circle cx="12" cy="13" r="2" />
+                          <line x1="13.45" y1="11.55" x2="15.5" y2="9.5" />
+                          <path d="M6.4 20a9 9 0 1 1 11.2 0z" />
+                        </svg>
+                      </ListItemIcon>
+                      <ListItemText primary="Admin Dashboard" />
+                    </ListItem>
+                  </Link>
+                )}
+
                 <Divider />
                 <ListItem button onClick={handleLogout}>
                   <ListItemIcon>

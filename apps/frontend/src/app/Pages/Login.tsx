@@ -83,6 +83,7 @@ export default function Login() {
       .then(() => {
         setHasError(false);
         setAuthState('loggedIn');
+        window.location.reload();
       })
       .catch(() => {
         setHasError(true);

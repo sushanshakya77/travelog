@@ -37,7 +37,7 @@ const AdminDestination = () => {
 
   const handleDelete = async (id: string) => {
     await axios
-      .delete(`api/destinations/delete/${id}`)
+      .delete(`/api/destinations/delete/${id}`)
       .then((res) => {
         console.log(res);
         destinationRefetch();
@@ -50,7 +50,7 @@ const AdminDestination = () => {
   const { data: destinationData, refetch: destinationRefetch } = useQuery<
     IDestination[]
   >('destinations', () =>
-    axios.get('api/destinations').then((res) => res.data)
+    axios.get('/api/destinations').then((res) => res.data)
   );
   return (
     <div>
@@ -117,7 +117,7 @@ const AdminDestination = () => {
                 <TableCell align="right">{row.title}</TableCell>
                 <TableCell align="right">{row.longitude}</TableCell>
                 <TableCell align="right">{row.latitude}</TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   <Button onClick={() => handleEdit(row)}>Edit</Button>
                   <Button onClick={() => handleDelete(row._id)}>Delete</Button>
                 </TableCell>

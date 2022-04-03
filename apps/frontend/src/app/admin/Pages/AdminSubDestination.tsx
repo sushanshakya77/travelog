@@ -27,6 +27,7 @@ const AdminSubDestination = () => {
   const handleClose = () => {
     setOpen(false);
     setEdit(undefined);
+    subRefetch();
   };
 
   const handleEdit = (row: ISubDestination) => {
@@ -34,11 +35,22 @@ const AdminSubDestination = () => {
     setEdit(row);
   };
 
-  const { data: subDestinationData } = useQuery<ISubDestination[]>(
-    'subDestinations',
-    () => axios.get('api/subDestinations').then((res) => res.data)
+  const { data: subDestinationData, refetch: subRefetch } = useQuery<
+    ISubDestination[]
+  >('subDestinations', () =>
+    axios.get('/api/subDestinations').then((res) => res.data)
   );
-
+  const handleDelete = async (id: string) => {
+    await axios
+      .delete(`/api/subDestinations/delete/${id}`)
+      .then((res) => {
+        console.log(res);
+        subRefetch();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <div>
       <Toolbar>
@@ -103,12 +115,14 @@ const AdminSubDestination = () => {
                   {row._id}
                 </TableCell>
                 <TableCell align="right">{row.title}</TableCell>
-                <TableCell align="right">{row.parentDestination}</TableCell>
+                <TableCell align="right">
+                  {row.parentDestination?.title}
+                </TableCell>
                 <TableCell align="right">{row.longitude}</TableCell>
                 <TableCell align="right">{row.latitude}</TableCell>
                 <TableCell align="right">
                   <Button onClick={() => handleEdit(row)}>Edit</Button>
-                  <Button>Delete</Button>
+                  <Button onClick={() => handleDelete(row._id)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}

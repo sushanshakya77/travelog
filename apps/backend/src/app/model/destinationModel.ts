@@ -7,7 +7,7 @@ const destinationsSchema = new mongoose.Schema(
     description: String,
     longitude: Number,
     latitude: Number,
-    categories: String,
+    categories: { type: String },
     userRating: [
       {
         rate: Number,

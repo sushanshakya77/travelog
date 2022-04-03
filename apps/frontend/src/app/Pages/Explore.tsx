@@ -23,23 +23,26 @@ import {
 import { blue, red, yellow } from '@mui/material/colors';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import LocationPickerDialog from '../Components/LocationPicker';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IUserInfo } from './UserInfo';
+import ImageUploading, { ImageListType } from 'react-images-uploading';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 interface IPost {
   userId: Array<string>;
   caption: string;
-  img: string;
+  img: any;
   likes: number;
-  destination: Array<string>;
+  destination: string;
 }
 
 const Explore = () => {
+  const { token, user } = useAuthentication();
   const { data: userInfoData } = useQuery<IUserInfo>('userInfo', () =>
     axios.get('api/userInfo').then((res) => res.data)
   );
@@ -62,12 +65,27 @@ const Explore = () => {
     watch,
     reset,
     register,
+    setValue,
     formState: { errors },
-  } = useForm<IPost>({});
+  } = useForm<IPost>();
+  const imageSubmit = useRef<HTMLInputElement | null>(null);
+
+  const input = useRef<HTMLInputElement | null>(null);
+
+  const [image, setImage] = useState<File>();
+  const [destination, setDestination] = useState<string>('');
 
   const onSubmit: SubmitHandler<IPost> = async (data) => {
-    await axios.post('api/post', data).then((res) => console.log(res));
+    setValue('img', image as any);
+    setValue('destination', destination);
+    console.log(data);
+
+    await axios
+      .post('/api/post', data)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
+  console.log(watch('img'));
 
   return (
     <div>
@@ -96,22 +114,30 @@ const Explore = () => {
                     multiline
                     rows={2}
                   />
+
                   <IconButton disableRipple>
-                    <label htmlFor="icon-button-file">
-                      <input
-                        accept="image/*"
-                        id="icon-button-file"
-                        type="file"
-                        style={{ display: 'none' }}
-                        {...register('img')}
-                      />
-                      <Avatar
-                        sx={{ bgcolor: blue[800], width: 36, height: 36 }}
-                      >
-                        <CameraAltOutlined sx={{ fontSize: '20px' }} />
-                      </Avatar>
-                    </label>
+                    <input
+                      type="file"
+                      ref={input}
+                      name="img"
+                      accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
+                      onChange={(e) => {
+                        const fileList = e.target.files;
+                        if (!fileList) {
+                          return;
+                        }
+                        setImage(fileList[0]);
+                      }}
+                      style={{
+                        // display: 'none',
+                        width: '20px',
+                      }}
+                    />
+                    <Avatar sx={{ bgcolor: blue[800], width: 36, height: 36 }}>
+                      <CameraAltOutlined sx={{ fontSize: '20px' }} />
+                    </Avatar>
                   </IconButton>
+
                   <IconButton
                     disableRipple
                     sx={{ padding: '2px' }}
@@ -135,7 +161,11 @@ const Explore = () => {
               </Card>
             </Grid>
             {open && (
-              <LocationPickerDialog open={open} handleClose={handleClose} />
+              <LocationPickerDialog
+                open={open}
+                handleClose={handleClose}
+                setDestination={setDestination}
+              />
             )}
 
             <Grid item xs={4}>

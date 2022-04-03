@@ -127,7 +127,7 @@ export const refreshTokenController: express.RequestHandler = async (
     expiresIn: '30d',
   });
 
-  res.status(200).json({
+  return res.status(200).json({
     user,
     newToken,
   });
@@ -139,8 +139,12 @@ export const logoutController: express.RequestHandler = async (
 ) => {
   req.session.destroy((error) => {
     if (error) {
-      console.log('this is error', error);
-      return res.send(error);
-    } else return res.json('Logged Out');
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Something went wrong. Try Again!',
+      });
+    }
+    return res.status(200).send({ message: 'Logged Out' });
   });
 };

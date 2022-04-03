@@ -1,4 +1,6 @@
 import * as express from 'express';
+import multer = require('multer');
+import path = require('path');
 import {
   createPost,
   deletePost,
@@ -8,17 +10,43 @@ import {
   likePost,
   updatePost,
 } from '../controller/post';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+  destination: function (req, __, cb) {
+    cb(null, `./public/images`);
+  },
+  filename: function (_, file, cb) {
+    cb(
+      null,
+      uuidv4() + '-' + Date.now() + '-' + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function (_, file, cb) {
+    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpeg'];
+
+    if (allowedFileTypes.includes(file.mimetype)) {
+      return cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  },
+});
+
 //create a post
-router.post('/', createPost);
+router.post('/', upload.single('img'), createPost);
 //update a post
 
-router.patch('/:id', updatePost);
+router.patch('/update/:id', updatePost);
 //delete a post
 
-router.delete('/:id', deletePost);
+router.delete('/delete/:id', deletePost);
 //like / dislike a post
 
 router.patch('/:id/like', likePost);

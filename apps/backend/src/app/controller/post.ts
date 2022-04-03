@@ -1,10 +1,19 @@
 import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 import Post from '../model/postModel';
 import User from '../model/userModel';
+import * as express from 'express';
 
-export const createPost = async (req, res) => {
-  const newPost = new Post(req.body);
+export const createPost = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
+    const img = req.file.filename;
+    console.log(img);
+    console.log(req.file.filename);
+    console.log(req.body);
+
+    const newPost = new Post(req.body);
     const savedPost = await newPost.save();
     res.status(200).json(savedPost);
   } catch (err) {

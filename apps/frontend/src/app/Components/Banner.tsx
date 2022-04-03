@@ -72,19 +72,67 @@ export default function Banner() {
           dynamicBullets: true,
         }}
         className="mySwiper"
+        style={{ position: 'relative' }}
       >
-        {/* <Typography
-          sx={{
-            zIndex: 999999,
-            color: 'white',
-            fontSize: '64px',
-            position: 'fixed',
-            margin: 'auto',
-            transform: 'translate(175%,-350%)',
+        <div
+          style={{
+            position: 'absolute',
+            top: '25%',
+            left: '40%',
+            zIndex: 99,
           }}
         >
-          travelog.
-        </Typography> */}
+          <Typography
+            sx={{
+              fontSize: '64px',
+              color: 'white',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            travelog.
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: '18px',
+              color: 'white',
+            }}
+          >
+            "make memories as you go"
+          </Typography>
+          <TextField
+            size="small"
+            placeholder="Search something..."
+            sx={{
+              fontSize: '64px',
+              bgcolor: 'white',
+              width: '280px',
+              borderRadius: '25px',
+              border: 'none',
+              outline: 'none',
+              ml: '-20px',
+              mt: '10px',
+              zIndex: 999,
+              '& .MuiOutlinedInput-root:hover': {
+                '& > fieldset': {
+                  border: 'none',
+                },
+              },
+              '.MuiOutlinedInput-root': {
+                border: 'none',
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+
+              // disableUnderline: true,
+            }}
+          />
+        </div>
         {images.map((status) => (
           <SwiperSlide style={{ height: 480 }}>
             <img src={`${status.imgPath}`} alt={`${status.label}`} />
@@ -92,7 +140,7 @@ export default function Banner() {
         ))}
       </Swiper>
 
-      <Typography
+      {/* <Typography
         sx={{
           fontSize: '64px',
           position: 'absolute',
@@ -155,7 +203,7 @@ export default function Banner() {
 
           // disableUnderline: true,
         }}
-      />
+      /> */}
     </div>
   );
 }

@@ -12,8 +12,8 @@ import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Autocomplete, Box, Paper } from '@mui/material';
 import { useQuery } from 'react-query';
-import { IDestination } from '../Pages/Home';
 import axios from 'axios';
+import { IDestination } from '../models/Destination';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -27,20 +27,26 @@ const Transition = React.forwardRef(function Transition(
 interface IProps {
   open: boolean;
   handleClose: () => void;
+  setDestination: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface IData {
-  destination: any;
+  destination: IDestination;
 }
 
-export default function LocationPickerDialog({ open, handleClose }: IProps) {
+export default function LocationPickerDialog({
+  open,
+  handleClose,
+  setDestination,
+}: IProps) {
   const { register, handleSubmit, control, watch, setValue } = useForm<IData>();
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
     () => axios.get('api/destinations').then((res) => res.data)
   );
   const onSubmit: SubmitHandler<IData> = (data) => {
-    console.log(data);
+    setDestination(data.destination._id);
+    handleClose();
   };
 
   return (
@@ -64,7 +70,7 @@ export default function LocationPickerDialog({ open, handleClose }: IProps) {
                   <Autocomplete
                     {...field}
                     options={destinationData}
-                    getOptionLabel={(option) => option.imgAlt}
+                    getOptionLabel={(option) => option.title}
                     freeSolo
                     sx={{ width: 300 }}
                     renderInput={(params) => (

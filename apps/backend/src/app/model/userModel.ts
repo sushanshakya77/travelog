@@ -1,11 +1,17 @@
 import * as mongoose from 'mongoose';
 
+enum Roles {
+  'ADMIN' = 'ADMIN',
+  'USER' = 'USER',
+}
+
 const usersSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   username: { type: String, required: true },
   phoneNumber: String,
   email: String,
+  role: { type: String, enum: [Roles.ADMIN, Roles.USER], default: Roles.USER },
   profilePicture: {
     data: Buffer,
     contentType: String,

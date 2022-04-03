@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema(
   {
-    userId: {
+    postedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
@@ -11,14 +11,13 @@ const postSchema = new mongoose.Schema(
       max: 500,
     },
     img: {
-      data: Buffer,
-      contentType: String,
+      type: String,
     },
     likes: {
       type: Array,
       default: [],
     },
-    location: {
+    destination: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Destination',
     },

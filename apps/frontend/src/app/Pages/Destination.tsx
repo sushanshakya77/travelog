@@ -3,6 +3,8 @@ import {
   Avatar,
   Button,
   Card,
+  CardActionArea,
+  CardMedia,
   Container,
   Grid,
   Rating,
@@ -16,6 +18,7 @@ import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IDestination } from '../models/Destination';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
+import { HoverCard } from './Home';
 import { IUserInfo } from './UserInfo';
 
 const Destination = () => {
@@ -106,6 +109,59 @@ const Destination = () => {
           </div>
         </Grid>
         <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="h5">
+              Trips related to the destination:
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={8} md={4}>
+            <HoverCard sx={{ mt: '15px', position: 'relative' }} elevation={0}>
+              <CardActionArea>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image="https://source.unsplash.com/random"
+                  alt="gg"
+                  sx={{
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'brightness(50%)',
+                    height: '250px',
+                    width: '500px',
+                    top: 0,
+                  }}
+                />
+                <Avatar
+                  sx={{
+                    zIndex: 9,
+                    top: 24,
+                    right: 24,
+                    position: 'absolute',
+                    boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                    WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                    MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                  }}
+                ></Avatar>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  sx={{
+                    zIndex: 9,
+                    bottom: 24,
+                    left: 24,
+                    position: 'absolute',
+                    color: 'white',
+                  }}
+                  component="div"
+                >
+                  Random
+                </Typography>
+              </CardActionArea>
+            </HoverCard>
+          </Grid>
+        </Grid>
+
+        <Grid container>
           <Grid item xs>
             <Typography variant="h5">Reviews:</Typography>
           </Grid>
@@ -129,6 +185,7 @@ const Destination = () => {
                 </Typography>
               </div>
             </Grid>
+
             <Grid item xs={12} mt="10px">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <ControlledTextField

@@ -43,12 +43,27 @@ export const getUserTrips: RequestHandler = async (req, res) => {
   }
 };
 
+//update a trip
+export const updateTrip: RequestHandler = async (req, res) => {
+  if (refreshTokenCheck) {
+    try {
+      const updatedTrip = await Trip.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      res.status(200).json(updatedTrip);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+};
+
 //delete a trip
 export const deleteTrip: RequestHandler = async (req, res) => {
   try {
-    await Trip.findByIdAndDelete(req.params.id).then((res) =>
-      res.status(200).json(res)
-    );
+    const deletedTrip = await Trip.findByIdAndDelete(req.params.id);
+    return res.status(200).json(deletedTrip);
   } catch (err) {
     res.status(500).json(err);
   }

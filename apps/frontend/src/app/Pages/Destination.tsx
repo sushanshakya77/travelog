@@ -14,21 +14,20 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
+import { IDestination } from '../models/Destination';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
-import { IDestination } from './Home';
 import { IUserInfo } from './UserInfo';
 
 const Destination = () => {
   const { id } = useParams();
   const { user } = useAuthentication();
-
   console.log(user);
 
   const { data: destinationData, refetch } = useQuery<IDestination>(
     'specificDestination',
     () => axios.get(`api/destinations/${id}`).then((res) => res.data)
   );
-  console.log(destinationData?.reviews);
+  // console.log(destinationData?.reviews.postedBy.username);
   const { data: userInfoData } = useQuery<IUserInfo>(
     'userInfo',
     async () => await axios.get('api/userInfo').then((res) => res.data)
@@ -64,7 +63,7 @@ const Destination = () => {
       <Container sx={{ padding: '40px' }} maxWidth="lg">
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h4">{destinationData?.imgAlt}</Typography>
+            <Typography variant="h4">{destinationData?.title}</Typography>
           </Grid>
           <Grid item container xs={12}>
             <Grid item xs={12}>
@@ -79,17 +78,17 @@ const Destination = () => {
             </Typography>
           </Grid>
           <Typography variant="h6">Categories:</Typography>
-          {destinationData?.categories?.map((category, index) => (
+          {/* {destinationData?.categories?.map((category, index) => (
             <Typography sx={{ marginTop: '4px', display: 'flex' }} key={index}>
               {', '}
               {category}
             </Typography>
-          ))}
+          ))} */}
           <div>
             <Card
               component="img"
               src={destinationData?.img}
-              alt={destinationData?.imgAlt}
+              alt={destinationData?.title}
               sx={{
                 marginLeft: '25px',
                 backgroundPosition: 'center',
@@ -102,7 +101,7 @@ const Destination = () => {
               variant="body1"
               sx={{ marginTop: '20px', textAlign: 'justify' }}
             >
-              {destinationData?.imgDesc}
+              {destinationData?.description}
             </Typography>
           </div>
         </Grid>
@@ -171,7 +170,7 @@ const Destination = () => {
                     >
                       <Avatar></Avatar>
                       <Typography variant="h6" sx={{ ml: '8px' }}>
-                        {review?.postedBy}:
+                        {review?.postedBy.username}:
                       </Typography>
                       <Typography variant="body1" sx={{ ml: '8px' }}>
                         "{review?.reviewText}"

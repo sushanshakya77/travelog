@@ -1,6 +1,33 @@
 import { RequestHandler } from 'express';
 import Destinations from '../model/destinationModel';
 
+//create new destination
+export const createDestination: RequestHandler = (req, res) => {
+  try {
+    const destination = new Destinations(req.body);
+
+    const savedDestination = destination.save();
+    res.status(201).json(savedDestination);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+//update destination
+export const updateDestination: RequestHandler = (req, res) => {
+  try {
+    const destination = req.body;
+    console.log(destination);
+    const updatedDestination = Destinations.findByIdAndUpdate(
+      req.params.id,
+      destination
+    );
+    res.status(200).json(updatedDestination);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 export const getDestination: RequestHandler = async (req, res) => {
   await Destinations.find()
     .then((data) => {
@@ -46,4 +73,14 @@ export const getDestinationById: RequestHandler = async (req, res) => {
     .catch((error) => {
       res.send(error);
     });
+};
+
+//delete destination
+export const deleteDestination: RequestHandler = async (req, res) => {
+  try {
+    const destination = await Destinations.findByIdAndDelete(req.params.id);
+    res.status(200).json(destination);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };

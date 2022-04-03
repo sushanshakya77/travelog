@@ -1,16 +1,20 @@
 import * as mongoose from 'mongoose';
 
-const destinationsSchema = new mongoose.Schema(
+const subDestinationsSchema = new mongoose.Schema(
   {
     img: String,
     title: String,
     description: String,
-    longitude: Number,
+    longitute: Number,
     latitude: Number,
     categories: String,
+    parentDestination: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Destinations',
+    },
     userRating: [
       {
-        rate: Number,
+        text: Number,
         ratedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],
@@ -26,6 +30,9 @@ const destinationsSchema = new mongoose.Schema(
   }
 );
 
-const Destinations = mongoose.model('Destinations', destinationsSchema);
+const SubDestinations = mongoose.model(
+  'SubDestinations',
+  subDestinationsSchema
+);
 
-export default Destinations;
+export default SubDestinations;

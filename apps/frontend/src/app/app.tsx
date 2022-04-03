@@ -3,6 +3,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import 'swiper/css/bundle';
+import AdminDestination from './admin/Pages/AdminDestination';
+import AdminHome from './admin/Pages/AdminHome';
+import AdminSubDestination from './admin/Pages/AdminSubDestination';
 import './Components/styles.css';
 import BaseLayout from './Pages/BaseLayout';
 import Destination from './Pages/Destination';
@@ -50,6 +53,10 @@ export function App() {
           <Route path="explore" element={<Explore />} />
           <Route path="trips/:id" element={<Trips />} />
           <Route path="trip/:id" element={<SingleTrip />} />
+          <Route path="admin" element={<AdminHome />}>
+            <Route path="destination" element={<AdminDestination />} />
+            <Route path="subdestination" element={<AdminSubDestination />} />
+          </Route>
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />

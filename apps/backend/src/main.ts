@@ -9,6 +9,7 @@ import destination from '../src/app/routes/destination';
 import subdestination from '../src/app/routes/subDestination';
 import post from '../src/app/routes/post';
 import trip from '../src/app/routes/trip';
+import blogs from '../src/app/routes/blog';
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/destinations', destination);
 app.use('/api/subDestinations', subdestination);
 app.use('/api/post', post);
 app.use('/api/trip', trip);
+app.use('/api/blogs', blogs);
 
 // app.use('/images', express.static(path.join(__dirname, 'public/images')));
 // const storage = multer.diskStorage({

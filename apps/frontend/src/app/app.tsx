@@ -7,12 +7,15 @@ import AdminDestination from './admin/Pages/AdminDestination';
 import AdminHome from './admin/Pages/AdminHome';
 import AdminSubDestination from './admin/Pages/AdminSubDestination';
 import './Components/styles.css';
+import AddBlog from './Pages/AddBlog';
 import BaseLayout from './Pages/BaseLayout';
+import Blogs from './Pages/Blogs';
 import Destination from './Pages/Destination';
 import Explore from './Pages/Explore';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import SingleBlog from './Pages/SingleBlog';
 import SingleTrip from './Pages/SingleTrip';
 import Trips from './Pages/Trips';
 import UserInfo from './Pages/UserInfo';
@@ -51,6 +54,9 @@ export function App() {
           <Route path="user/info" element={<UserInfo />} />
           <Route path="destinations/:id" element={<Destination />} />
           <Route path="explore" element={<Explore />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="singleBlog/:id" element={<SingleBlog />} />
+          <Route path="blogs/addBlog" element={<AddBlog />} />
           <Route path="trips/:id" element={<Trips />} />
           <Route path="trip/:id" element={<SingleTrip />} />
           <Route path="admin" element={<AdminHome />}>

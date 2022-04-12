@@ -7,22 +7,21 @@ declare module 'express-session' {
   export interface Session {
     refreshToken: string;
     accessToken: string;
-    user: IUserInfo;
-  }
-
-  export interface IUserInfo {
-    _id: any;
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-    createdAt: Date;
-    currentCity: string;
-    description: string;
-    profilePicture: string;
+    user: IUser;
   }
 }
-
+export interface IUser {
+  _id: any;
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  email: string;
+  createdAt: Date;
+  currentCity: string;
+  description: string;
+  profilePicture: string;
+}
 export interface payloadData {
   username: string;
 }

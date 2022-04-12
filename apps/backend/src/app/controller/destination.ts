@@ -41,20 +41,23 @@ export const getDestination: RequestHandler = async (req, res) => {
 //update destination
 export const reviewDestination: RequestHandler = async (req, res) => {
   const user = req.session.user;
+  const reply = [
+    {
+      replyText: req.body.replyText,
+      postedBy: user._id,
+    },
+  ];
   const review = {
-    reviewText: req.body.reviews,
+    reviewRating: req.body.reviewRating,
+    reviewText: req.body.reviewText,
     postedBy: user._id,
   };
-  console.log(review);
-  await Destinations.findByIdAndUpdate(
-    req.params.id,
-    {
-      $push: { reviews: review },
-    },
-    {
-      new: true,
-    }
-  )
+
+  console.log(req.body);
+  await Destinations.findByIdAndUpdate(req.params.id, {
+    reviews: review,
+    // 'reviews.replies': reply,
+  })
     .then((res) => {
       return res.status(500).json(res);
     })

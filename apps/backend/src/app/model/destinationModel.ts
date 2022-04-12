@@ -8,15 +8,17 @@ const destinationsSchema = new mongoose.Schema(
     longitude: Number,
     latitude: Number,
     categories: { type: String },
-    userRating: [
-      {
-        rate: Number,
-        ratedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      },
-    ],
+
     reviews: [
       {
+        reviewRating: Number,
         reviewText: String,
+        replies: [
+          {
+            replyText: String,
+            postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+          },
+        ],
         postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],

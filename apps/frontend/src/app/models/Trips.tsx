@@ -19,7 +19,7 @@ export interface ITrip {
 
 export interface IDays {
   _id: string;
-  number: number;
+  number: string;
   title: string;
   description: string;
   destination: IDestination;

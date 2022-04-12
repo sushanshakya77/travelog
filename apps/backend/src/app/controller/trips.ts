@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import Trip from '../model/tripModel';
+import Trip, { Status } from '../model/tripModel';
 import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 
 export const createTrip: RequestHandler = async (req, res) => {
@@ -23,6 +23,10 @@ export const getTripById: RequestHandler = async (req, res) => {
   if (refreshTokenCheck) {
     try {
       const trip = await Trip.findById(req.params.id);
+      // .populate(
+      //   'days.destination',
+      //   'longitude latitude'
+      // );
       res.status(200).json(trip);
     } catch (err) {
       res.status(500).json(err);
@@ -66,5 +70,18 @@ export const deleteTrip: RequestHandler = async (req, res) => {
     return res.status(200).json(deletedTrip);
   } catch (err) {
     res.status(500).json(err);
+  }
+};
+
+export const getTripsByDestination: RequestHandler = async (req, res) => {
+  try {
+    const trips = await Trip.find({
+      destination: req.params.id,
+      status: Status.Public,
+    });
+    console.log(trips);
+    return res.status(200).json(trips);
+  } catch (err) {
+    return res.status(500).json(err);
   }
 };

@@ -11,10 +11,11 @@ import axios from 'axios';
 import React from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
+import { Navigate } from 'react-router';
 
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IBlog } from '../models/Blogs';
+import { IBlog, Tags } from '../models/Blogs';
 import { IDestination } from '../models/Destination';
 import { Roles } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
@@ -23,7 +24,9 @@ const AddBlog = () => {
   const { control, handleSubmit, register } = useForm<IBlog>();
   const { user } = useAuthentication();
   const onSubmit: SubmitHandler<IBlog> = async (data) => {
-    await axios.post('/api/blogs', data);
+    await axios.post('/api/blogs', data).then(() => {
+      return <Navigate to="/blogs" />;
+    });
   };
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
@@ -33,7 +36,7 @@ const AddBlog = () => {
   return (
     <Container maxWidth="md">
       <Grid container>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <ControlledTextField
             Component={RedditTextField}
             name="title"
@@ -42,7 +45,7 @@ const AddBlog = () => {
             fullWidth
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <ControlledTextField
             Component={RedditTextField}
             name="image"
@@ -75,17 +78,6 @@ const AddBlog = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12}>
-          <ControlledTextField
-            Component={RedditTextField}
-            name="description"
-            label="Description"
-            control={control}
-            multiline
-            fullWidth
-            rows={18}
-          />
-        </Grid>
         {user?.role === Roles.ADMIN && (
           <Grid item xs={12}>
             <Controller
@@ -104,7 +96,7 @@ const AddBlog = () => {
           </Grid>
         )}
 
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           {destinationData && (
             <Controller
               render={({ field }) => (
@@ -130,6 +122,42 @@ const AddBlog = () => {
               name="destination"
             />
           )}
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                multiple
+                fullWidth
+                options={Object.values(Tags)}
+                renderInput={(params) => (
+                  <RedditTextField
+                    {...params}
+                    label="Tags"
+                    inputProps={{
+                      ...params.inputProps,
+                      autoComplete: 'disabled',
+                    }}
+                  />
+                )}
+                onChange={(_, data) => field.onChange(data)}
+              />
+            )}
+            control={control}
+            name="tags"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <ControlledTextField
+            Component={RedditTextField}
+            name="description"
+            label="Description"
+            control={control}
+            multiline
+            fullWidth
+            rows={18}
+          />
         </Grid>
         <Grid item xs={12}>
           <Button sx={{ float: 'right' }} onClick={handleSubmit(onSubmit)}>

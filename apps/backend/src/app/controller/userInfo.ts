@@ -1,8 +1,9 @@
 import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
+import * as argon2 from 'argon2';
 import User from '../model/userModel';
-import { payloadData } from './user';
+import { IUser, payloadData } from './user';
 // import * as argon2 from 'argon2';
 
 export const getUserInfo: express.RequestHandler = async (
@@ -16,7 +17,6 @@ export const getUserInfo: express.RequestHandler = async (
   const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string);
   const username = (decoded as payloadData).username;
 
-  // find user in db
   const user = await User.findOne({ username }).select([
     'firstName',
     'lastName',
@@ -59,5 +59,37 @@ export const createUserInfo: express.RequestHandler = async (
     }
   } catch (err) {
     console.log(err);
+  }
+};
+
+//reset password
+export const resetPassword: express.RequestHandler = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const user = req.session.user as IUser;
+    console.log(req.body);
+
+    const isPasswordCorrect = await argon2.verify(
+      user.password,
+      req.body.oldPassword
+    );
+
+    if (isPasswordCorrect) {
+      const hashedPassword = await argon2.hash(req.body.password, {
+        hashLength: 40,
+      });
+      const user = await User.create({
+        password: hashedPassword,
+      });
+
+      res.status(200).json(user);
+    } else {
+      res.status(400).json('Old password is incorrect');
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
   }
 };

@@ -5,22 +5,23 @@ const subDestinationsSchema = new mongoose.Schema(
     img: String,
     title: String,
     description: String,
-    longitute: Number,
+    longitude: Number,
     latitude: Number,
-    categories: String,
+    categories: { type: String },
     parentDestination: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Destinations',
     },
-    userRating: [
-      {
-        text: Number,
-        ratedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      },
-    ],
     reviews: [
       {
+        reviewRating: Number,
         reviewText: String,
+        replies: [
+          {
+            replyText: String,
+            postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+          },
+        ],
         postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       },
     ],

@@ -29,9 +29,9 @@ import { useQuery } from 'react-query';
 import LocationPickerDialog from '../Components/LocationPicker';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IUserInfo } from './UserInfo';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
+import { IUser } from '../models/User';
 
 interface IPost {
   userId: Array<string>;
@@ -43,7 +43,7 @@ interface IPost {
 
 const Explore = () => {
   const { token, user } = useAuthentication();
-  const { data: userInfoData } = useQuery<IUserInfo>('userInfo', () =>
+  const { data: userInfoData } = useQuery<IUser>('userInfo', () =>
     axios.get('api/userInfo').then((res) => res.data)
   );
   useEffect(() => {
@@ -169,7 +169,14 @@ const Explore = () => {
             )}
 
             <Grid item xs={4}>
-              <Card sx={{ width: '100%', height: '150px' }} elevation={0}>
+              <Card
+                sx={{
+                  width: '100%',
+                  height: '150px',
+                  position: 'sticky',
+                }}
+                elevation={0}
+              >
                 <CardHeader
                   avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
                   title={userInfoData?.username}

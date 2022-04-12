@@ -3,6 +3,9 @@ import { Add, Delete } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Grid,
   IconButton,
   TextField,
@@ -28,7 +31,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IDestination } from '../models/Destination';
+import { IDestination, ISubDestination } from '../models/Destination';
 import { ITrip } from '../models/Trips';
 
 const MAPBOX_TOKEN =
@@ -46,15 +49,17 @@ const StyledCard = styled(Grid)`
 const SingleTrip = () => {
   const { id } = useParams();
 
-  const { data: singleTripData } = useQuery<ITrip>('singletrip', () =>
-    axios.get(`api/trip/${id}`).then((res) => res.data)
+  const { data: singleTripData, refetch: tripDataRefetch } = useQuery<ITrip>(
+    'singletrip',
+    () => axios.get(`api/trip/${id}`).then((res) => res.data)
   );
 
-  const { control, watch, handleSubmit } = useForm<ITrip>();
+  const { control, watch, handleSubmit, register } = useForm<ITrip>();
   const onSubmit: SubmitHandler<ITrip> = async (data) => {
     console.log(data);
     await axios.patch(`/api/trip/update/${id}`, data).then((res) => {
       console.log(res);
+      tripDataRefetch();
     });
   };
 
@@ -62,32 +67,11 @@ const SingleTrip = () => {
     name: 'days',
     control,
   });
-  const { data: destinationData } = useQuery<IDestination[]>(
-    'destinations',
-    () => axios.get('api/destinations').then((res) => res.data)
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
+    'subDestinations',
+    () => axios.get('api/subDestinations').then((res) => res.data)
   );
-
-  const [viewport, setViewport] = React.useState({
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 8,
-  });
-  const handleViewportChange = React.useCallback(
-    (newViewport) => setViewport(newViewport),
-    []
-  );
-
-  const handleGeocoderViewportChange = React.useCallback(
-    (newViewport) => {
-      const geocoderDefaultOverrides = { transitionDuration: 1000 };
-
-      return handleViewportChange({
-        ...newViewport,
-        ...geocoderDefaultOverrides,
-      });
-    },
-    [handleViewportChange]
-  );
+  console.log(singleTripData?.days);
 
   return (
     <div>
@@ -99,13 +83,19 @@ const SingleTrip = () => {
             zoom: 12,
           }}
           style={{ width: '100%', height: '100vh' }}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
+          mapStyle="mapbox://styles/sushanshakya/ckxsqv4o81jau14nu0137rm5v"
           mapboxAccessToken={MAPBOX_TOKEN}
           attributionControl={false}
           scrollZoom={true}
         >
           <NavigationControl />
           <GeolocateControl />
+          {singleTripData?.days?.map((day, index) => (
+            <Marker
+              longitude={day?.destination?.longitude ?? 85.3205817}
+              latitude={day?.destination?.latitude ?? 27.708317}
+            />
+          ))}
         </Map>
         <StyledCard
           item
@@ -138,42 +128,70 @@ const SingleTrip = () => {
             </Grid>
           </Grid>
 
-          <Grid container xs={12} sx={{ maxHeight: '450px', overflow: 'auto' }}>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                onClick={() =>
-                  append({
-                    title: '',
-                    description: '',
-                    destination: undefined,
-                  })
-                }
-                startIcon={<Add />}
-                disableRipple
-                disableElevation
-              >
-                Add Days{' '}
-              </Button>
-            </Grid>
-            <Grid item xs={12} spacing={2}>
+          {(singleTripData?.days?.length ?? []) > 0 ? (
+            <div>
+              {singleTripData?.days?.map((day, index) => (
+                <Grid container xs={12} key={day._id}>
+                  <Grid item xs={12}>
+                    <Toolbar>
+                      <Typography variant="h6">Day {index + 1}</Typography>
+                      <div style={{ flexGrow: 1 }} />
+                      <IconButton onClick={() => remove(index)}>
+                        <Delete />
+                      </IconButton>
+                    </Toolbar>
+                  </Grid>
+                  <StyledCard sx={{ width: '600px' }}>
+                    <CardHeader
+                      title={day.title}
+                      titleTypographyProps={{ fontSize: '28px' }}
+                    />
+                    <CardContent>
+                      <Typography variant="body1">{day.description}</Typography>
+                    </CardContent>
+                  </StyledCard>
+                </Grid>
+              ))}
+            </div>
+          ) : (
+            <Grid
+              container
+              xs={12}
+              sx={{ maxHeight: '450px', overflow: 'auto' }}
+            >
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    append({
+                      title: '',
+                      description: '',
+                      destination: undefined,
+                    })
+                  }
+                  startIcon={<Add />}
+                  disableRipple
+                  disableElevation
+                >
+                  Add Days{' '}
+                </Button>
+              </Grid>
               {fields.map((field, index) => (
-                <div key={field.id}>
+                <Grid item xs={12} spacing={2} key={field.id}>
                   <Toolbar>
                     <Typography variant="h6">Day {index + 1}</Typography>
-                    <ControlledTextField
-                      Component={RedditTextField}
-                      defaultValue={index + 1}
-                      name={`days.${index}.number`}
-                      control={control}
-                      sx={{ display: 'none' }}
-                    ></ControlledTextField>
+
                     <div style={{ flexGrow: 1 }} />
                     <IconButton onClick={() => remove(index)}>
                       <Delete />
                     </IconButton>
                   </Toolbar>
-
+                  <RedditTextField
+                    value={index + 1}
+                    fullWidth
+                    {...register(`days.${index}.number`)}
+                    sx={{ display: 'none' }}
+                  />
                   <ControlledTextField
                     Component={RedditTextField}
                     name={`days.${index}.title`}
@@ -191,12 +209,12 @@ const SingleTrip = () => {
                     sx={{ my: '12px' }}
                     control={control}
                   />
-                  {destinationData && (
+                  {subDestinationData && (
                     <Controller
                       render={({ field }) => (
                         <Autocomplete
                           {...field}
-                          options={destinationData ?? []}
+                          options={subDestinationData ?? []}
                           getOptionLabel={(option) => option.title}
                           renderInput={(params) => (
                             <RedditTextField
@@ -216,18 +234,20 @@ const SingleTrip = () => {
                       name={`days.${index}.destination`}
                     />
                   )}
-                </div>
+                </Grid>
               ))}
+              <Grid item xs={12}>
+                {fields.length !== 0 && (
+                  <Button
+                    type="submit"
+                    sx={{ float: 'right' }}
+                    onClick={handleSubmit(onSubmit)}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-          {fields.length !== 0 && (
-            <Button
-              type="submit"
-              sx={{ float: 'right' }}
-              onClick={handleSubmit(onSubmit)}
-            >
-              Submit
-            </Button>
           )}
         </StyledCard>
       </Grid>

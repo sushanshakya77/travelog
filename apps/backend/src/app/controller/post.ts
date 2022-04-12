@@ -8,12 +8,10 @@ export const createPost = async (
   res: express.Response
 ) => {
   try {
-    const img = req.file.filename;
-    console.log(img);
-    console.log(req.file.filename);
-    console.log(req.body);
+    const data = req.body;
+    const img = req?.file?.path;
 
-    const newPost = new Post(req.body);
+    const newPost = new Post({ ...data, img: img });
     const savedPost = await newPost.save();
     res.status(200).json(savedPost);
   } catch (err) {

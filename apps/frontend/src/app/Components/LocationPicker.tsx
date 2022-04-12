@@ -14,6 +14,8 @@ import { Autocomplete, Box, Paper } from '@mui/material';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { IDestination } from '../models/Destination';
+import { ITrip, Status } from '../models/Trips';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -27,25 +29,42 @@ const Transition = React.forwardRef(function Transition(
 interface IProps {
   open: boolean;
   handleClose: () => void;
-  setDestination: React.Dispatch<React.SetStateAction<string>>;
+  fromTrip?: string;
+  setDestination?: React.Dispatch<React.SetStateAction<string>>;
+  setTripForBlog?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface IData {
   destination: IDestination;
+  trip: ITrip;
 }
 
 export default function LocationPickerDialog({
   open,
   handleClose,
   setDestination,
+  setTripForBlog,
+  fromTrip,
 }: IProps) {
   const { register, handleSubmit, control, watch, setValue } = useForm<IData>();
+  const { user } = useAuthentication();
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
     () => axios.get('api/destinations').then((res) => res.data)
   );
+  const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
+    'trips',
+    async () =>
+      await axios.get(`api/trip/user/${user._id}`).then((res) => res.data)
+  );
   const onSubmit: SubmitHandler<IData> = (data) => {
-    setDestination(data.destination._id);
+    setDestination?.(data.destination._id);
+    setTripForBlog?.(data.trip._id);
+    if (fromTrip) {
+      axios.patch(`/api/blogs/update/${fromTrip}`, {
+        trip: data.trip._id,
+      });
+    }
     handleClose();
   };
 
@@ -61,15 +80,45 @@ export default function LocationPickerDialog({
         )}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <DialogTitle>Add Destination</DialogTitle>
+        <DialogTitle>Add {fromTrip ? 'Trip' : 'Destination'} </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            {destinationData && (
+          {fromTrip ? (
+            <div>
               <Controller
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
-                    options={destinationData}
+                    options={
+                      tripData?.filter(
+                        (trip) => trip.status === Status.Public
+                      ) ?? []
+                    }
+                    getOptionLabel={(option) => option.title}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <RedditTextField
+                        {...params}
+                        label="Search"
+                        inputProps={{
+                          ...params.inputProps,
+                          autoComplete: 'disabled',
+                        }}
+                      />
+                    )}
+                    onChange={(_, data) => field.onChange(data)}
+                  />
+                )}
+                control={control}
+                name="trip"
+              />
+            </div>
+          ) : (
+            <div>
+              <Controller
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={destinationData ?? []}
                     getOptionLabel={(option) => option.title}
                     freeSolo
                     sx={{ width: 300 }}
@@ -89,8 +138,8 @@ export default function LocationPickerDialog({
                 control={control}
                 name="destination"
               />
-            )}
-          </DialogContentText>
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

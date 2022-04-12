@@ -28,7 +28,7 @@ import { useParams } from 'react-router';
 import Replies from '../Components/Replies';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IDestination, IReply, IReview } from '../models/Destination';
+import { IReview, ISubDestination } from '../models/Destination';
 import { ITrip } from '../models/Trips';
 import { IUser } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
@@ -66,7 +66,7 @@ export function IconContainer(props: IconContainerProps) {
   return <span {...other}>{customIcons[value].icon}</span>;
 }
 
-const Destination = () => {
+const SubDestination = () => {
   const { id } = useParams();
   const { user } = useAuthentication();
   const [open, setOpen] = React.useState(false);
@@ -81,16 +81,15 @@ const Destination = () => {
     setOpen(false);
   };
   console.log(user);
-  const { data: destinationData, refetch: destinationRefetch } =
-    useQuery<IDestination>('specificDestination', () =>
-      axios.get(`api/destinations/${id}`).then((res) => res.data)
+  const { data: subDestinationData, refetch: subDestinationRefetch } =
+    useQuery<ISubDestination>('specificsubDestination', () =>
+      axios.get(`api/subDestinations/${id}`).then((res) => res.data)
     );
   const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
     'trips',
     () => axios.get(`api/trip/destination/${id}`).then((res) => res.data)
   );
   console.log(tripData);
-  // console.log(destinationData?.reviews.postedBy.username);
   const { data: userInfoData } = useQuery<IUser>(
     'userInfo',
     async () => await axios.get('api/userInfo').then((res) => res.data)
@@ -108,10 +107,10 @@ const Destination = () => {
   const onSubmit: SubmitHandler<IReview> = async (data) => {
     console.log(data);
     await axios
-      .patch(`api/destinations/review/${id}`, data)
+      .patch(`api/subDestinations/review/${id}`, data)
       .then((res) => {
         console.log(res);
-        destinationRefetch();
+        subDestinationRefetch();
       })
       .catch((err) => {
         console.log(err);
@@ -127,32 +126,32 @@ const Destination = () => {
       <Container sx={{ padding: '40px' }} maxWidth="lg">
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h4">{destinationData?.title}</Typography>
+            <Typography variant="h4">{subDestinationData?.title}</Typography>
           </Grid>
           <Grid item container xs={12}>
             <Grid item xs={12}>
               <Rating
                 readOnly
-                value={destinationData?.rating}
+                value={subDestinationData?.rating}
                 precision={0.5}
               />
             </Grid>
             <Typography variant="h6" sx={{ marginTop: '4px' }}>
-              Rating: {destinationData?.rating}
+              Rating: {subDestinationData?.rating}
             </Typography>
           </Grid>
           <Typography variant="h6">Categories:</Typography>
-          {/* {destinationData?.categories?.map((category, index) => (
-            <Typography sx={{ marginTop: '4px', display: 'flex' }} key={index}>
-              {', '}
-              {category}
-            </Typography>
-          ))} */}
+          {/* {subDestinationData?.categories?.map((category, index) => (
+              <Typography sx={{ marginTop: '4px', display: 'flex' }} key={index}>
+                {', '}
+                {category}
+              </Typography>
+            ))} */}
           <div>
             <Card
               component="img"
-              src={destinationData?.img}
-              alt={destinationData?.title}
+              src={subDestinationData?.img}
+              alt={subDestinationData?.title}
               sx={{
                 marginLeft: '25px',
                 backgroundPosition: 'center',
@@ -165,14 +164,14 @@ const Destination = () => {
               variant="body1"
               sx={{ marginTop: '20px', textAlign: 'justify' }}
             >
-              {destinationData?.description}
+              {subDestinationData?.description}
             </Typography>
           </div>
         </Grid>
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h5">
-              Blogs related to the destination:
+              Blogs related to the subDestination:
             </Typography>
           </Grid>
           {tripData?.map((trip, index) => (
@@ -286,7 +285,7 @@ const Destination = () => {
                 }}
               />
             </Grid>
-            {destinationData?.reviews?.map((review, index) => (
+            {subDestinationData?.reviews?.map((review, index) => (
               <Grid item xs={12} mt="10px" md={4}>
                 <HoverCard
                   sx={{ padding: '26px', position: 'relative' }}
@@ -349,45 +348,45 @@ const Destination = () => {
                     </Typography>
                   </div>
                   {/* <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <TextField
-                      size="small"
-                      margin="dense"
-                      placeholder="Reply to this comment"
-                      {...register('replyText')}
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton onClick={handleSubmit(onSubmit)}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="icon icon-tabler icon-tabler-brand-telegram"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="#2c3e50"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
-                            </svg>
-                          </IconButton>
-                        ),
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
                       }}
-                    />
-                  </div> */}
+                    >
+                      <TextField
+                        size="small"
+                        margin="dense"
+                        placeholder="Reply to this comment"
+                        {...register('replyText')}
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton onClick={handleSubmit(onSubmit)}>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-brand-telegram"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="#2c3e50"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+                              </svg>
+                            </IconButton>
+                          ),
+                        }}
+                      />
+                    </div> */}
                 </HoverCard>
               </Grid>
             ))}
@@ -399,4 +398,4 @@ const Destination = () => {
   );
 };
 
-export default Destination;
+export default SubDestination;

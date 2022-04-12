@@ -22,10 +22,18 @@ export interface ISubDestination {
   reviews: IReview[];
 }
 
-interface IReview {
+export interface IReview {
   _id: string;
   postedBy: IUser;
+  reviewRating: number | null;
   reviewText: string;
+  replies: IReply[];
+}
+
+export interface IReply {
+  _id: string;
+  postedBy: IUser;
+  replyText: string;
 }
 
 interface IUser {

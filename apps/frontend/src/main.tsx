@@ -7,7 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import App from './app/app';
 import './styles.css';
-import SimpleBar from 'simplebar-react';
+import { SnackbarProvider } from 'notistack';
 import 'simplebar/dist/simplebar.min.css';
 
 const theme = createTheme({
@@ -32,10 +32,18 @@ ReactDOM.render(
     <BrowserRouter>
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
+          <SnackbarProvider
+            maxSnack={3}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+          >
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </SnackbarProvider>
         </QueryClientProvider>
       </RecoilRoot>
     </BrowserRouter>

@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { AddCircleOutlineOutlined } from '@mui/icons-material';
 import { Paper, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -10,7 +11,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import axios from 'axios';
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { IUserInfo } from '../Pages/UserInfo';
+import { IUser } from '../models/User';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -24,7 +25,7 @@ const Transition = React.forwardRef(function Transition(
 interface IProps {
   openProfile: boolean;
   handleCloseProfile: () => void;
-  userInfo: IUserInfo;
+  userInfo: IUser;
 }
 
 export default function AddProfile({
@@ -38,11 +39,11 @@ export default function AddProfile({
     watch,
     reset,
     formState: { errors },
-  } = useForm<IUserInfo>({
+  } = useForm<IUser>({
     defaultValues: {},
   });
 
-  const onSubmit: SubmitHandler<IUserInfo> = async (data) => {
+  const onSubmit: SubmitHandler<IUser> = async (data) => {
     axios.post(`/api/userInfo`, data).then((res) => {
       console.log(res);
       handleCloseProfile();

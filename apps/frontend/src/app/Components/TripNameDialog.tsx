@@ -155,7 +155,7 @@ export default function TripNameDialog({ open, handleClose }: IProps) {
               </MenuItem>
             ))}
           </RedditTextField>
-          {watch('status') === Status.Public && (
+          {/* {watch('status') === Status.Public && (
             <Controller
               render={({ field }) => (
                 <Autocomplete
@@ -180,7 +180,7 @@ export default function TripNameDialog({ open, handleClose }: IProps) {
               control={control}
               name="destination"
             />
-          )}
+          )} */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

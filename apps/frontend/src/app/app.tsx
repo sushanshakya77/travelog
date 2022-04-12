@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import 'swiper/css/bundle';
+import AdminBlogs from './admin/Pages/AdminBlogs';
 import AdminDestination from './admin/Pages/AdminDestination';
 import AdminHome from './admin/Pages/AdminHome';
 import AdminSubDestination from './admin/Pages/AdminSubDestination';
@@ -10,13 +11,16 @@ import './Components/styles.css';
 import AddBlog from './Pages/AddBlog';
 import BaseLayout from './Pages/BaseLayout';
 import Blogs from './Pages/Blogs';
+import BlogsMainPage from './Pages/BlogsMainPage';
 import Destination from './Pages/Destination';
 import Explore from './Pages/Explore';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import SearchBlogs from './Pages/SearchBlogs';
 import SingleBlog from './Pages/SingleBlog';
 import SingleTrip from './Pages/SingleTrip';
+import SubDestination from './Pages/SubDestination';
 import Trips from './Pages/Trips';
 import UserInfo from './Pages/UserInfo';
 import PrivateRoute from './Routes/PrivateRoute';
@@ -53,8 +57,12 @@ export function App() {
           <Route index element={<Home />} />
           <Route path="user/info" element={<UserInfo />} />
           <Route path="destinations/:id" element={<Destination />} />
+          <Route path="subDestinations/:id" element={<SubDestination />} />
           <Route path="explore" element={<Explore />} />
-          <Route path="blogs" element={<Blogs />} />
+          <Route path="blogs" element={<Blogs />}>
+            <Route index element={<BlogsMainPage />} />
+            <Route path="tags/:tags" element={<SearchBlogs />} />
+          </Route>
           <Route path="singleBlog/:id" element={<SingleBlog />} />
           <Route path="blogs/addBlog" element={<AddBlog />} />
           <Route path="trips/:id" element={<Trips />} />
@@ -62,6 +70,7 @@ export function App() {
           <Route path="admin" element={<AdminHome />}>
             <Route path="destination" element={<AdminDestination />} />
             <Route path="subdestination" element={<AdminSubDestination />} />
+            <Route path="blogs" element={<AdminBlogs />} />
           </Route>
         </Route>
         <Route path="login" element={<Login />} />

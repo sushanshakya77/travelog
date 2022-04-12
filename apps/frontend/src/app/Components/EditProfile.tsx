@@ -21,12 +21,12 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IUserInfo } from '../Pages/UserInfo';
+import { IUser } from '../models/User';
 
 interface IProps {
   open: boolean;
   handleClose: () => void;
-  userInfo: IUserInfo;
+  userInfo: IUser;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const Input = styled.input`
@@ -45,7 +45,7 @@ export default function EditProfile({
     watch,
     reset,
     formState: { errors },
-  } = useForm<IUserInfo>({
+  } = useForm<IUser>({
     defaultValues: {
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
@@ -54,9 +54,9 @@ export default function EditProfile({
       description: userInfo.description,
     },
   });
-  const { refetch } = useQuery<IUserInfo>('userInfo');
+  const { refetch } = useQuery<IUser>('userInfo');
   const [isLoading, setIsLoading] = React.useState(false);
-  const onSubmit: SubmitHandler<IUserInfo> = async (data) => {
+  const onSubmit: SubmitHandler<IUser> = async (data) => {
     setIsLoading(true);
     // if (data._id)
     // return

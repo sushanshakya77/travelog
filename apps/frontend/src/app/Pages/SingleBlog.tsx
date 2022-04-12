@@ -1,4 +1,4 @@
-import { ExpandMore, MoreVert } from '@mui/icons-material';
+import { ExpandMore, MoreVert, Send } from '@mui/icons-material';
 import {
   Avatar,
   Container,
@@ -13,6 +13,9 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
+  TextField,
+  Rating,
 } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -22,6 +25,12 @@ import { IBlog } from '../models/Blogs';
 import dayjs from 'dayjs';
 import LocationPickerDialog from '../Components/LocationPicker';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
+import ControlledTextField from '../ControlledComponent/ControlledTextField';
+import { RedditTextField } from '../ControlledComponent/RedditTextField';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { HoverCard } from './Home';
+import { IconContainer } from './Destination';
+import { IReview } from '../models/Destination';
 
 const SingleBlog = () => {
   const { id } = useParams();
@@ -64,9 +73,25 @@ const SingleBlog = () => {
         .then((res) => res.data)
   );
 
-  React.useEffect(() => {
-    blogUserRefetch();
-  }, []);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<IReview>({});
+
+  const onSubmit: SubmitHandler<IReview> = async (data) => {
+    await axios
+      .patch(`api/blogs/review/${id}`, data)
+      .then((res) => {
+        console.log(res);
+        blogRefetch();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const fromTrip = blogData?._id;
   return (
@@ -78,6 +103,7 @@ const SingleBlog = () => {
           sx={{
             padding: '30px',
             borderRight: '1px solid #bdbdbd',
+            borderLeft: '1px solid #bdbdbd',
             overflow: 'auto',
             maxHeight: '800px',
           }}
@@ -148,25 +174,27 @@ const SingleBlog = () => {
           <Grid item xs={12} sx={{ mt: '20px' }}>
             <Typography variant="body1">{blogData?.description}</Typography>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h6">Days of trips</Typography>
-            {blogData?.trip?.days?.map((day, index) => (
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  aria-controls="panel2a-content"
-                  id="panel2a-header"
-                >
-                  <Typography>
-                    Day {index + 1}: {day.title}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>{day.description}</Typography>
-                </AccordionDetails>
-              </Accordion>
-            ))}
-          </Grid>
+          {blogData?.trip && (
+            <Grid item xs={12}>
+              <Typography variant="h6">Days of trips</Typography>
+              {blogData?.trip?.days?.map((day, index) => (
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMore />}
+                    aria-controls="panel2a-content"
+                    id="panel2a-header"
+                  >
+                    <Typography>
+                      Day {index + 1}: {day.title}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>{day.description}</Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Grid>
+          )}
         </Grid>
         <Grid item xs={4}>
           <Grid item xs={12} sx={{ padding: '30px' }}>
@@ -226,65 +254,194 @@ const SingleBlog = () => {
               >
                 <Divider sx={{ mb: '15px' }} />
                 {blogUserData?.map((blog) => (
-                  <Grid container key={blog._id}>
-                    <Grid item xs={8}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                        }}
-                      >
-                        <Typography variant="h6">{blog.title}</Typography>
-                        <Typography variant="body2" sx={{ ml: '8px' }}>
-                          by {blog.postedBy.username}
-                        </Typography>
-                      </div>
+                  <>
+                    <Grid container key={blog._id}>
+                      <Grid item xs={8}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          <Typography variant="h6">{blog.title}</Typography>
+                        </div>
 
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        Lorem, ipsum dolor sit amet consectetur adipisicing
-                        elit. Eos animi soluta tenetur rem natus, hic,
-                      </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          Lorem, ipsum dolor sit amet consectetur adipisicing
+                          elit. Eos animi soluta tenetur rem natus, hic,
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <div
+                          style={{
+                            backgroundSize: 'cover',
+                            height: '100px',
+                            width: '100px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <img
+                            src="https://source.unsplash.com/random"
+                            alt="gg"
+                          />
+                        </div>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                      <div
-                        style={{
-                          backgroundSize: 'cover',
-                          height: '100px',
-                          width: '100px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <img
-                          src="https://source.unsplash.com/random"
-                          alt="gg"
-                        />
-                      </div>
-                    </Grid>
-                  </Grid>
+                    <Divider sx={{ my: '15px' }} />
+                  </>
                 ))}
-                <Divider sx={{ my: '15px' }} />
               </Card>
             </Grid>
           </Grid>
         </Grid>
       </Grid>{' '}
-      <Grid container sx={{ px: '40px', ml: '20px' }} spacing={2}>
+      <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>
           <Typography
             variant="h4"
             sx={{ lineHeight: '80px', fontWeight: '500' }}
           >
-            Featured Blogs:
+            Reviews:
           </Typography>
+          <Rating
+            IconContainerComponent={IconContainer}
+            highlightSelectedOnly
+            onChange={(_, value) => {
+              setValue('reviewRating', value);
+            }}
+          />
         </Grid>
+        <Grid item xs={12} mt="10px">
+          <ControlledTextField
+            Component={RedditTextField}
+            name="reviewText"
+            label="Write Your Review Here:"
+            multiline
+            fullWidth
+            rows={4}
+            control={control}
+            InputProps={{
+              endAdornment: (
+                <Button
+                  variant="contained"
+                  type="submit"
+                  startIcon={<Send sx={{ fontSize: '6px' }} />}
+                  disableRipple
+                  disableElevation
+                  sx={{ textTransform: 'none' }}
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  Review
+                </Button>
+              ),
+            }}
+          />
+        </Grid>
+        {blogData?.reviews?.map((review, index) => (
+          <Grid item xs={12} mt="10px" md={4}>
+            <HoverCard
+              sx={{ padding: '26px', position: 'relative' }}
+              elevation={0}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+                key={review._id}
+              >
+                <Avatar></Avatar>
+                <IconButton
+                  sx={{ float: 'right', position: 'absolute', right: 16 }}
+                >
+                  <MoreVert />
+                </IconButton>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography variant="h6">
+                  {review?.postedBy?.username}
+                </Typography>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <Rating
+                  value={review?.reviewRating}
+                  IconContainerComponent={IconContainer}
+                  highlightSelectedOnly
+                  readOnly
+                />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography variant="body1">"{review?.reviewText}"</Typography>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <TextField
+                  size="small"
+                  margin="dense"
+                  placeholder="Reply to this comment"
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton onClick={handleSubmit(onSubmit)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-brand-telegram"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="#2c3e50"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+                        </svg>
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </div>
+            </HoverCard>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );

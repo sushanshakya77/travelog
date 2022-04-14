@@ -136,9 +136,9 @@ const SingleTrip = () => {
                     <Toolbar>
                       <Typography variant="h6">Day {index + 1}</Typography>
                       <div style={{ flexGrow: 1 }} />
-                      <IconButton onClick={() => remove(index)}>
+                      {/* <IconButton onClick={() => remove(index)}>
                         <Delete />
-                      </IconButton>
+                      </IconButton> */}
                     </Toolbar>
                   </Grid>
                   <StyledCard sx={{ width: '600px' }}>

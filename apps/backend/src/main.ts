@@ -30,28 +30,9 @@ app.use('/api/auth', users);
 app.use('/api/userInfo', userInfo);
 app.use('/api/destinations', destination);
 app.use('/api/subDestinations', subdestination);
-app.use('/api/post', post);
+app.use('/api/posts', post);
 app.use('/api/trip', trip);
 app.use('/api/blogs', blogs);
-
-// app.use('/images', express.static(path.join(__dirname, 'public/images')));
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'public/images');
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, req.body.name);
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-// app.post('/api/upload', upload.single('file'), (req, res) => {
-//   try {
-//     return res.status(200).json('File uploded successfully');
-//   } catch (error) {
-//     console.error(error);
-//   }
-// });
 
 // app.use(express.static('public'));
 // app.use(express.static(path.join(__dirname, '..', '/client')));

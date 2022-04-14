@@ -68,25 +68,27 @@ export const resetPassword: express.RequestHandler = async (
   res: express.Response
 ) => {
   try {
-    const user = req.session.user as IUser;
-    console.log(req.body);
+    if (refreshTokenCheck) {
+      const user = await User.findById(req.params.id);
+      console.log(req.body);
 
-    const isPasswordCorrect = await argon2.verify(
-      user.password,
-      req.body.oldPassword
-    );
+      const isPasswordCorrect = await argon2.verify(
+        user.password,
+        req.body.oldPassword
+      );
 
-    if (isPasswordCorrect) {
-      const hashedPassword = await argon2.hash(req.body.password, {
-        hashLength: 40,
-      });
-      const user = await User.create({
-        password: hashedPassword,
-      });
+      if (isPasswordCorrect) {
+        const hashedPassword = await argon2.hash(req.body.password, {
+          hashLength: 40,
+        });
+        const user = await User.findByIdAndUpdate(req.params.id, {
+          password: hashedPassword,
+        });
 
-      res.status(200).json(user);
-    } else {
-      res.status(400).json('Old password is incorrect');
+        res.status(200).json(user);
+      } else {
+        res.status(400).json('Old password is incorrect');
+      }
     }
   } catch (err) {
     console.log(err);

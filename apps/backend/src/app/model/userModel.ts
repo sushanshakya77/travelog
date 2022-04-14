@@ -30,6 +30,7 @@ const usersSchema = new mongoose.Schema({
   },
   currentCity: String,
   description: String,
+  dob: String,
   password: { type: String, required: true },
 });
 

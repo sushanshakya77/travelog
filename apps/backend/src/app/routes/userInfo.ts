@@ -11,6 +11,6 @@ const router = express.Router();
 router.post('/', createUserInfo);
 router.get('/', getUserInfo);
 router.patch('/:id', updateUserInfo);
-router.patch('/reset', resetPassword);
+router.patch('/reset/:id', resetPassword);
 
 export default router;

@@ -54,6 +54,7 @@ const ResetPassword = ({ form, handleFormClose }: SimpleDialogFormProps) => {
   const handleClick = () => {
     enqueueSnackbar('Succesfully updated!', {
       variant: 'success',
+      autoHideDuration: 3000,
     });
   };
   const onSubmit: SubmitHandler<IFormData> = async ({
@@ -62,7 +63,7 @@ const ResetPassword = ({ form, handleFormClose }: SimpleDialogFormProps) => {
   }) => {
     setLoading(true);
     await axios
-      .patch(`/api/userInfo/reset`, rest, {
+      .patch(`/api/userInfo/reset/${user._id}`, rest, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {

@@ -1,14 +1,14 @@
-import { CssBaseline } from '@mui/material';
-import { StrictMode } from 'react';
+import { Button, CssBaseline } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { SnackbarProvider } from 'notistack';
+import React, { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
+import 'simplebar/dist/simplebar.min.css';
 import App from './app/app';
 import './styles.css';
-import { SnackbarProvider } from 'notistack';
-import 'simplebar/dist/simplebar.min.css';
 
 const theme = createTheme({
   palette: {

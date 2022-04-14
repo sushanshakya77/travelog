@@ -302,6 +302,68 @@ const BlogsMainPage = () => {
           </Card>
         </Grid>
       </Grid>
+      {allBlogData && (
+        <Grid container sx={{ px: '40px', ml: '20px' }}>
+          <Grid item xs={12}>
+            <Toolbar>
+              <Typography
+                variant="h4"
+                sx={{ lineHeight: '80px', fontWeight: '500' }}
+              >
+                All Blogs:
+              </Typography>
+            </Toolbar>
+          </Grid>
+          {allBlogData?.slice(0, 4).map((blog) => (
+            <Grid item xs={12} sm={6} md={3}>
+              <Link to={`/singleBlog/${blog._id}`}>
+                <Card
+                  sx={{ mt: '15px', maxWidth: '300px' }}
+                  elevation={0}
+                  key={blog._id}
+                >
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image="https://source.unsplash.com/random"
+                    alt="gg"
+                    sx={{
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      filter: 'brightness(90%)',
+                      height: '300px',
+                      transition: '0.3s ease-in-out',
+                      top: 0,
+                      '&:hover': {
+                        filter: 'brightness(100%)',
+                      },
+                    }}
+                  />
+                  <CardContent sx={{ backgroundColor: '#DEF2F1' }}>
+                    <Typography
+                      gutterBottom
+                      variant="h6"
+                      sx={{
+                        zIndex: 9,
+                        color: 'black',
+                        textAlign: 'center',
+                      }}
+                      component="div"
+                    >
+                      {blog.title}
+                    </Typography>
+                    <Typography
+                      sx={{ display: 'flex', justifyContent: 'center' }}
+                    >
+                      by {blog.postedBy.username}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       {blogData && (
         <Grid container sx={{ px: '40px', ml: '20px' }}>
           <Grid item xs={12}>

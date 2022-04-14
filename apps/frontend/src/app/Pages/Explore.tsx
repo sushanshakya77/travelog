@@ -34,7 +34,6 @@ import { useAuthentication } from '../useAuthentication/useAuthentication';
 import { IUser } from '../models/User';
 
 interface IPost {
-  userId: Array<string>;
   caption: string;
   img: any;
   likes: number;
@@ -68,6 +67,7 @@ const Explore = () => {
     setValue,
     formState: { errors },
   } = useForm<IPost>();
+
   const imageSubmit = useRef<HTMLInputElement | null>(null);
 
   const input = useRef<HTMLInputElement | null>(null);
@@ -76,16 +76,23 @@ const Explore = () => {
   const [destination, setDestination] = useState<string>('');
 
   const onSubmit: SubmitHandler<IPost> = async (data) => {
-    setValue('img', image as any);
-    setValue('destination', destination);
-    console.log(data);
+    const formData = new FormData();
+
+    formData.append('caption', data.caption);
+    formData.append('destination', destination);
+
+    if (image) formData.append('img', image, image.name);
 
     await axios
-      .post('/api/post', data)
+      .post('/api/posts', formData)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   };
-  console.log(watch('img'));
+
+  const { data: postsData } = useQuery<IPost[]>('posts', () =>
+    axios.get('/api/posts/all').then((res) => res.data)
+  );
+  console.log(postsData);
 
   return (
     <div>
@@ -116,26 +123,31 @@ const Explore = () => {
                   />
 
                   <IconButton disableRipple>
-                    <input
-                      type="file"
-                      ref={input}
-                      name="img"
-                      accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
-                      onChange={(e) => {
-                        const fileList = e.target.files;
-                        if (!fileList) {
-                          return;
-                        }
-                        setImage(fileList[0]);
-                      }}
-                      style={{
-                        // display: 'none',
-                        width: '20px',
-                      }}
-                    />
-                    <Avatar sx={{ bgcolor: blue[800], width: 36, height: 36 }}>
-                      <CameraAltOutlined sx={{ fontSize: '20px' }} />
-                    </Avatar>
+                    <label htmlFor="icon-button-file">
+                      <input
+                        type="file"
+                        ref={input}
+                        id="icon-button-file"
+                        name="img"
+                        accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
+                        onChange={(e) => {
+                          const fileList = e.target.files;
+                          if (!fileList) {
+                            return;
+                          }
+                          setImage(fileList[0]);
+                        }}
+                        style={{
+                          display: 'none',
+                          // width: '20px',
+                        }}
+                      />
+                      <Avatar
+                        sx={{ bgcolor: blue[800], width: 36, height: 36 }}
+                      >
+                        <CameraAltOutlined sx={{ fontSize: '20px' }} />
+                      </Avatar>
+                    </label>
                   </IconButton>
 
                   <IconButton
@@ -197,6 +209,12 @@ const Explore = () => {
               </Card>
             </Grid>
           </Grid>
+          {postsData?.map((post) => (
+            <img src={post.img} alt="post" />
+            // <Typography variant="body1" component="div">
+            //   {post.img}
+            // </Typography>
+          ))}
 
           <Grid item xs={12} md={8}>
             <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>

@@ -8,8 +8,12 @@ export const createPost = async (
   res: express.Response
 ) => {
   try {
-    const data = req.body;
-    const img = req?.file?.path;
+    const data = {
+      caption: req.body.caption,
+      destination: req.body.destination,
+      postedBy: req.session.user._id,
+    };
+    const img = req?.file?.filename;
 
     const newPost = new Post({ ...data, img: img });
     const savedPost = await newPost.save();
@@ -50,6 +54,20 @@ export const deletePost = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err);
+  }
+};
+//get all posts
+export const getAllPosts = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const posts = await Post.find()
+      .populate('postedBy', '_id username')
+      .sort({ createdAt: -1 });
+    return res.status(200).json(posts);
+  } catch (err) {
+    return res.status(500).json(err);
   }
 };
 
@@ -120,8 +138,7 @@ export const getTimelinePosts = async (req, res) => {
 
 export const getUserPosts = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
-    const posts = await Post.find({ userId: user._id });
+    const posts = await Post.find({ postedBy: req.session.user._id });
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);

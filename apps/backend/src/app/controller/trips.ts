@@ -23,13 +23,18 @@ export const getTripById: RequestHandler = async (req, res) => {
   if (refreshTokenCheck) {
     try {
       const trip = await Trip.findById(req.params.id);
-      // .populate(
-      //   'days.destination',
-      //   'longitude latitude'
-      // );
-      res.status(200).json(trip);
+      // .populate([
+      //   {
+      //     path: 'days',
+      //     populate: {
+      //       path: 'destination',
+      //       select: '_id longitude latitude',
+      //     },
+      //   },
+      // ]);
+      return res.status(200).json(trip);
     } catch (err) {
-      res.status(500).json(err);
+      return res.status(500).json(err);
     }
   }
 };

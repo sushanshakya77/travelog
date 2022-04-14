@@ -175,6 +175,18 @@ export default function EditProfile({
             <Grid item xs={12}>
               <ControlledTextField
                 Component={RedditTextField}
+                error={!!errors.dob}
+                type="date"
+                helperText={errors.dob && errors.dob.message}
+                name="dob"
+                label="Date of Birth"
+                InputLabelProps={{ shrink: true }}
+                {...props}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <ControlledTextField
+                Component={RedditTextField}
                 error={!!errors.currentCity}
                 helperText={errors.currentCity && errors.currentCity.message}
                 name="currentCity"

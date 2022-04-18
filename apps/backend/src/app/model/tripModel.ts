@@ -36,7 +36,7 @@ const tripSchema = new mongoose.Schema(
         description: String,
         destination: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'SubDestination',
+          ref: 'SubDestinations',
         },
       },
     ],

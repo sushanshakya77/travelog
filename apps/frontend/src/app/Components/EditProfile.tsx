@@ -22,6 +22,7 @@ import { useQuery } from 'react-query';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IUser } from '../models/User';
+import dayjs from 'dayjs';
 
 interface IProps {
   open: boolean;
@@ -50,6 +51,7 @@ export default function EditProfile({
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
       username: userInfo.username,
+      dob: dayjs(userInfo.dob, 'YYYY-MM-DD').format('YYYY-MM-DD'),
       currentCity: userInfo.currentCity,
       description: userInfo.description,
     },

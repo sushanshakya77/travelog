@@ -20,23 +20,25 @@ export const createTrip: RequestHandler = async (req, res) => {
 };
 
 export const getTripById: RequestHandler = async (req, res) => {
-  if (refreshTokenCheck) {
-    try {
-      const trip = await Trip.findById(req.params.id);
-      // .populate([
-      //   {
-      //     path: 'days',
-      //     populate: {
-      //       path: 'destination',
-      //       select: '_id longitude latitude',
-      //     },
-      //   },
-      // ]);
-      return res.status(200).json(trip);
-    } catch (err) {
-      return res.status(500).json(err);
-    }
-  }
+  const { id } = req.params;
+  console.log(id);
+  await Trip.findById(id)
+    .populate('days.destination', '_id longitude latitude')
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+  // .populate([
+  //   {
+  //     path: 'days',
+  //     populate: {
+  //       path: 'destination',
+  //       select: '_id longitude latitude',
+  //     },
+  //   },
+  // ]);
 };
 
 export const getUserTrips: RequestHandler = async (req, res) => {
@@ -75,18 +77,5 @@ export const deleteTrip: RequestHandler = async (req, res) => {
     return res.status(200).json(deletedTrip);
   } catch (err) {
     res.status(500).json(err);
-  }
-};
-
-export const getTripsByDestination: RequestHandler = async (req, res) => {
-  try {
-    const trips = await Trip.find({
-      destination: req.params.id,
-      status: Status.Public,
-    });
-    console.log(trips);
-    return res.status(200).json(trips);
-  } catch (err) {
-    return res.status(500).json(err);
   }
 };

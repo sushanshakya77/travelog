@@ -1,18 +1,23 @@
 import styled from '@emotion/styled';
-import { Add, Delete } from '@mui/icons-material';
+import { Add, Delete, MoreVert } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
-  Card,
   CardContent,
   CardHeader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
-  TextField,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
 } from '@mui/material';
 import axios from 'axios';
+import { FreeCameraOptions } from 'mapbox-gl';
 import * as React from 'react';
 import {
   Controller,
@@ -21,17 +26,17 @@ import {
   useForm,
 } from 'react-hook-form';
 import Map, {
-  AttributionControl,
   GeolocateControl,
   Marker,
   NavigationControl,
+  Popup,
 } from 'react-map-gl';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import { IDestination, ISubDestination } from '../models/Destination';
+import { ISubDestination } from '../models/Destination';
 import { ITrip } from '../models/Trips';
 
 const MAPBOX_TOKEN =
@@ -48,16 +53,26 @@ const StyledCard = styled(Grid)`
 
 const SingleTrip = () => {
   const { id } = useParams();
-
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const [openDialog, setopenDialog] = React.useState(false);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const { data: singleTripData, refetch: tripDataRefetch } = useQuery<ITrip>(
     'singletrip',
     () => axios.get(`api/trip/${id}`).then((res) => res.data)
   );
-
   const { control, watch, handleSubmit, register } = useForm<ITrip>();
+
   const onSubmit: SubmitHandler<ITrip> = async (data) => {
     console.log(data);
     await axios.patch(`/api/trip/update/${id}`, data).then((res) => {
+      setopenDialog(false);
+
       console.log(res);
       tripDataRefetch();
     });
@@ -72,16 +87,36 @@ const SingleTrip = () => {
     () => axios.get('api/subDestinations').then((res) => res.data)
   );
   console.log(singleTripData?.days);
+  const [viewState, setViewState] = React.useState({
+    longitude: 85.3205817,
+    latitude: 27.708317,
+    zoom: 12,
+  });
+
+  // singleTripData?.days?.map((day, index) =>
+  //   setViewState({
+  //     longitude: day?.destination?.longitude,
+  //     latitude: day?.destination?.latitude,
+  //     zoom: 4,
+  //   })
+  // );
+
+  React.useEffect(() => {
+    watch('days')?.map((day, index) =>
+      setViewState({
+        longitude: day?.destination?.longitude,
+        latitude: day?.destination?.latitude,
+        zoom: 16,
+      })
+    );
+  }, []);
 
   return (
     <div>
       <Grid container sx={{ position: 'relative' }}>
         <Map
-          initialViewState={{
-            longitude: 85.3205817,
-            latitude: 27.708317,
-            zoom: 12,
-          }}
+          initialViewState={viewState}
+          // {...viewState}
           style={{ width: '100%', height: '100vh' }}
           mapStyle="mapbox://styles/sushanshakya/ckxsqv4o81jau14nu0137rm5v"
           mapboxAccessToken={MAPBOX_TOKEN}
@@ -90,12 +125,22 @@ const SingleTrip = () => {
         >
           <NavigationControl />
           <GeolocateControl />
-          {singleTripData?.days?.map((day, index) => (
-            <Marker
-              longitude={day?.destination?.longitude ?? 85.3205817}
-              latitude={day?.destination?.latitude ?? 27.708317}
-            />
-          ))}
+
+          {(singleTripData?.days?.length ?? []) > 0
+            ? singleTripData?.days?.map((day, index) => (
+                <Marker
+                  key={day._id}
+                  longitude={day?.destination?.longitude ?? 0}
+                  latitude={day?.destination?.latitude ?? 0}
+                />
+              ))
+            : watch('days')?.map((day, index) => (
+                <Marker
+                  key={day._id}
+                  longitude={day?.destination?.longitude ?? 0}
+                  latitude={day?.destination?.latitude ?? 0}
+                />
+              ))}
         </Map>
         <StyledCard
           item
@@ -115,9 +160,67 @@ const SingleTrip = () => {
                 variant="h4"
                 sx={{ display: 'flex', justifyContent: 'center' }}
               >
+                <div style={{ flexGrow: 1 }} />
                 {singleTripData?.title}
+                <div style={{ flexGrow: 1 }} />
+                <IconButton onClick={handleClick}>
+                  <MoreVert />
+                </IconButton>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setopenDialog(true);
+                      handleClose();
+                    }}
+                  >
+                    Edit Trip
+                  </MenuItem>
+                </Menu>
               </Typography>
             </Grid>
+            <Dialog
+              open={openDialog}
+              maxWidth="md"
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Edit Trip Status</DialogTitle>
+              <DialogContent>
+                <Controller
+                  render={({ field }) => (
+                    <RedditTextField
+                      label="Categories"
+                      fullWidth
+                      select
+                      {...field}
+                    >
+                      {['Public', 'Private'].map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </RedditTextField>
+                  )}
+                  name="status"
+                  control={control}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setopenDialog(false)} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmit(onSubmit)} color="primary">
+                  Edit
+                </Button>
+              </DialogActions>
+            </Dialog>
             <Grid item xs={12}>
               <Typography
                 variant="body2"

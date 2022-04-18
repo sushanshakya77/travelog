@@ -13,8 +13,7 @@ const usersSchema = new mongoose.Schema({
   email: String,
   role: { type: String, enum: [Roles.ADMIN, Roles.USER], default: Roles.USER },
   profilePicture: {
-    data: Buffer,
-    contentType: String,
+    type: String,
   },
   coverPicture: {
     data: Buffer,

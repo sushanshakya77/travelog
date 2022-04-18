@@ -1,6 +1,7 @@
 import {
   deleteBlog,
   getAllBlogs,
+  getAllBlogsByDestinationId,
   getBlogById,
   getBlogsByTags,
   getBlogsByUserId,
@@ -16,6 +17,8 @@ router.post('/', createBlog);
 
 //get user blogs
 router.get('/all', getAllBlogs);
+
+router.get('/destination/:id', getAllBlogsByDestinationId);
 
 //update blog
 router.patch('/update/:id', updateBlog);

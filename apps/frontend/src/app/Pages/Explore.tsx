@@ -5,6 +5,7 @@ import {
   Favorite,
   LocationOnOutlined,
   MoreVert,
+  Done,
 } from '@mui/icons-material';
 import {
   Avatar,
@@ -17,8 +18,10 @@ import {
   Container,
   Grid,
   IconButton,
+  TextField,
   Toolbar,
   Typography,
+  Link as TextLink,
 } from '@mui/material';
 import { blue, red, yellow } from '@mui/material/colors';
 import axios from 'axios';
@@ -29,16 +32,12 @@ import { useQuery } from 'react-query';
 import LocationPickerDialog from '../Components/LocationPicker';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
-import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 import { IUser } from '../models/User';
-
-interface IPost {
-  caption: string;
-  img: any;
-  likes: number;
-  destination: string;
-}
+import { IPost } from '../models/Post';
+import { ISubDestination } from '../models/Destination';
+import { Link } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 const Explore = () => {
   const { token, user } = useAuthentication();
@@ -68,30 +67,40 @@ const Explore = () => {
     formState: { errors },
   } = useForm<IPost>();
 
-  const imageSubmit = useRef<HTMLInputElement | null>(null);
-
   const input = useRef<HTMLInputElement | null>(null);
 
   const [image, setImage] = useState<File>();
   const [destination, setDestination] = useState<string>('');
 
+  const { data: postsData, refetch: postRefetch } = useQuery<IPost[]>(
+    'posts',
+    () => axios.get('/api/posts/all').then((res) => res.data)
+  );
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
+    'subDestinations',
+    () => axios.get('api/subDestinations').then((res) => res.data)
+  );
+  const { enqueueSnackbar } = useSnackbar();
   const onSubmit: SubmitHandler<IPost> = async (data) => {
     const formData = new FormData();
 
     formData.append('caption', data.caption);
     formData.append('destination', destination);
-
     if (image) formData.append('img', image, image.name);
 
     await axios
       .post('/api/posts', formData)
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+        postRefetch();
+        enqueueSnackbar('Post created successfully!', {
+          variant: 'success',
+        });
+        reset();
+      })
       .catch((err) => console.log(err));
   };
 
-  const { data: postsData } = useQuery<IPost[]>('posts', () =>
-    axios.get('/api/posts/all').then((res) => res.data)
-  );
   console.log(postsData);
 
   return (
@@ -101,7 +110,7 @@ const Explore = () => {
           <Grid container item spacing={1}>
             <Grid item xs={8}>
               <Card
-                sx={{ width: '100%', py: '24px' }}
+                sx={{ width: '100%', py: '40px', height: '100%' }}
                 elevation={0}
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
@@ -145,7 +154,11 @@ const Explore = () => {
                       <Avatar
                         sx={{ bgcolor: blue[800], width: 36, height: 36 }}
                       >
-                        <CameraAltOutlined sx={{ fontSize: '20px' }} />
+                        {image ? (
+                          <Done sx={{ fontSize: '20px' }} />
+                        ) : (
+                          <CameraAltOutlined sx={{ fontSize: '20px' }} />
+                        )}
                       </Avatar>
                     </label>
                   </IconButton>
@@ -162,7 +175,11 @@ const Explore = () => {
                         height: 36,
                       }}
                     >
-                      <LocationOnOutlined sx={{ fontSize: '20px' }} />
+                      {destination ? (
+                        <Done sx={{ fontSize: '20px' }} />
+                      ) : (
+                        <LocationOnOutlined sx={{ fontSize: '20px' }} />
+                      )}
                     </Avatar>
                   </IconButton>
                   <div style={{ flexGrow: '1' }} />
@@ -184,7 +201,7 @@ const Explore = () => {
               <Card
                 sx={{
                   width: '100%',
-                  height: '150px',
+                  // height: '150px',
                   position: 'sticky',
                 }}
                 elevation={0}
@@ -203,57 +220,103 @@ const Explore = () => {
                   </Typography>
 
                   <Typography variant="body1" component="div">
-                    benevolent
+                    {subDestinationData?.slice(0, 1).map((destination) => (
+                      <Link
+                        to={`/subDestinations/${destination._id}`}
+                        style={{ textDecorationLine: 'underline' }}
+                        key={destination.title}
+                      >
+                        <Typography variant="body1" component="div">
+                          {destination.title}
+                        </Typography>
+                      </Link>
+                    ))}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
-          {postsData?.map((post) => (
-            <img src={post.img} alt="post" />
-            // <Typography variant="body1" component="div">
-            //   {post.img}
-            // </Typography>
-          ))}
 
-          <Grid item xs={12} md={8}>
-            <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
-              <CardHeader
-                avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
-                action={
-                  <IconButton aria-label="settings">
-                    <MoreVert />
+          {postsData?.map((post) => (
+            <Grid item xs={12} md={8} key={post._id}>
+              <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
+                <CardHeader
+                  avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
+                  action={
+                    <IconButton aria-label="settings">
+                      <MoreVert />
+                    </IconButton>
+                  }
+                  title={
+                    userInfoData?.firstName +
+                    ' ' +
+                    userInfoData?.lastName +
+                    ' was in '
+                  }
+                  subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
+                />
+                <CardMedia
+                  component="img"
+                  height="20"
+                  image={`http://localhost:3333/${post.img}`}
+                  alt="random"
+                  sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
+                />
+                <CardContent>
+                  {post?.postedBy?.username}
+                  <Typography variant="body2">{post?.caption}</Typography>
+                </CardContent>
+                <CardActions disableSpacing>
+                  <IconButton aria-label="add to favorites">
+                    <Favorite />
                   </IconButton>
-                }
-                title={
-                  userInfoData?.firstName +
-                  ' ' +
-                  userInfoData?.lastName +
-                  ' was in '
-                }
-                subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
-              />
-              <CardMedia
-                component="img"
-                height="20"
-                image="https://source.unsplash.com/random"
-                alt="random"
-                sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
-              />
-              <CardContent>
-                {userInfoData?.username}
-                <Typography variant="body2">pray</Typography>
-              </CardContent>
-              <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                  <Favorite />
-                </IconButton>
-                <IconButton aria-label="share">
-                  <ChatOutlined />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
+                  {/* <IconButton aria-label="share">
+                    <ChatOutlined />
+                  </IconButton>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <TextField
+                      size="small"
+                      margin="dense"
+                      placeholder="Reply to this comment"
+                      {...register('replyText')}
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton onClick={handleSubmit(onSubmit)}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="icon icon-tabler icon-tabler-brand-telegram"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="#2c3e50"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+                            </svg>
+                          </IconButton>
+                        ),
+                      }}
+                    />
+                  </div> */}
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
           <Grid item xs={12} md={8}>
             <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
               <CardHeader

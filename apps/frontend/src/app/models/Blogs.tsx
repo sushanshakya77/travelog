@@ -1,7 +1,7 @@
 import { IBaseMongoInterface } from './BaseMongoInterface';
 import { IDestination, IReview } from './Destination';
 import { IUser } from './User';
-import { ITrip } from './Trips';
+import { ITrip, Status } from './Trips';
 
 export interface IBlog extends IBaseMongoInterface {
   title: string;
@@ -13,6 +13,7 @@ export interface IBlog extends IBaseMongoInterface {
   trip: ITrip;
   tags: Tags[];
   reviews: IReview[];
+  status: Status;
 }
 export enum Categories {
   'Featured' = 'Featured',

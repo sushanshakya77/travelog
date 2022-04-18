@@ -110,7 +110,7 @@ const ResetPassword = ({ form, handleFormClose }: SimpleDialogFormProps) => {
             id="simple-dialog-title"
             sx={{ backgroundColor: '#3F51B5', color: 'white' }}
           >
-            Reset Password
+            Change Password
           </DialogTitle>
           <DialogContent>
             <Grid container direction="column">

@@ -18,6 +18,7 @@ import {
   IconButton,
   IconContainerProps,
   Rating,
+  TextField,
   Typography,
 } from '@mui/material';
 import axios from 'axios';
@@ -25,9 +26,11 @@ import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import Replies from '../Components/Replies';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
+import { IBlog } from '../models/Blogs';
 import { IDestination, IReply, IReview } from '../models/Destination';
 import { ITrip } from '../models/Trips';
 import { IUser } from '../models/User';
@@ -85,11 +88,10 @@ const Destination = () => {
     useQuery<IDestination>('specificDestination', () =>
       axios.get(`api/destinations/${id}`).then((res) => res.data)
     );
-  const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
-    'trips',
-    () => axios.get(`api/trip/destination/${id}`).then((res) => res.data)
+  const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
+    axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
   );
-  console.log(tripData);
+  console.log(blogData);
   // console.log(destinationData?.reviews.postedBy.username);
   const { data: userInfoData } = useQuery<IUser>(
     'userInfo',
@@ -117,6 +119,14 @@ const Destination = () => {
         console.log(err);
       });
   };
+
+  // const averageRating = (reviews: IReview[]) => {
+  //   let sum = 0;
+  //   reviews.forEach((review) => {
+  //     sum += review.reviewRating;
+  //   });
+  //   return sum / reviews.length;
+  // };
 
   // useEffect(() => {
   //   window.scrollTo(0, 0);
@@ -169,68 +179,72 @@ const Destination = () => {
             </Typography>
           </div>
         </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h5">
-              Blogs related to the destination:
-            </Typography>
-          </Grid>
-          {tripData?.map((trip, index) => (
-            <Grid item xs={12} sm={8} md={4}>
-              <HoverCard
-                sx={{ mt: '15px', position: 'relative' }}
-                elevation={0}
-                key={trip._id}
-              >
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image="https://source.unsplash.com/random"
-                    alt="gg"
-                    sx={{
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      filter: 'brightness(50%)',
-                      height: '250px',
-                      width: '500px',
-                      transition: '0.3s ease-in-out',
-                      top: 0,
-                      '&:hover': {
-                        filter: 'brightness(80%)',
-                      },
-                    }}
-                  />
-                  <Avatar
-                    sx={{
-                      zIndex: 9,
-                      top: 24,
-                      right: 24,
-                      position: 'absolute',
-                      boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                      WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                      MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                    }}
-                  ></Avatar>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    sx={{
-                      zIndex: 9,
-                      bottom: 24,
-                      left: 24,
-                      position: 'absolute',
-                      color: 'white',
-                    }}
-                    component="div"
-                  >
-                    {trip.title}
-                  </Typography>
-                </CardActionArea>
-              </HoverCard>
+        {blogData && (
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h5">
+                Blogs related to the destination:
+              </Typography>
             </Grid>
-          ))}
-        </Grid>
+            {blogData?.map((blog, index) => (
+              <Grid item xs={12} sm={8} md={4}>
+                <Link to={`/singleBlog/${blog._id}`}>
+                  <HoverCard
+                    sx={{ mt: '15px', position: 'relative' }}
+                    elevation={0}
+                    key={blog._id}
+                  >
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image="https://source.unsplash.com/random"
+                        alt="gg"
+                        sx={{
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          filter: 'brightness(50%)',
+                          height: '250px',
+                          width: '500px',
+                          transition: '0.3s ease-in-out',
+                          top: 0,
+                          '&:hover': {
+                            filter: 'brightness(80%)',
+                          },
+                        }}
+                      />
+                      <Avatar
+                        sx={{
+                          zIndex: 9,
+                          top: 24,
+                          right: 24,
+                          position: 'absolute',
+                          boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                          WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                          MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                        }}
+                      ></Avatar>
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        sx={{
+                          zIndex: 9,
+                          bottom: 24,
+                          left: 24,
+                          position: 'absolute',
+                          color: 'white',
+                        }}
+                        component="div"
+                      >
+                        {blog.title}
+                      </Typography>
+                    </CardActionArea>
+                  </HoverCard>
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
         <Grid container spacing={2} mt="24px">
           <Grid item xs={3}>
@@ -373,8 +387,8 @@ const Destination = () => {
                               stroke-width="1.5"
                               stroke="#2c3e50"
                               fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                             >
                               <path
                                 stroke="none"

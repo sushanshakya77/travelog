@@ -24,7 +24,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import TripNameDialog from '../Components/TripNameDialog';
 import dayjs from 'dayjs';
-import { ITrip } from '../models/Trips';
+import { ITrip, Status } from '../models/Trips';
 
 const Trips = () => {
   const [open, setOpen] = React.useState(false);
@@ -110,6 +110,45 @@ const Trips = () => {
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {trip.title}
+                    {trip.status === Status.Public ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-world"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="#2c3e50"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <circle cx="12" cy="12" r="9" />
+                        <line x1="3.6" y1="9" x2="20.4" y2="9" />
+                        <line x1="3.6" y1="15" x2="20.4" y2="15" />
+                        <path d="M11.5 3a17 17 0 0 0 0 18" />
+                        <path d="M12.5 3a17 17 0 0 1 0 18" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-lock"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="#fc1313"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <rect x="5" y="11" width="14" height="10" rx="2" />
+                        <circle cx="12" cy="16" r="1" />
+                        <path d="M8 11v-4a4 4 0 0 1 8 0v4" />
+                      </svg>
+                    )}
                     <IconButton
                       onClick={() => handleDelete(trip._id)}
                       sx={{ float: 'right' }}

@@ -69,8 +69,8 @@ const AdminSubDestination = () => {
               stroke-width="1.5"
               stroke="#feffff"
               fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <circle cx="12" cy="12" r="9" />

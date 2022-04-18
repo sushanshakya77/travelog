@@ -17,6 +17,13 @@ const postSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    comment: {
+      replyText: String,
+      postedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
     destination: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Destination',

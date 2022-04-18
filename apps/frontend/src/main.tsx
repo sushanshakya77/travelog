@@ -38,6 +38,12 @@ ReactDOM.render(
               vertical: 'bottom',
               horizontal: 'right',
             }}
+            iconVariant={{
+              success: '✅',
+              error: '✖️',
+              warning: '⚠️',
+              info: 'ℹ️',
+            }}
           >
             <ThemeProvider theme={theme}>
               <CssBaseline />

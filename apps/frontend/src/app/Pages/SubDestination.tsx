@@ -89,7 +89,6 @@ const SubDestination = () => {
     'trips',
     () => axios.get(`api/trip/destination/${id}`).then((res) => res.data)
   );
-  console.log(tripData);
   const { data: userInfoData } = useQuery<IUser>(
     'userInfo',
     async () => await axios.get('api/userInfo').then((res) => res.data)
@@ -140,13 +139,13 @@ const SubDestination = () => {
               Rating: {subDestinationData?.rating}
             </Typography>
           </Grid>
-          <Typography variant="h6">Categories:</Typography>
-          {/* {subDestinationData?.categories?.map((category, index) => (
-              <Typography sx={{ marginTop: '4px', display: 'flex' }} key={index}>
-                {', '}
-                {category}
-              </Typography>
-            ))} */}
+          <Typography variant="h6">Category:</Typography>
+
+          <Typography sx={{ marginTop: '4px', display: 'flex' }}>
+            {' '}
+            {subDestinationData?.categories}
+          </Typography>
+
           <div>
             <Card
               component="img"
@@ -168,68 +167,70 @@ const SubDestination = () => {
             </Typography>
           </div>
         </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h5">
-              Blogs related to the subDestination:
-            </Typography>
-          </Grid>
-          {tripData?.map((trip, index) => (
-            <Grid item xs={12} sm={8} md={4}>
-              <HoverCard
-                sx={{ mt: '15px', position: 'relative' }}
-                elevation={0}
-                key={trip._id}
-              >
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image="https://source.unsplash.com/random"
-                    alt="gg"
-                    sx={{
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      filter: 'brightness(50%)',
-                      height: '250px',
-                      width: '500px',
-                      transition: '0.3s ease-in-out',
-                      top: 0,
-                      '&:hover': {
-                        filter: 'brightness(80%)',
-                      },
-                    }}
-                  />
-                  <Avatar
-                    sx={{
-                      zIndex: 9,
-                      top: 24,
-                      right: 24,
-                      position: 'absolute',
-                      boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                      WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                      MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                    }}
-                  ></Avatar>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    sx={{
-                      zIndex: 9,
-                      bottom: 24,
-                      left: 24,
-                      position: 'absolute',
-                      color: 'white',
-                    }}
-                    component="div"
-                  >
-                    {trip.title}
-                  </Typography>
-                </CardActionArea>
-              </HoverCard>
+        {tripData && (
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h5">
+                {tripData && 'Blogs related to the Destination:'}
+              </Typography>
             </Grid>
-          ))}
-        </Grid>
+            {tripData?.map((trip, index) => (
+              <Grid item xs={12} sm={8} md={4}>
+                <HoverCard
+                  sx={{ mt: '15px', position: 'relative' }}
+                  elevation={0}
+                  key={trip._id}
+                >
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image="https://source.unsplash.com/random"
+                      alt="gg"
+                      sx={{
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        filter: 'brightness(50%)',
+                        height: '250px',
+                        width: '500px',
+                        transition: '0.3s ease-in-out',
+                        top: 0,
+                        '&:hover': {
+                          filter: 'brightness(80%)',
+                        },
+                      }}
+                    />
+                    <Avatar
+                      sx={{
+                        zIndex: 9,
+                        top: 24,
+                        right: 24,
+                        position: 'absolute',
+                        boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                        WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                        MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                      }}
+                    ></Avatar>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      sx={{
+                        zIndex: 9,
+                        bottom: 24,
+                        left: 24,
+                        position: 'absolute',
+                        color: 'white',
+                      }}
+                      component="div"
+                    >
+                      {trip.title}
+                    </Typography>
+                  </CardActionArea>
+                </HoverCard>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
         <Grid container spacing={2} mt="24px">
           <Grid item xs={3}>
@@ -372,8 +373,8 @@ const SubDestination = () => {
                                 stroke-width="1.5"
                                 stroke="#2c3e50"
                                 fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
                                 <path
                                   stroke="none"

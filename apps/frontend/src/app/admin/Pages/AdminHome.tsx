@@ -137,8 +137,8 @@ export default function AdminHome() {
               stroke-width="1.5"
               stroke="#2c3e50"
               fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <line x1="4" y1="6" x2="20" y2="6" />
@@ -174,8 +174,8 @@ export default function AdminHome() {
                   stroke-width="1.5"
                   stroke="#2c3e50"
                   fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <polyline points="5 12 3 12 12 3 21 12 19 12" />
@@ -213,8 +213,8 @@ export default function AdminHome() {
                   stroke-width="1.5"
                   stroke="#2c3e50"
                   fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <circle cx="7" cy="17" r="2" />
@@ -252,8 +252,8 @@ export default function AdminHome() {
                   stroke-width="1.5"
                   stroke="#2c3e50"
                   fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <circle cx="6" cy="17" r="2" />
@@ -295,8 +295,8 @@ export default function AdminHome() {
                   stroke-width="1.5"
                   stroke="#2c3e50"
                   fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />

@@ -4,7 +4,9 @@ import {
   DescriptionOutlined,
   Edit,
   Event,
+  Favorite,
   LocationOnOutlined,
+  MoreVert,
   Settings,
 } from '@mui/icons-material';
 import {
@@ -25,7 +27,12 @@ import {
   MenuItem,
   Card,
   Divider,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
 } from '@mui/material';
+import { red } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -153,8 +160,8 @@ const UserInfo = () => {
         }}
       />
 
-      <Container maxWidth="lg" sx={{ transform: 'translate(0%,-30%)' }}>
-        <Grid container spacing={2}>
+      <Grid container spacing={2}>
+        <Container maxWidth="lg" sx={{ transform: 'translate(0%,-30%)' }}>
           <Grid container item>
             <Box
               maxWidth="lg"
@@ -195,7 +202,7 @@ const UserInfo = () => {
                   >
                     <Avatar
                       // src={userInfoData?.profilePicture}
-                      src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
+                      // src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
                       // src="https://source.unsplash.com/random"
                       sx={{
                         height: '128px',
@@ -274,7 +281,7 @@ const UserInfo = () => {
                   >
                     <MenuItem onClick={handleClickOpen}>Edit Profile</MenuItem>
                     <MenuItem onClick={() => setForm(true)}>
-                      Reset Password
+                      Change Password
                     </MenuItem>
                   </Menu>
                 </Grid>
@@ -297,7 +304,8 @@ const UserInfo = () => {
               </Grid>
             </Box>
           </Grid>
-
+        </Container>
+        <Container maxWidth="lg" sx={{ mt: '-40px' }}>
           <Grid container item>
             <Grid item xs={2.5}>
               <Box
@@ -350,12 +358,56 @@ const UserInfo = () => {
             </Grid>
             <Grid item xs={9.5}>
               <TabPanel value={value} index={0}>
-                Posts
+                <Card
+                  sx={{
+                    width: '100%',
+                    borderRadius: '6px',
+                    mt: '-20px',
+                    mx: 'auto',
+                  }}
+                  elevation={0}
+                >
+                  <CardHeader
+                    avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
+                    action={
+                      <IconButton aria-label="settings">
+                        <MoreVert />
+                      </IconButton>
+                    }
+                    title={
+                      userInfoData?.firstName +
+                      ' ' +
+                      userInfoData?.lastName +
+                      ' was in '
+                    }
+                    subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
+                  />
+                  <CardMedia
+                    component="img"
+                    height="20"
+                    image="https://source.unsplash.com/random"
+                    alt="random"
+                    sx={{
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  />
+                  <CardContent>
+                    {userInfoData?.username}
+                    <Typography variant="body2">pray</Typography>
+                  </CardContent>
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <Favorite />
+                    </IconButton>
+                  </CardActions>
+                </Card>
               </TabPanel>
               <TabPanel value={value} index={1}>
                 <Card
                   sx={{
                     padding: '25px',
+                    mt: '-20px',
                   }}
                   elevation={0}
                 >
@@ -418,8 +470,8 @@ const UserInfo = () => {
               </TabPanel>
             </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      </Grid>
     </Grid>
   );
 };

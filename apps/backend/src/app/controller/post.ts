@@ -13,7 +13,11 @@ export const createPost = async (
       destination: req.body.destination,
       postedBy: req.session.user._id,
     };
-    const img = req?.file?.filename;
+
+    // const filePath =
+    //   req.protocol + '://' + req.hostname + ':' + 3333 + '/' + req.file.path;
+    // const img = filePath;
+    const img = req.file.path;
 
     const newPost = new Post({ ...data, img: img });
     const savedPost = await newPost.save();
@@ -35,6 +39,25 @@ export const updatePost = async (req, res) => {
           res.send(err);
         });
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+export const commentOnPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { replyText, postedBy } = req.body;
+    const comment = {
+      replyText,
+      postedBy,
+    };
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { $push: { comment: comment } },
+      { new: true }
+    );
+    res.status(200).json(updatedPost);
   } catch (err) {
     res.status(500).json(err);
   }

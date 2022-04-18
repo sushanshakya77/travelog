@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { Status } from './tripModel';
 export enum Categories {
   'Featured' = 'Featured',
   'Popular' = 'Popular',
@@ -41,6 +42,10 @@ const blogSchema = new mongoose.Schema(
         ],
       },
     ],
+    status: {
+      type: String,
+      enum: Object.values(Status),
+    },
     destination: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Destination',

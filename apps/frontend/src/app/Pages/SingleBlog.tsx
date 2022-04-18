@@ -20,7 +20,7 @@ import {
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router';
+import { Navigate, useNavigate, useParams } from 'react-router';
 import { IBlog } from '../models/Blogs';
 import dayjs from 'dayjs';
 import LocationPickerDialog from '../Components/LocationPicker';
@@ -31,6 +31,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { HoverCard } from './Home';
 import { IconContainer } from './Destination';
 import { IReview } from '../models/Destination';
+import { useSnackbar } from 'notistack';
 
 const SingleBlog = () => {
   const { id } = useParams();
@@ -69,7 +70,7 @@ const SingleBlog = () => {
     'userblogs',
     () =>
       axios
-        .get(`api/blogs/user/${blogData?.postedBy?._id}`)
+        .get(`/api/blogs/user/${blogData?.postedBy?._id}`)
         .then((res) => res.data)
   );
 
@@ -81,9 +82,10 @@ const SingleBlog = () => {
     formState: { errors },
   } = useForm<IReview>({});
 
+  const navigate = useNavigate();
   const onSubmit: SubmitHandler<IReview> = async (data) => {
     await axios
-      .patch(`api/blogs/review/${id}`, data)
+      .patch(`/api/blogs/review/${id}`, data)
       .then((res) => {
         console.log(res);
         blogRefetch();
@@ -92,10 +94,27 @@ const SingleBlog = () => {
         console.log(err);
       });
   };
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleDelete = () => {
+    axios
+      .delete(`/api/blogs/${id}`)
+      .then((res) => {
+        console.log(res);
+        enqueueSnackbar('Succesfully Deleted!', {
+          variant: 'success',
+          autoHideDuration: 3000,
+        });
+        navigate('/user/info');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const fromTrip = blogData?._id;
   return (
-    <Container sx={{ ml: '150px' }}>
+    <div style={{ margin: '0px 20px 0px 20px' }}>
       <Grid container>
         <Grid
           item
@@ -139,6 +158,7 @@ const SingleBlog = () => {
                 }}
               >
                 <MenuItem onClick={handleClickOpen}>Add Trip</MenuItem>
+                <MenuItem onClick={handleDelete}>Delete Blog</MenuItem>
               </Menu>
               <LocationPickerDialog
                 open={open}
@@ -428,8 +448,8 @@ const SingleBlog = () => {
                           stroke-width="1.5"
                           stroke="#2c3e50"
                           fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
                           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                           <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
@@ -443,7 +463,7 @@ const SingleBlog = () => {
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </div>
   );
 };
 

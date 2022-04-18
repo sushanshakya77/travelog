@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import User from '../model/userModel';
-import { IUser, payloadData } from './user';
+import { payloadData } from './user';
 // import * as argon2 from 'argon2';
 
 export const getUserInfo: express.RequestHandler = async (
@@ -46,19 +46,20 @@ export const updateUserInfo: express.RequestHandler = async (
 };
 
 //create a new user
-export const createUserInfo: express.RequestHandler = async (
+export const uploadProfile: express.RequestHandler = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const { profilePicture } = new User(req.body);
-    console.log(profilePicture);
-    if (refreshTokenCheck) {
-      // await profilePicture.save();
-      res.status(201).json(profilePicture);
-    }
+    const image = req?.file?.path;
+    const addProfile = await User.findByIdAndUpdate(req.params.id, {
+      $push: { profilePicture: image },
+    });
+    const savedProfile = await addProfile.save();
+    return res.status(200).json(savedProfile);
   } catch (err) {
     console.log(err);
+    return res.status(500).json(err);
   }
 };
 

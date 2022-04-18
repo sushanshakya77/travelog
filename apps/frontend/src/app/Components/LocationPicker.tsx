@@ -13,7 +13,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Autocomplete, Box, Paper } from '@mui/material';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { IDestination } from '../models/Destination';
+import { IDestination, ISubDestination } from '../models/Destination';
 import { ITrip, Status } from '../models/Trips';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
@@ -56,6 +56,11 @@ export default function LocationPickerDialog({
     'trips',
     async () =>
       await axios.get(`api/trip/user/${user._id}`).then((res) => res.data)
+  );
+
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
+    'subDestinations',
+    () => axios.get('api/subDestinations').then((res) => res.data)
   );
   const onSubmit: SubmitHandler<IData> = (data) => {
     setDestination?.(data.destination._id);
@@ -132,7 +137,9 @@ export default function LocationPickerDialog({
                         }}
                       />
                     )}
-                    onChange={(_, data) => field.onChange(data)}
+                    onChange={(_, data) => {
+                      if (data) field.onChange(data);
+                    }}
                   />
                 )}
                 control={control}

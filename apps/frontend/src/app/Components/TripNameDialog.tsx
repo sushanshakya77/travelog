@@ -121,8 +121,8 @@ export default function TripNameDialog({ open, handleClose }: IProps) {
                       stroke-width="1.5"
                       stroke="#fc1313"
                       fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                       <rect x="5" y="11" width="14" height="10" rx="2" />
@@ -139,8 +139,8 @@ export default function TripNameDialog({ open, handleClose }: IProps) {
                       stroke-width="1.5"
                       stroke="#2c3e50"
                       fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                       <circle cx="12" cy="12" r="9" />

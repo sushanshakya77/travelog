@@ -1,5 +1,6 @@
 import * as express from 'express';
 import Blog from '../model/blogModel';
+import { Status } from '../model/tripModel';
 
 export const createBlog: express.RequestHandler = async (req, res) => {
   try {
@@ -103,7 +104,10 @@ export const getAllBlogsByDestinationId: express.RequestHandler = async (
   res
 ) => {
   try {
-    const blogs = await Blog.find({ destination: req.params.id });
+    const blogs = await Blog.find({
+      destination: req.params.id,
+      status: Status.Public,
+    });
     return res.status(200).json(blogs);
   } catch (err) {
     return res.status(500).json(err);

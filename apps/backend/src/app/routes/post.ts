@@ -17,11 +17,11 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (_, __, cb) {
-    fs.mkdirSync(`apps/backend/images/post/`, {
+    fs.mkdirSync('apps/backend/public/images/post/', {
       recursive: true,
     });
 
-    cb(null, 'apps/backend/images/post/');
+    cb(null, 'apps/backend/public/images/post/');
   },
   filename: function (_, file, cb) {
     cb(null, file.originalname);

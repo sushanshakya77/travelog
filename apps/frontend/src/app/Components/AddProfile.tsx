@@ -12,6 +12,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { IUser } from '../models/User';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -42,12 +43,20 @@ export default function AddProfile({
   } = useForm<IUser>({
     defaultValues: {},
   });
+  const input = React.useRef<HTMLInputElement | null>(null);
 
+  const [image, setImage] = React.useState<File>();
+  const { user } = useAuthentication();
+
+  const formData = new FormData();
   const onSubmit: SubmitHandler<IUser> = async (data) => {
-    axios.post(`/api/userInfo`, data).then((res) => {
-      console.log(res);
-      handleCloseProfile();
-    });
+    if (image) formData.append('profile', image, image.name);
+    axios
+      .patch(`/api/userInfo/addProfile/${user._id}`, formData)
+      .then((res) => {
+        console.log(res);
+        handleCloseProfile();
+      });
   };
   return (
     <div>
@@ -80,10 +89,19 @@ export default function AddProfile({
           >
             <label htmlFor="icon-button-file">
               <input
-                accept="image/*"
-                id="icon-button-file"
                 type="file"
+                ref={input}
+                id="icon-button-file"
+                accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
+                onChange={(e) => {
+                  const fileList = e.target.files;
+                  if (!fileList) {
+                    return;
+                  }
+                  setImage(fileList[0]);
+                }}
                 style={{ display: 'none' }}
+                name="profile"
               />
               <div
                 style={{

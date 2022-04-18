@@ -26,7 +26,7 @@ const BlogsMainPage = () => {
   );
   return (
     <div>
-      <Grid container sx={{ px: '40px', ml: '20px' }} spacing={2}>
+      <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>
           <Toolbar>
             <Typography
@@ -45,7 +45,7 @@ const BlogsMainPage = () => {
         </Link> */}
           </Toolbar>
         </Grid>
-        {allBlogData?.map(
+        {allBlogData?.slice(0, 2).map(
           (blog) =>
             blog.categories === Categories.Featured && (
               <Grid item xs={12} sm={6} md={6} key={blog._id}>
@@ -142,7 +142,7 @@ const BlogsMainPage = () => {
           </Card>
         </Grid>
       </Grid>
-      <Grid container sx={{ px: '40px', ml: '20px' }} spacing={2}>
+      <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>
           <Toolbar>
             <Typography
@@ -237,17 +237,17 @@ const BlogsMainPage = () => {
         <Grid
           item
           xs={6}
-          // sx={{
-          //   display: 'flex',
-          //   flexWrap: 'wrap',
-          //   justifyContent: 'space-between',
-          // }}
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
         >
           <Card
             elevation={0}
             sx={{
               padding: '20px',
-              mt: '48px',
+              // mt: '48px',
             }}
           >
             <Typography
@@ -450,8 +450,8 @@ const BlogsMainPage = () => {
             stroke-width="1.5"
             stroke="#f6f6f6"
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />

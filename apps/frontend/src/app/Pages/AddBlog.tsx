@@ -5,14 +5,13 @@ import {
   Grid,
   IconButton,
   MenuItem,
-  Select,
 } from '@mui/material';
 import axios from 'axios';
+import { useSnackbar } from 'notistack';
 import React from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
-import { Navigate } from 'react-router';
-
+import { useNavigate } from 'react-router';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IBlog, Tags } from '../models/Blogs';
@@ -23,9 +22,20 @@ import { useAuthentication } from '../useAuthentication/useAuthentication';
 const AddBlog = () => {
   const { control, handleSubmit, register } = useForm<IBlog>();
   const { user } = useAuthentication();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
   const onSubmit: SubmitHandler<IBlog> = async (data) => {
-    await axios.post('/api/blogs', data).then(() => {
-      return <Navigate to="/blogs" />;
+    await axios.post('/api/blogs', data).then((res) => {
+      navigate('/blogs');
+      enqueueSnackbar('Blog successfully added!', {
+        variant: 'success',
+        autoHideDuration: 3000,
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'left',
+        },
+      });
     });
   };
   const { data: destinationData } = useQuery<IDestination[]>(
@@ -64,8 +74,8 @@ const AddBlog = () => {
                     stroke-width="1.5"
                     stroke="#2c3e50"
                     fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <circle cx="12" cy="13" r="3" />
@@ -124,6 +134,21 @@ const AddBlog = () => {
           )}
         </Grid>
         <Grid item xs={12} md={6}>
+          <Controller
+            render={({ field }) => (
+              <RedditTextField label="Categories" fullWidth select {...field}>
+                {['Public', 'Private'].map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </RedditTextField>
+            )}
+            name="status"
+            control={control}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <Controller
             render={({ field }) => (
               <Autocomplete

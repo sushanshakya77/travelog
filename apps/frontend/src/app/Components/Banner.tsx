@@ -9,22 +9,50 @@ import 'swiper/css/autoplay';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {
+  Autocomplete,
   Box,
   InputAdornment,
+  Rating,
   TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
+import { Controller, useForm } from 'react-hook-form';
+import { RedditTextField } from '../ControlledComponent/RedditTextField';
+import { ISubDestination } from '../models/Destination';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // install Swiper modules
 SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 const images = [
   {
+    label: 'himal',
+    imgPath:
+      'https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+  },
+  {
+    label: 'village',
+    imgPath:
+      'https://images.unsplash.com/photo-1511215579272-6192432f83bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+  },
+  {
     label: 'desert',
     imgPath:
       'https://images.unsplash.com/photo-1639402479478-f5e7881c0ccc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
+  },
+  {
+    label: 'anotherForest',
+    imgPath:
+      'https://images.unsplash.com/photo-1438786657495-640937046d18?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+  },
+  {
+    label: 'jungle',
+    imgPath:
+      'https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
   },
   {
     label: 'stars',
@@ -58,8 +86,20 @@ const images = [
       'https://images.unsplash.com/photo-1506606401543-2e73709cebb4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
   },
 ];
+interface IProps {
+  destinations: ISubDestination;
+}
 
-export default function Banner() {
+interface IBannerProps {
+  setSearchDestination: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function Banner({ setSearchDestination }: IBannerProps) {
+  const { control } = useForm<IProps>();
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
+    'subDestinations',
+    () => axios.get('api/subDestinations').then((res) => res.data)
+  );
   return (
     <div>
       <Swiper
@@ -77,14 +117,14 @@ export default function Banner() {
         <div
           style={{
             position: 'absolute',
-            top: '25%',
-            left: '40%',
+            top: 130,
+            left: 450,
             zIndex: 99,
           }}
         >
           <Typography
             sx={{
-              fontSize: '64px',
+              fontSize: '74px',
               color: 'white',
               justifyContent: 'center',
               alignItems: 'center',
@@ -94,23 +134,84 @@ export default function Banner() {
           </Typography>
           <Typography
             sx={{
-              fontSize: '18px',
+              fontSize: '22px',
               color: 'white',
             }}
           >
             "make memories as you go"
           </Typography>
-          <TextField
+          {subDestinationData && (
+            <Controller
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  options={subDestinationData ?? []}
+                  getOptionLabel={(option) => option.title}
+                  // freeSolo
+                  size="small"
+                  popupIcon={false}
+                  noOptionsText="No results"
+                  renderOption={(props, option) => (
+                    <Link to={`subDestinations/${option._id}`}>
+                      <Box
+                        component="li"
+                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                        {...props}
+                      >
+                        <img
+                          loading="lazy"
+                          width="60"
+                          src={option.img}
+                          alt={option.title}
+                        />
+                        {option.title}
+                        <Rating
+                          value={option.rating}
+                          precision={0.5}
+                          readOnly
+                          size="small"
+                        />
+                      </Box>
+                    </Link>
+                  )}
+                  sx={{
+                    bgcolor: 'white',
+                    outline: 'none',
+                    mt: '10px',
+                    ml: '-10px',
+                    width: '300px',
+                  }}
+                  renderInput={(params) => (
+                    <RedditTextField
+                      {...params}
+                      label="Search"
+                      inputProps={{
+                        ...params.inputProps,
+                        autoComplete: 'disabled',
+                      }}
+                    />
+                  )}
+                  onChange={(_, data) => {
+                    if (data) setSearchDestination(data._id);
+                  }}
+                />
+              )}
+              control={control}
+              name="destinations"
+            />
+          )}
+
+          {/* <TextField
             size="small"
             placeholder="Search something..."
             sx={{
               fontSize: '64px',
               bgcolor: 'white',
-              width: '280px',
+              width: '300px',
               borderRadius: '25px',
               border: 'none',
               outline: 'none',
-              ml: '-20px',
+              ml: '-10px',
               mt: '10px',
               zIndex: 999,
               '& .MuiOutlinedInput-root:hover': {
@@ -131,10 +232,10 @@ export default function Banner() {
 
               // disableUnderline: true,
             }}
-          />
+          /> */}
         </div>
         {images.map((status) => (
-          <SwiperSlide style={{ height: 480 }}>
+          <SwiperSlide style={{ height: 500 }}>
             <img src={`${status.imgPath}`} alt={`${status.label}`} />
           </SwiperSlide>
         ))}

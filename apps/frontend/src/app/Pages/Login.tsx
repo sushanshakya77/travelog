@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { alpha, styled as style } from '@mui/material/styles';
 import axios, { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router-dom';
@@ -68,22 +69,27 @@ export default function Login() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<ILoginInputs>({
     defaultValues: {
       username: '',
       password: '',
     },
   });
+  const { enqueueSnackbar } = useSnackbar();
 
   const onSubmit: SubmitHandler<ILoginInputs> = async (data: ILoginInputs) => {
     setIsLoading(true);
     await axios
       .post('api/auth/login', data)
       .then(() => {
-        setHasError(false);
         setAuthState('loggedIn');
         window.location.reload();
+        setHasError(false);
+        enqueueSnackbar('Signed In!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
       })
       .catch(() => {
         setHasError(true);
@@ -173,11 +179,6 @@ export default function Login() {
               rules={{ required: 'password is required' }}
               error={!!errors.password}
               helperText={errors.password && errors.password.message}
-            />
-
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
             />
 
             <Button

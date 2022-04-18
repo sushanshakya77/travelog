@@ -15,9 +15,7 @@ const SearchBlogs = () => {
   return (
     <Grid container sx={{ padding: '40px' }}>
       <Grid item xs={12}>
-        {tagsBlogData?.map((blog) => (
-          <Typography variant="h5">{blog.tags}</Typography>
-        ))}
+        <Typography variant="h5">{tags}</Typography>
       </Grid>
       <Grid item xs={12}>
         <Card
@@ -27,7 +25,9 @@ const SearchBlogs = () => {
           elevation={0}
         >
           <Divider sx={{ mb: '15px' }} />
-          {tagsBlogData && <Typography>No result on that tag.</Typography>}
+          {(tagsBlogData?.length ?? []) < 0 && (
+            <Typography>No result on that tag.</Typography>
+          )}
           {tagsBlogData?.map((blog) => (
             <Link to={`/singleBlog/${blog._id}`}>
               <Grid container>

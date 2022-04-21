@@ -28,6 +28,7 @@ import { useParams } from 'react-router';
 import Replies from '../Components/Replies';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
+import { IBlog } from '../models/Blogs';
 import { IReview, ISubDestination } from '../models/Destination';
 import { ITrip } from '../models/Trips';
 import { IUser } from '../models/User';
@@ -85,9 +86,8 @@ const SubDestination = () => {
     useQuery<ISubDestination>('specificsubDestination', () =>
       axios.get(`api/subDestinations/${id}`).then((res) => res.data)
     );
-  const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
-    'trips',
-    () => axios.get(`api/trip/destination/${id}`).then((res) => res.data)
+  const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
+    axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
   );
   const { data: userInfoData } = useQuery<IUser>(
     'userInfo',
@@ -167,14 +167,14 @@ const SubDestination = () => {
             </Typography>
           </div>
         </Grid>
-        {tripData && (
+        {blogData && (
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="h5">
-                {tripData && 'Blogs related to the Destination:'}
+                {blogData && 'Blogs related to the Destination:'}
               </Typography>
             </Grid>
-            {tripData?.map((trip, index) => (
+            {blogData?.map((trip, index) => (
               <Grid item xs={12} sm={8} md={4}>
                 <HoverCard
                   sx={{ mt: '15px', position: 'relative' }}

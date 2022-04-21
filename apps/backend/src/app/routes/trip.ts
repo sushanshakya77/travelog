@@ -3,7 +3,6 @@ import {
   createTrip,
   deleteTrip,
   getTripById,
-  getTripsByDestination,
   getUserTrips,
   updateTrip,
 } from '../controller/trips';

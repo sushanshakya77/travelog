@@ -12,6 +12,6 @@ export interface IUser extends IBaseMongoInterface {
   email: string;
   currentCity: string;
   description: string;
-  profilePicture: string;
-  dob: string;
+  profilePicture: any;
+  dob: Date;
 }

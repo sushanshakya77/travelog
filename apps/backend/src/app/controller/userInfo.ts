@@ -23,6 +23,7 @@ export const getUserInfo: express.RequestHandler = async (
     'email',
     'username',
     'currentCity',
+    'dob',
     'description',
     'createdAt',
   ]);
@@ -51,12 +52,12 @@ export const uploadProfile: express.RequestHandler = async (
   res: express.Response
 ) => {
   try {
-    const image = req?.file?.path;
+    const image = `images/profilePicture/${req?.file?.filename}`;
     const addProfile = await User.findByIdAndUpdate(req.params.id, {
       $push: { profilePicture: image },
     });
-    const savedProfile = await addProfile.save();
-    return res.status(200).json(savedProfile);
+
+    return res.status(200).json(addProfile);
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);

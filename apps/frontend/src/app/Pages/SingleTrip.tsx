@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Add, Delete, MoreVert } from '@mui/icons-material';
+import { Add, Delete, MoreVert, PersonPinSharp } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import { FreeCameraOptions } from 'mapbox-gl';
+import mapboxgl, { FreeCameraOptions } from 'mapbox-gl';
 import * as React from 'react';
 import {
   Controller,
@@ -27,9 +27,12 @@ import {
 } from 'react-hook-form';
 import Map, {
   GeolocateControl,
+  Layer,
   Marker,
   NavigationControl,
   Popup,
+  Source,
+  ViewState,
 } from 'react-map-gl';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useQuery } from 'react-query';
@@ -66,7 +69,13 @@ const SingleTrip = () => {
     'singletrip',
     () => axios.get(`api/trip/${id}`).then((res) => res.data)
   );
-  const { control, watch, handleSubmit, register } = useForm<ITrip>();
+  const {
+    control,
+    watch,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ITrip>();
 
   const onSubmit: SubmitHandler<ITrip> = async (data) => {
     console.log(data);
@@ -92,24 +101,7 @@ const SingleTrip = () => {
     latitude: 27.708317,
     zoom: 12,
   });
-
-  // singleTripData?.days?.map((day, index) =>
-  //   setViewState({
-  //     longitude: day?.destination?.longitude,
-  //     latitude: day?.destination?.latitude,
-  //     zoom: 4,
-  //   })
-  // );
-
-  React.useEffect(() => {
-    watch('days')?.map((day, index) =>
-      setViewState({
-        longitude: day?.destination?.longitude,
-        latitude: day?.destination?.latitude,
-        zoom: 16,
-      })
-    );
-  }, []);
+  const [popup, setPopup] = React.useState(false);
 
   return (
     <div>
@@ -120,8 +112,6 @@ const SingleTrip = () => {
           style={{ width: '100%', height: '100vh' }}
           mapStyle="mapbox://styles/sushanshakya/ckxsqv4o81jau14nu0137rm5v"
           mapboxAccessToken={MAPBOX_TOKEN}
-          attributionControl={false}
-          scrollZoom={true}
         >
           <NavigationControl />
           <GeolocateControl />
@@ -130,9 +120,33 @@ const SingleTrip = () => {
             ? singleTripData?.days?.map((day, index) => (
                 <Marker
                   key={day._id}
-                  longitude={day?.destination?.longitude ?? 0}
-                  latitude={day?.destination?.latitude ?? 0}
-                />
+                  longitude={day.destination.longitude ?? 0}
+                  latitude={day.destination.latitude ?? 0}
+                  anchor="bottom"
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    setPopup(true);
+                  }}
+                >
+                  {/* {popup && (
+                    <Popup
+                      longitude={day.destination.longitude ?? 0}
+                      latitude={day.destination.latitude ?? 0}
+                      anchor="bottom"
+                      onClose={() => {
+                        setPopup(false);
+                      }}
+                    >
+                      <Typography variant="h6">
+                        {day.destination.title}
+                      </Typography>
+                    </Popup>
+                  )} */}
+                </Marker>
               ))
             : watch('days')?.map((day, index) => (
                 <Marker
@@ -224,7 +238,7 @@ const SingleTrip = () => {
             <Grid item xs={12}>
               <Typography
                 variant="body2"
-                sx={{ display: 'flex', justifyContent: 'center' }}
+                sx={{ display: 'flex', justifyContent: 'center', mt: '5px' }}
               >
                 {singleTripData?.desc}
               </Typography>
@@ -232,19 +246,16 @@ const SingleTrip = () => {
           </Grid>
 
           {(singleTripData?.days?.length ?? []) > 0 ? (
-            <div>
+            <div style={{ maxHeight: '500px', overflow: 'auto' }}>
               {singleTripData?.days?.map((day, index) => (
                 <Grid container xs={12} key={day._id}>
                   <Grid item xs={12}>
                     <Toolbar>
                       <Typography variant="h6">Day {index + 1}</Typography>
                       <div style={{ flexGrow: 1 }} />
-                      {/* <IconButton onClick={() => remove(index)}>
-                        <Delete />
-                      </IconButton> */}
                     </Toolbar>
                   </Grid>
-                  <StyledCard sx={{ width: '600px' }}>
+                  <StyledCard sx={{ width: '700px' }}>
                     <CardHeader
                       title={day.title}
                       titleTypographyProps={{ fontSize: '28px' }}
@@ -260,7 +271,7 @@ const SingleTrip = () => {
             <Grid
               container
               xs={12}
-              sx={{ maxHeight: '450px', overflow: 'auto' }}
+              sx={{ maxHeight: '450px', overflow: 'auto', mt: '20px' }}
             >
               <Grid item xs={12}>
                 <Button
@@ -299,8 +310,14 @@ const SingleTrip = () => {
                     Component={RedditTextField}
                     name={`days.${index}.title`}
                     label="Title"
+                    rules={{ required: 'Title is required' }}
                     fullWidth
                     control={control}
+                    error={!!errors.days?.[index]?.title}
+                    helperText={
+                      errors.days?.[index]?.title &&
+                      errors.days?.[index]?.title?.message
+                    }
                   />
                   <ControlledTextField
                     Component={RedditTextField}
@@ -308,9 +325,15 @@ const SingleTrip = () => {
                     fullWidth
                     label="Description"
                     multiline
+                    rules={{ required: 'Description is required' }}
                     rows={4}
                     sx={{ my: '12px' }}
                     control={control}
+                    error={!!errors.days?.[index]?.description}
+                    helperText={
+                      errors.days?.[index]?.description &&
+                      errors.days?.[index]?.description?.message
+                    }
                   />
                   {subDestinationData && (
                     <Controller
@@ -333,6 +356,7 @@ const SingleTrip = () => {
                           onChange={(_, data) => field.onChange(data)}
                         />
                       )}
+                      rules={{ required: 'Destination is required' }}
                       control={control}
                       name={`days.${index}.destination`}
                     />

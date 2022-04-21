@@ -43,14 +43,14 @@ export default function AddProfile({
   } = useForm<IUser>({
     defaultValues: {},
   });
-  const input = React.useRef<HTMLInputElement | null>(null);
 
   const [image, setImage] = React.useState<File>();
   const { user } = useAuthentication();
 
   const formData = new FormData();
   const onSubmit: SubmitHandler<IUser> = async (data) => {
-    if (image) formData.append('profile', image, image.name);
+    console.log(image);
+    if (image) formData.append('profilePicture', image, image.name);
     axios
       .patch(`/api/userInfo/addProfile/${user._id}`, formData)
       .then((res) => {
@@ -58,6 +58,7 @@ export default function AddProfile({
         handleCloseProfile();
       });
   };
+  console.log(watch('profilePicture'));
   return (
     <div>
       <Dialog
@@ -76,22 +77,18 @@ export default function AddProfile({
             sx={{
               height: '250px',
               width: '100%',
-              // backgroundColor: '#393E46',
-              // color: '#EEEEEE',
               borderRadius: '10px',
-              // border: '1px solid #222831',
-              // '&:hover': { backgroundColor: '#222831', color: '#EEEEEE' },
               borderColor: 'divider',
             }}
             disableElevation
             disableRipple
             variant="contained"
           >
-            <label htmlFor="icon-button-file">
+            <label htmlFor="icon">
               <input
                 type="file"
-                ref={input}
-                id="icon-button-file"
+                id="icon"
+                name="profilePicture"
                 accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
                 onChange={(e) => {
                   const fileList = e.target.files;
@@ -100,8 +97,6 @@ export default function AddProfile({
                   }
                   setImage(fileList[0]);
                 }}
-                style={{ display: 'none' }}
-                name="profile"
               />
               <div
                 style={{

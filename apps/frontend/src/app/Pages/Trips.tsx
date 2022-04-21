@@ -114,8 +114,8 @@ const Trips = () => {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="icon icon-tabler icon-tabler-world"
-                        width="24"
-                        height="24"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="#2c3e50"
@@ -134,8 +134,8 @@ const Trips = () => {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="icon icon-tabler icon-tabler-lock"
-                        width="24"
-                        height="24"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="#fc1313"
@@ -159,7 +159,15 @@ const Trips = () => {
                   <Typography sx={{ fontSize: '12px' }} color="text.secondary">
                     {dayjs(trip.createdAt).format('MMMM DD, YYYY')}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    sx={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {trip.desc}
                   </Typography>
                 </CardContent>

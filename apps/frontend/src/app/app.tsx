@@ -68,7 +68,7 @@ export function App() {
           <Route path="trips/:id" element={<Trips />} />
           <Route path="trip/:id" element={<SingleTrip />} />
           <Route path="admin" element={<AdminHome />}>
-            <Route path="destination" element={<AdminDestination />} />
+            <Route index element={<AdminDestination />} />
             <Route path="subdestination" element={<AdminSubDestination />} />
             <Route path="blogs" element={<AdminBlogs />} />
           </Route>

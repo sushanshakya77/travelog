@@ -48,7 +48,7 @@ const blogSchema = new mongoose.Schema(
     },
     destination: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Destination',
+      ref: 'SubDestinations',
     },
     trip: {
       type: mongoose.Schema.Types.ObjectId,

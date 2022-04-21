@@ -19,17 +19,10 @@ const usersSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
-  followers: {
-    type: Array,
-    default: [],
-  },
-  followings: {
-    type: Array,
-    default: [],
-  },
+
   currentCity: String,
   description: String,
-  dob: String,
+  dob: Date,
   password: { type: String, required: true },
 });
 

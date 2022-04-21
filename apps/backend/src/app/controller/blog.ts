@@ -1,5 +1,7 @@
 import * as express from 'express';
 import Blog from '../model/blogModel';
+import Destinations from '../model/destinationModel';
+import SubDestinations from '../model/subDestinationModel';
 import { Status } from '../model/tripModel';
 
 export const createBlog: express.RequestHandler = async (req, res) => {
@@ -103,6 +105,23 @@ export const getAllBlogsByDestinationId: express.RequestHandler = async (
   req,
   res
 ) => {
+  try {
+    const destination = SubDestinations.findById(req.params.id).select(
+      'parentDestination'
+    );
+    const parentDestination = Destinations.findById(destination).select('_id');
+    console.log(parentDestination);
+    const blogs = await Blog.find({
+      destination: req.params.id,
+      status: Status.Public,
+    });
+    return res.status(200).json(blogs);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+export const getAllBlogsBy: express.RequestHandler = async (req, res) => {
   try {
     const blogs = await Blog.find({
       destination: req.params.id,

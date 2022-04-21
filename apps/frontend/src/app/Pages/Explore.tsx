@@ -6,6 +6,7 @@ import {
   LocationOnOutlined,
   MoreVert,
   Done,
+  FavoriteBorder,
 } from '@mui/icons-material';
 import {
   Avatar,
@@ -22,6 +23,8 @@ import {
   Toolbar,
   Typography,
   Link as TextLink,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import { blue, red, yellow } from '@mui/material/colors';
 import axios from 'axios';
@@ -40,7 +43,7 @@ import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 const Explore = () => {
-  const { token, user } = useAuthentication();
+  const { user } = useAuthentication();
   const { data: userInfoData } = useQuery<IUser>('userInfo', () =>
     axios.get('api/userInfo').then((res) => res.data)
   );
@@ -56,7 +59,14 @@ const Explore = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
   const {
     control,
     handleSubmit,
@@ -67,7 +77,7 @@ const Explore = () => {
     formState: { errors },
   } = useForm<IPost>();
 
-  const input = useRef<HTMLInputElement | null>(null);
+  // const input = useRef<HTMLInputElement | null>(null);
 
   const [image, setImage] = useState<File>();
   const [destination, setDestination] = useState<string>('');
@@ -76,16 +86,33 @@ const Explore = () => {
     'posts',
     () => axios.get('/api/posts/all').then((res) => res.data)
   );
+  console.log(postsData);
   const { data: subDestinationData } = useQuery<ISubDestination[]>(
     'subDestinations',
     () => axios.get('api/subDestinations').then((res) => res.data)
   );
+
+  const [isLiked, setIsLiked] = useState(false);
+
+  const likeHandler = (post: IPost) => {
+    try {
+      axios.put(`/api/posts/${post._id}/like`).then(() => postRefetch());
+    } catch (err) {
+      console.log(err);
+    }
+    setIsLiked(!isLiked);
+  };
+  const handleDelete = async (id: string) => {
+    console.log(id);
+    await axios.delete(`/api/posts/delete/${id}`).then(() => postRefetch());
+  };
+
   const { enqueueSnackbar } = useSnackbar();
   const onSubmit: SubmitHandler<IPost> = async (data) => {
     const formData = new FormData();
 
     formData.append('caption', data.caption);
-    formData.append('destination', destination);
+    formData?.append('destination', destination);
     if (image) formData.append('img', image, image.name);
 
     await axios
@@ -95,13 +122,12 @@ const Explore = () => {
         postRefetch();
         enqueueSnackbar('Post created successfully!', {
           variant: 'success',
+          autoHideDuration: 2000,
         });
         reset();
       })
       .catch((err) => console.log(err));
   };
-
-  console.log(postsData);
 
   return (
     <div>
@@ -116,9 +142,7 @@ const Explore = () => {
                 onSubmit={handleSubmit(onSubmit)}
               >
                 <Toolbar>
-                  <Avatar sx={{ bgcolor: red[500], ml: '-10px', mr: '10px' }}>
-                    S
-                  </Avatar>
+                  <Avatar sx={{ ml: '-10px', mr: '10px' }}></Avatar>
                   <div style={{ flexGrow: '1' }} />
                   <ControlledTextField
                     Component={RedditTextField}
@@ -126,6 +150,9 @@ const Explore = () => {
                     size="small"
                     fullWidth
                     control={control}
+                    rules={{ required: 'Caption is required' }}
+                    error={!!errors.caption}
+                    helperText={errors.caption?.message}
                     name="caption"
                     multiline
                     rows={2}
@@ -134,9 +161,8 @@ const Explore = () => {
                   <IconButton disableRipple>
                     <label htmlFor="icon-button-file">
                       <input
-                        type="file"
-                        ref={input}
                         id="icon-button-file"
+                        type="file"
                         name="img"
                         accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
                         onChange={(e) => {
@@ -241,20 +267,32 @@ const Explore = () => {
             <Grid item xs={12} md={8} key={post._id}>
               <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
                 <CardHeader
-                  avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
+                  avatar={<Avatar></Avatar>}
                   action={
-                    <IconButton aria-label="settings">
+                    <IconButton aria-label="settings" onClick={handleClick}>
                       <MoreVert />
                     </IconButton>
                   }
-                  title={
-                    userInfoData?.firstName +
-                    ' ' +
-                    userInfoData?.lastName +
-                    ' was in '
-                  }
-                  subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
+                  title={`${post.postedBy.firstName}
+                    ${post.postedBy.lastName} 
+                    was in ${post.destination.title}`}
+                  subheader={dayjs(post.createdAt).format(
+                    'MMMM DD YYYY, h:mm a'
+                  )}
                 />
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={openMenu}
+                  onClose={handleCloseMenu}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                >
+                  <MenuItem onClick={() => handleDelete(post._id)}>
+                    Delete Post
+                  </MenuItem>
+                </Menu>
                 <CardMedia
                   component="img"
                   height="20"
@@ -263,13 +301,25 @@ const Explore = () => {
                   sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
                 />
                 <CardContent>
-                  {post?.postedBy?.username}
-                  <Typography variant="body2">{post?.caption}</Typography>
+                  {post?.postedBy?.username}: "{post.caption}"
+                  <Typography variant="body2" component="div">
+                    Liked by:{post.likes.length}
+                  </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
-                  <IconButton aria-label="add to favorites">
-                    <Favorite />
-                  </IconButton>
+                  {isLiked || post.likes.includes(user._id as never) ? (
+                    <IconButton aria-label="add to favorites">
+                      <Favorite
+                        sx={{ color: '#fd4444' }}
+                        onClick={() => likeHandler(post)}
+                      />
+                    </IconButton>
+                  ) : (
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteBorder onClick={() => likeHandler(post)} />
+                    </IconButton>
+                  )}
+
                   {/* <IconButton aria-label="share">
                     <ChatOutlined />
                   </IconButton>
@@ -317,44 +367,6 @@ const Explore = () => {
               </Card>
             </Grid>
           ))}
-          <Grid item xs={12} md={8}>
-            <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
-              <CardHeader
-                avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
-                action={
-                  <IconButton aria-label="settings">
-                    <MoreVert />
-                  </IconButton>
-                }
-                title={
-                  userInfoData?.firstName +
-                  ' ' +
-                  userInfoData?.lastName +
-                  ' was in '
-                }
-                subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
-              />
-              <CardMedia
-                component="img"
-                height="20"
-                image="https://source.unsplash.com/random"
-                alt="random"
-                sx={{ backgroundSize: 'cover', backgroundPosition: 'center' }}
-              />
-              <CardContent>
-                {userInfoData?.username}
-                <Typography variant="body2">pray</Typography>
-              </CardContent>
-              <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                  <Favorite />
-                </IconButton>
-                <IconButton aria-label="share">
-                  <ChatOutlined />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
         </Grid>
       </Container>
     </div>

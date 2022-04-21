@@ -30,9 +30,6 @@ interface IProps {
   userInfo: IUser;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const Input = styled.input`
-  display: none;
-`;
 
 export default function EditProfile({
   open,
@@ -51,7 +48,7 @@ export default function EditProfile({
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
       username: userInfo.username,
-      dob: dayjs(userInfo.dob, 'YYYY-MM-DD').format('YYYY-MM-DD'),
+      dob: userInfo.dob,
       currentCity: userInfo.currentCity,
       description: userInfo.description,
     },
@@ -60,15 +57,12 @@ export default function EditProfile({
   const [isLoading, setIsLoading] = React.useState(false);
   const onSubmit: SubmitHandler<IUser> = async (data) => {
     setIsLoading(true);
-    // if (data._id)
-    // return
     await axios
       .patch(`/api/userInfo/${userInfo._id}`, data)
       .then((response) => {
         console.log(response);
         refetch();
         setOpen(false);
-        reset();
       })
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false));
@@ -101,8 +95,7 @@ export default function EditProfile({
               overlap="circular"
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               badgeContent={
-                <label htmlFor="icon-button-file">
-                  <Input accept="image/*" id="icon-button-file" type="file" />
+                <>
                   <IconButton
                     sx={{
                       width: 30,
@@ -118,13 +111,22 @@ export default function EditProfile({
                     }}
                     component="span"
                   >
-                    <Edit sx={{ fontSize: '20px' }} />
+                    <label htmlFor="icon-button">
+                      <input
+                        id="icon-button"
+                        type="file"
+                        accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
+                        name="profilePicture"
+                        // style={{ display: 'none' }}
+                      />
+                      <Edit sx={{ fontSize: '20px' }} />
+                    </label>
                   </IconButton>
-                </label>
+                </>
               }
             >
               <Avatar
-                src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
+                src=""
                 sx={{
                   height: '120px',
                   width: '120px',
@@ -163,7 +165,7 @@ export default function EditProfile({
                 helperText={errors.username && errors.username.message}
                 name="username"
                 rules={{ required: 'User Name is required' }}
-                label="User Name"
+                label="Username"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">@</InputAdornment>
@@ -181,6 +183,7 @@ export default function EditProfile({
                 type="date"
                 helperText={errors.dob && errors.dob.message}
                 name="dob"
+                defaultValue={dayjs(userInfo.dob).format('YYYY-MM-DD')}
                 label="Date of Birth"
                 InputLabelProps={{ shrink: true }}
                 {...props}
@@ -193,6 +196,29 @@ export default function EditProfile({
                 helperText={errors.currentCity && errors.currentCity.message}
                 name="currentCity"
                 label="Current City"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-map-pin"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="#707070"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <circle cx="12" cy="11" r="3" />
+                        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+                      </svg>
+                    </InputAdornment>
+                  ),
+                  disableUnderline: true,
+                }}
                 {...props}
               />
             </Grid>

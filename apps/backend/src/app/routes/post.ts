@@ -12,59 +12,35 @@ import {
   updatePost,
 } from '../controller/post';
 import * as fs from 'fs';
+import { join } from 'path';
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (_, __, cb) {
-    fs.mkdirSync('apps/backend/public/images/post/', {
+    fs.mkdirSync(join(__dirname, 'public/images/post/'), {
       recursive: true,
     });
 
-    cb(null, 'apps/backend/public/images/post/');
+    cb(null, join(__dirname, 'public/images/post/'));
   },
   filename: function (_, file, cb) {
-    cb(null, file.originalname);
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
 const upload = multer({
   storage: storage,
   fileFilter: function (_, file, cb) {
-    const regex = new RegExp(/\.(gif|jpe?g|jpg|tiff?|png|webp|bmp)$/i);
-    const ext = path.extname(file.originalname);
+    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpeg'];
 
-    if (regex.test(ext)) {
+    if (allowedFileTypes.includes(file.mimetype)) {
       return cb(null, true);
+    } else {
+      cb(null, false);
     }
-    return cb(new Error('Only images with jpeg/png/gif/webp/bmp allowed'));
   },
 });
-
-// const storage = multer.diskStorage({
-//   destination: function (req, __, cb) {
-//     cb(null, `./public/images`);
-//   },
-//   filename: function (_, file, cb) {
-//     cb(
-//       null,
-//       uuidv4() + '-' + Date.now() + '-' + path.extname(file.originalname)
-//     );
-//   },
-// });
-
-// const upload = multer({
-//   storage: storage,
-//   fileFilter: function (_, file, cb) {
-//     const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpeg'];
-
-//     if (allowedFileTypes.includes(file.mimetype)) {
-//       return cb(null, true);
-//     } else {
-//       cb(null, false);
-//     }
-//   },
-// });
 
 //create a post
 router.post('/', upload.single('img'), createPost);
@@ -79,7 +55,7 @@ router.get('/all', getAllPosts);
 router.delete('/delete/:id', deletePost);
 //like / dislike a post
 
-router.patch('/:id/like', likePost);
+router.put('/:id/like', likePost);
 //get a post
 
 router.get('/:id', getSinglePost);

@@ -26,7 +26,7 @@ const postSchema = new mongoose.Schema(
     },
     destination: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Destination',
+      ref: 'SubDestinations',
     },
   },
   { timestamps: true }

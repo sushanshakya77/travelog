@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as fs from 'fs';
 import multer = require('multer');
-import path = require('path');
+import { join } from 'path';
 import {
   getUserInfo,
   resetPassword,
@@ -13,33 +13,33 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (_, __, cb) {
-    fs.mkdirSync('apps/backend/public/images/profilePicture/', {
+    fs.mkdirSync(join(__dirname, 'public/images/profilePicture/'), {
       recursive: true,
     });
 
-    cb(null, 'apps/backend/public/images/profilePicture/');
+    cb(null, join(__dirname, 'public/images/profilePicture/'));
   },
   filename: function (_, file, cb) {
-    cb(null, file.originalname);
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
 const upload = multer({
   storage: storage,
   fileFilter: function (_, file, cb) {
-    const regex = new RegExp(/\.(gif|jpe?g|jpg|tiff?|png|webp|bmp)$/i);
-    const ext = path.extname(file.originalname);
+    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpeg'];
 
-    if (regex.test(ext)) {
+    if (allowedFileTypes.includes(file.mimetype)) {
       return cb(null, true);
+    } else {
+      cb(null, false);
     }
-    return cb(new Error('Only images with jpeg/png/gif/webp/bmp allowed'));
   },
 });
 
 router.get('/', getUserInfo);
 router.patch('/:id', updateUserInfo);
-router.patch('/addProfile/:id', upload.single('profile'), uploadProfile);
+router.patch('/addProfile/:id', upload.single('profilePicture'), uploadProfile);
 router.patch('/reset/:id', resetPassword);
 
 export default router;

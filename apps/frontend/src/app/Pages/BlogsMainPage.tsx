@@ -15,6 +15,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Categories, IBlog } from '../models/Blogs';
+import { Status } from '../models/Trips';
 
 const BlogsMainPage = () => {
   const { data: blogData, refetch: blogRefetch } = useQuery<IBlog[]>(
@@ -28,33 +29,37 @@ const BlogsMainPage = () => {
     <div>
       <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>
-          <Toolbar>
-            <Typography
-              variant="h4"
-              sx={{ lineHeight: '80px', fontWeight: '500' }}
-            >
-              Featured Blogs:
-            </Typography>
-            <div style={{ flexGrow: 1 }} />
-            {/* <Link to="addBlog">
+          <Typography
+            variant="h4"
+            sx={{ lineHeight: '60px', fontWeight: '500' }}
+          >
+            Featured Blogs:
+          </Typography>
+          {/* <Link to="addBlog">
           <Button
             sx={{ textTransform: 'none', color: '#2c3e50' }}
           >
             Add Your Blog
           </Button>{' '}
         </Link> */}
-          </Toolbar>
+          <Grid xs={12}>
+            <Typography variant="body2" sx={{ fontSize: '15px' }}>
+              Explore what peole are saying about the world.
+            </Typography>
+          </Grid>
         </Grid>
+
         {allBlogData?.slice(0, 2).map(
-          (blog) =>
-            blog.categories === Categories.Featured && (
+          (blog, index) =>
+            (blog.categories === Categories.Featured ||
+              blog.status === Status.Public) && (
               <Grid item xs={12} sm={6} md={6} key={blog._id}>
                 <Link to={`/singleBlog/${blog._id}`}>
                   <Card sx={{ mt: '15px' }} elevation={0}>
                     <CardMedia
                       component="img"
                       height="140"
-                      image="https://www.awwwards.com/awards/images/2019/05/illustration-web-design-2-cover.jpg"
+                      image={blog.img}
                       alt="gg"
                       sx={{
                         backgroundSize: 'cover',
@@ -98,49 +103,6 @@ const BlogsMainPage = () => {
         {/* {allBlogData?.map(
       (blog) => blog.categories === Categories.Popular && <div>hi</div>
     )} */}
-
-        <Grid item xs={12} sm={6} md={6}>
-          <Card sx={{ mt: '15px' }} elevation={0}>
-            <CardMedia
-              component="img"
-              height="140"
-              image="https://miro.medium.com/max/1400/1*SeoJ8tDtFHdpoU1xxjI1UQ.jpeg"
-              alt="gg"
-              sx={{
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'brightness(90%)',
-                height: '300px',
-                transition: '0.3s ease-in-out',
-                top: 0,
-                '&:hover': {
-                  filter: 'brightness(100%)',
-                },
-              }}
-            />
-            <CardContent sx={{ backgroundColor: '#DEF2F1' }}>
-              <Typography
-                gutterBottom
-                variant="h6"
-                sx={{
-                  zIndex: 9,
-                  // bottom: 24,
-                  // left: 24,
-                  // position: 'absolute',
-                  color: 'black',
-                  textAlign: 'center',
-                }}
-                component="div"
-              >
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iure
-                ipsum odit nihil. Odio, similique.
-              </Typography>
-              <Typography sx={{ display: 'flex', justifyContent: 'center' }}>
-                by hernandez
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
       <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>

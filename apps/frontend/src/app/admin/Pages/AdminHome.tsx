@@ -189,7 +189,7 @@ export default function AdminHome() {
           <Divider />
 
           <Divider />
-          <Link to="destination">
+          <Link to="/admin">
             <ListItemButton
               sx={{
                 minHeight: 48,

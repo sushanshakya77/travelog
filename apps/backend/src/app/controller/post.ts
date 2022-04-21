@@ -2,6 +2,7 @@ import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 import Post from '../model/postModel';
 import User from '../model/userModel';
 import * as express from 'express';
+import { IUser } from './user';
 
 export const createPost = async (
   req: express.Request,
@@ -14,10 +15,7 @@ export const createPost = async (
       postedBy: req.session.user._id,
     };
 
-    // const filePath =
-    //   req.protocol + '://' + req.hostname + ':' + 3333 + '/' + req.file.path;
-    // const img = filePath;
-    const img = req.file.path;
+    const img = `images/post/${req.file.filename}`;
 
     const newPost = new Post({ ...data, img: img });
     const savedPost = await newPost.save();
@@ -86,7 +84,8 @@ export const getAllPosts = async (
 ) => {
   try {
     const posts = await Post.find()
-      .populate('postedBy', '_id username')
+      .populate('postedBy', '_id username firstName lastName')
+      .populate('destination', '_id title')
       .sort({ createdAt: -1 });
     return res.status(200).json(posts);
   } catch (err) {
@@ -94,24 +93,18 @@ export const getAllPosts = async (
   }
 };
 
-//component to like and dislike a post
+//like and dislike post
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
-    const user = await User.findById(userId);
+    const user = req.session.user;
     const post = await Post.findById(id);
-    if (refreshTokenCheck) {
-      if (user.likedPosts.includes(id)) {
-        user.likedPosts.splice(user.likedPosts.indexOf(id), 1);
-        post.likes--;
-      } else {
-        user.likedPosts.push(id);
-        post.likes++;
-      }
-      await user.save();
-      await post.save();
-      res.json(post);
+    if (!post.likes.includes(user._id)) {
+      await post.updateOne({ $push: { likes: user._id } });
+      res.status(200).json('The post has been liked');
+    } else {
+      await post.updateOne({ $pull: { likes: user._id } });
+      res.status(200).json('The post has been disliked');
     }
   } catch (err) {
     res.status(500).json(err);

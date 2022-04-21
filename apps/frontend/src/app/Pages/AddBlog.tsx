@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IBlog, Tags } from '../models/Blogs';
-import { IDestination } from '../models/Destination';
+import { IDestination, ISubDestination } from '../models/Destination';
 import { Roles } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
@@ -38,9 +38,9 @@ const AddBlog = () => {
       });
     });
   };
-  const { data: destinationData } = useQuery<IDestination[]>(
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
     'destinations',
-    () => axios.get('api/destinations').then((res) => res.data)
+    () => axios.get('api/subDestinations').then((res) => res.data)
   );
 
   return (
@@ -58,7 +58,7 @@ const AddBlog = () => {
         <Grid item xs={12} md={6}>
           <ControlledTextField
             Component={RedditTextField}
-            name="image"
+            name="img"
             label="Images(Link or Upload)"
             control={control}
             fullWidth
@@ -107,13 +107,13 @@ const AddBlog = () => {
         )}
 
         <Grid item xs={12} md={6}>
-          {destinationData && (
+          {subDestinationData && (
             <Controller
               render={({ field }) => (
                 <Autocomplete
                   {...field}
                   fullWidth
-                  options={destinationData}
+                  options={subDestinationData}
                   getOptionLabel={(option) => option.title}
                   renderInput={(params) => (
                     <RedditTextField

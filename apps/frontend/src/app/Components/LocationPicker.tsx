@@ -50,7 +50,7 @@ export default function LocationPickerDialog({
   const { user } = useAuthentication();
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
-    () => axios.get('api/destinations').then((res) => res.data)
+    () => axios.get('api/subDestinations').then((res) => res.data)
   );
   const { data: tripData, refetch: tripRefetch } = useQuery<ITrip[]>(
     'trips',

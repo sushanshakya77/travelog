@@ -16,11 +16,13 @@ import {
   Button,
   TextField,
   Rating,
+  CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Navigate, useNavigate, useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import { IBlog } from '../models/Blogs';
 import dayjs from 'dayjs';
 import LocationPickerDialog from '../Components/LocationPicker';
@@ -43,7 +45,6 @@ const SingleBlog = () => {
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  console.log(tripForBlog);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -71,7 +72,10 @@ const SingleBlog = () => {
     () =>
       axios
         .get(`/api/blogs/user/${blogData?.postedBy?._id}`)
-        .then((res) => res.data)
+        .then((res) => res.data),
+    {
+      refetchInterval: 100,
+    }
   );
 
   const {
@@ -113,6 +117,7 @@ const SingleBlog = () => {
   };
 
   const fromTrip = blogData?._id;
+
   return (
     <div style={{ margin: '0px 20px 0px 20px' }}>
       <Grid container>
@@ -179,7 +184,7 @@ const SingleBlog = () => {
             xs={12}
             sx={{
               mt: '20px',
-              backgroundImage: 'url(https://source.unsplash.com/random)',
+              backgroundImage: `url(${blogData?.img})`,
               backgroundRepeat: 'no-repeat',
               backgroundColor: (t) =>
                 t.palette.mode === 'light'
@@ -265,61 +270,69 @@ const SingleBlog = () => {
                 More from {blogData?.postedBy.username}:
               </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <Card
-                sx={{
-                  padding: '25px',
-                }}
-                elevation={0}
-              >
-                <Divider sx={{ mb: '15px' }} />
-                {blogUserData?.map((blog) => (
-                  <>
-                    <Grid container key={blog._id}>
-                      <Grid item xs={8}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                          }}
-                        >
-                          <Typography variant="h6">{blog.title}</Typography>
-                        </div>
+            {!blogUserData ? (
+              <CircularProgress />
+            ) : (
+              <Grid item xs={12}>
+                <Card
+                  sx={{
+                    padding: '25px',
+                  }}
+                  elevation={0}
+                >
+                  <Divider sx={{ mb: '15px' }} />
+                  {blogUserData
+                    ?.filter((blog) => blog._id !== blogData?._id)
+                    .map((blog) =>
+                      blog ? (
+                        <Link to={`/singleBlog/${blog._id}`}>
+                          <Grid container key={blog._id}>
+                            <Grid item xs={8}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  flexWrap: 'wrap',
+                                }}
+                              >
+                                <Typography variant="h6">
+                                  {blog.title}
+                                </Typography>
+                              </div>
 
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          Lorem, ipsum dolor sit amet consectetur adipisicing
-                          elit. Eos animi soluta tenetur rem natus, hic,
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <div
-                          style={{
-                            backgroundSize: 'cover',
-                            height: '100px',
-                            width: '100px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <img
-                            src="https://source.unsplash.com/random"
-                            alt="gg"
-                          />
-                        </div>
-                      </Grid>
-                    </Grid>
-                    <Divider sx={{ my: '15px' }} />
-                  </>
-                ))}
-              </Card>
-            </Grid>
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                }}
+                              >
+                                {blog.description}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                              <div
+                                style={{
+                                  backgroundSize: 'cover',
+                                  height: '100px',
+                                  width: '100px',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                <img src={blog.img} alt="gg" />
+                              </div>
+                            </Grid>
+                          </Grid>
+                          <Divider sx={{ my: '15px' }} />
+                        </Link>
+                      ) : (
+                        <div>No Blogs from user</div>
+                      )
+                    )}
+                </Card>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>{' '}

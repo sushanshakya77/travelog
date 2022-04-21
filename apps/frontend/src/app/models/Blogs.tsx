@@ -6,7 +6,7 @@ import { ITrip, Status } from './Trips';
 export interface IBlog extends IBaseMongoInterface {
   title: string;
   description: string;
-  image: string;
+  img: string;
   postedBy: IUser;
   categories: Categories;
   destination: IDestination;

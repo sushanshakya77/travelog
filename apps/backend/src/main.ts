@@ -10,9 +10,10 @@ import subdestination from '../src/app/routes/subDestination';
 import post from '../src/app/routes/post';
 import trip from '../src/app/routes/trip';
 import blogs from '../src/app/routes/blog';
+import { join } from 'path';
 
 const app = express();
-
+app.use(express.static(join(__dirname, 'public')));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

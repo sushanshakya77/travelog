@@ -53,11 +53,12 @@ export const reviewDestination: RequestHandler = async (req, res) => {
     postedBy: user._id,
   };
 
-  console.log(req.body);
+  console.log(reply);
   await Destinations.findByIdAndUpdate(
     req.params.id,
     {
       $push: { reviews: review },
+      $set: { 'reviews.$.replies': reply },
       // 'reviews.replies': reply,
     },
     { new: true }

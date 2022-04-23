@@ -61,16 +61,7 @@ export default function AddProfile({
   console.log(watch('profilePicture'));
   return (
     <div>
-      <Dialog
-        PaperComponent={(props) => (
-          <Paper {...(props as never)} component={'form'}></Paper>
-        )}
-        open={openProfile}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleCloseProfile}
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <Dialog open={openProfile} TransitionComponent={Transition}>
         <DialogTitle>Choose your profile picture</DialogTitle>
         <DialogContent>
           <Button
@@ -98,6 +89,7 @@ export default function AddProfile({
                   setImage(fileList[0]);
                 }}
               />
+
               <div
                 style={{
                   display: 'flex',
@@ -125,7 +117,9 @@ export default function AddProfile({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseProfile}>Cancel</Button>
-          <Button type="submit">Set as Profile Picture</Button>
+          <Button onClick={handleSubmit(onSubmit)}>
+            Set as Profile Picture
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

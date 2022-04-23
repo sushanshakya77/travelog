@@ -21,7 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
@@ -83,8 +83,12 @@ const SubDestination = () => {
   };
   console.log(user);
   const { data: subDestinationData, refetch: subDestinationRefetch } =
-    useQuery<ISubDestination>('specificsubDestination', () =>
-      axios.get(`api/subDestinations/${id}`).then((res) => res.data)
+    useQuery<ISubDestination>(
+      'specificsubDestination',
+      () => axios.get(`api/subDestinations/${id}`).then((res) => res.data),
+      {
+        refetchInterval: 1000,
+      }
     );
   const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
     axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
@@ -116,10 +120,13 @@ const SubDestination = () => {
       });
   };
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
-
+  const average = useCallback(
+    (arr: number[]) => {
+      const sum = arr.reduce((a, b) => a + b, 0);
+      return sum / arr.length;
+    },
+    [subDestinationData]
+  );
   return (
     <div>
       <Container sx={{ padding: '40px' }} maxWidth="lg">
@@ -131,12 +138,21 @@ const SubDestination = () => {
             <Grid item xs={12}>
               <Rating
                 readOnly
+                // value={
+                //   subDestinationData &&
+                //   average(
+                //     subDestinationData.reviews.map(
+                //       (r) => r.reviewRating as number
+                //     )
+                //   )
+                // }
                 value={subDestinationData?.rating}
                 precision={0.5}
               />
             </Grid>
             <Typography variant="h6" sx={{ marginTop: '4px' }}>
-              Rating: {subDestinationData?.rating}
+              Rating:
+              {subDestinationData?.rating}
             </Typography>
           </Grid>
           <Typography variant="h6">Category:</Typography>
@@ -167,11 +183,11 @@ const SubDestination = () => {
             </Typography>
           </div>
         </Grid>
-        {blogData && (
+        {blogData === [] && (
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="h5">
-                {blogData && 'Blogs related to the Destination:'}
+                Blogs related to the Destination:
               </Typography>
             </Grid>
             {blogData?.map((trip, index) => (
@@ -330,7 +346,7 @@ const SubDestination = () => {
                     }}
                   >
                     <Rating
-                      value={review?.reviewRating}
+                      value={review.reviewRating}
                       IconContainerComponent={IconContainer}
                       highlightSelectedOnly
                       readOnly
@@ -345,7 +361,7 @@ const SubDestination = () => {
                     }}
                   >
                     <Typography variant="body1">
-                      "{review?.reviewText}"
+                      "{review.reviewText}"
                     </Typography>
                   </div>
                   {/* <div

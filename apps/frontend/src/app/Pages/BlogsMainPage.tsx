@@ -287,7 +287,7 @@ const BlogsMainPage = () => {
                   <CardMedia
                     component="img"
                     height="140"
-                    image="https://source.unsplash.com/random"
+                    image={blog.img}
                     alt="gg"
                     sx={{
                       backgroundSize: 'cover',
@@ -349,7 +349,7 @@ const BlogsMainPage = () => {
                   <CardMedia
                     component="img"
                     height="140"
-                    image="https://source.unsplash.com/random"
+                    image={blog.img}
                     alt="gg"
                     sx={{
                       backgroundSize: 'cover',

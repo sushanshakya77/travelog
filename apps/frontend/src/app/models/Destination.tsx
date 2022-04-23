@@ -1,3 +1,5 @@
+import { IUser } from './User';
+
 export interface IDestination {
   _id: string;
   img: string;
@@ -23,6 +25,7 @@ export interface ISubDestination {
 }
 
 export interface IReview {
+  rating: any;
   _id: string;
   postedBy: IUser;
   reviewRating: number | null;
@@ -34,9 +37,4 @@ export interface IReply {
   _id: string;
   postedBy: IUser;
   replyText: string;
-}
-
-interface IUser {
-  _id: string;
-  username: string;
 }

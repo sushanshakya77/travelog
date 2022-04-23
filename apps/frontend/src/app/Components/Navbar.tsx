@@ -208,7 +208,10 @@ function Navbar() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                <Avatar
+                  sx={{ width: 32, height: 32 }}
+                  src={`http://localhost:3333/${user.profilePicture}`}
+                ></Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -253,7 +256,9 @@ function Navbar() {
                 >
                   <ListItem button>
                     <ListItemIcon>
-                      <Avatar />
+                      <Avatar
+                        src={`http://localhost:3333/${user.profilePicture}`}
+                      />
                     </ListItemIcon>
                     <ListItemText primary={user?.username} />
                   </ListItem>

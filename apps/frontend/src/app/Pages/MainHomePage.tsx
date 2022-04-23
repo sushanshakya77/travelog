@@ -22,7 +22,9 @@ import Banner from '../Components/Banner';
 import { IBlog } from '../models/Blogs';
 import { IDestination, ISubDestination } from '../models/Destination';
 import { HoverCard } from './Home';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 const MainHomePage = () => {
+  const { user } = useAuthentication();
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
     () => axios.get('api/destinations').then((res) => res.data)
@@ -34,6 +36,12 @@ const MainHomePage = () => {
   const { data: allBlogData } = useQuery<IBlog[]>('allblogs', () =>
     axios.get(`api/blogs/all`).then((res) => res.data)
   );
+
+  const average = (arr: number[]) => {
+    const sum = arr.reduce((a, b) => a + b, 0);
+    return sum / arr.length;
+  };
+
   return (
     <div>
       <Grid container>
@@ -81,7 +89,14 @@ const MainHomePage = () => {
                           {content.title}
                         </Typography>
                         <Rating
-                          value={content.rating}
+                          value={
+                            content &&
+                            average(
+                              content.reviews.map(
+                                (review) => review.reviewRating as number
+                              )
+                            )
+                          }
                           precision={0.5}
                           readOnly
                           size="small"
@@ -212,7 +227,7 @@ const MainHomePage = () => {
                       component="img"
                       height="140"
                       alt="gg"
-                      image="https://source.unsplash.com/random"
+                      image={content.img}
                       // image={content.image}
                       sx={{
                         backgroundSize: 'cover',
@@ -233,6 +248,7 @@ const MainHomePage = () => {
                         WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
                         MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
                       }}
+                      src={`http://localhost:3333/${content.postedBy.profilePicture}`}
                     ></Avatar>
                     <Typography
                       gutterBottom

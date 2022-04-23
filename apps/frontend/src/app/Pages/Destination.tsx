@@ -22,7 +22,7 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
@@ -36,6 +36,8 @@ import { ITrip } from '../models/Trips';
 import { IUser } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 import { HoverCard } from './Home';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 
 const customIcons: {
   [index: string]: {
@@ -74,7 +76,14 @@ const Destination = () => {
   const { user } = useAuthentication();
   const [open, setOpen] = React.useState(false);
   const [reviews, setreviews] = React.useState<IReview>();
-
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm<IReview>({});
   const handleClickOpen = (data: IReview) => {
     setOpen(true);
     setreviews(data);
@@ -85,8 +94,12 @@ const Destination = () => {
   };
   console.log(user);
   const { data: destinationData, refetch: destinationRefetch } =
-    useQuery<IDestination>('specificDestination', () =>
-      axios.get(`api/destinations/${id}`).then((res) => res.data)
+    useQuery<IDestination>(
+      'specificDestination',
+      () => axios.get(`api/destinations/${id}`).then((res) => res.data),
+      {
+        refetchInterval: 1000,
+      }
     );
   const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
     axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
@@ -97,15 +110,6 @@ const Destination = () => {
     'userInfo',
     async () => await axios.get('api/userInfo').then((res) => res.data)
   );
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    reset,
-    register,
-    formState: { errors },
-  } = useForm<IReview>({});
 
   const onSubmit: SubmitHandler<IReview> = async (data) => {
     console.log(data);
@@ -120,17 +124,14 @@ const Destination = () => {
       });
   };
 
-  // const averageRating = (reviews: IReview[]) => {
-  //   let sum = 0;
-  //   reviews.forEach((review) => {
-  //     sum += review.reviewRating;
-  //   });
-  //   return sum / reviews.length;
-  // };
-
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
+  //average from [3,4,5]
+  const average = useCallback(
+    (arr: number[]) => {
+      const sum = arr.reduce((a, b) => a + b, 0);
+      return sum / arr.length;
+    },
+    [destinationData]
+  );
 
   return (
     <div>
@@ -143,21 +144,29 @@ const Destination = () => {
             <Grid item xs={12}>
               <Rating
                 readOnly
-                value={destinationData?.rating}
+                value={
+                  destinationData &&
+                  average(
+                    destinationData.reviews.map((r) => r.reviewRating as number)
+                  )
+                }
                 precision={0.5}
               />
             </Grid>
             <Typography variant="h6" sx={{ marginTop: '4px' }}>
-              Rating: {destinationData?.rating}
+              Rating:{' '}
+              {destinationData &&
+                average(
+                  destinationData.reviews.map((r) => r.reviewRating as number)
+                )}
             </Typography>
           </Grid>
           <Typography variant="h6">Categories:</Typography>
-          {/* {destinationData?.categories?.map((category, index) => (
-            <Typography sx={{ marginTop: '4px', display: 'flex' }} key={index}>
-              {', '}
-              {category}
-            </Typography>
-          ))} */}
+          <Typography sx={{ marginTop: '4px', display: 'flex' }}>
+            {' '}
+            {destinationData?.categories}
+          </Typography>
+
           <div>
             <Card
               component="img"
@@ -179,7 +188,7 @@ const Destination = () => {
             </Typography>
           </div>
         </Grid>
-        {blogData && (
+        {blogData === [] && (
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="h5">
@@ -223,6 +232,7 @@ const Destination = () => {
                           WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
                           MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
                         }}
+                        src={`http://localhost:3333/${blog.postedBy.profilePicture}`}
                       ></Avatar>
                       <Typography
                         gutterBottom
@@ -259,9 +269,11 @@ const Destination = () => {
                   flexWrap: 'wrap',
                 }}
               >
-                <Avatar></Avatar>
+                <Avatar
+                  src={`http://localhost:3333/${user.profilePicture}`}
+                ></Avatar>
                 <Typography variant="h6" sx={{ ml: '8px' }}>
-                  {userInfoData?.username}
+                  {user?.username}
                 </Typography>
 
                 <Rating
@@ -300,6 +312,51 @@ const Destination = () => {
                 }}
               />
             </Grid>
+            {/* <Carousel
+              additionalTransfrom={0}
+              arrows
+              autoPlaySpeed={3000}
+              centerMode={false}
+              containerClass="container"
+              dotListClass=""
+              draggable
+              focusOnSelect={false}
+              infinite={false}
+              keyBoardControl
+              minimumTouchDrag={80}
+              renderButtonGroupOutside={false}
+              renderDotsOutside={false}
+              responsive={{
+                desktop: {
+                  breakpoint: {
+                    max: 3000,
+                    min: 1024,
+                  },
+                  items: 3,
+                  partialVisibilityGutter: 40,
+                },
+                mobile: {
+                  breakpoint: {
+                    max: 464,
+                    min: 0,
+                  },
+                  items: 1,
+                  partialVisibilityGutter: 30,
+                },
+                tablet: {
+                  breakpoint: {
+                    max: 1024,
+                    min: 464,
+                  },
+                  items: 2,
+                  partialVisibilityGutter: 30,
+                },
+              }}
+              showDots={false}
+              sliderClass=""
+              slidesToSlide={1}
+              swipeable
+            > */}
             {destinationData?.reviews?.map((review, index) => (
               <Grid item xs={12} mt="10px" md={4}>
                 <HoverCard
@@ -316,7 +373,9 @@ const Destination = () => {
                     }}
                     key={review._id}
                   >
-                    <Avatar></Avatar>
+                    <Avatar
+                      src={`http://localhost:3333/${review.postedBy.profilePicture}`}
+                    ></Avatar>
                     <IconButton
                       sx={{ float: 'right', position: 'absolute', right: 16 }}
                     >
@@ -405,6 +464,7 @@ const Destination = () => {
                 </HoverCard>
               </Grid>
             ))}
+            {/* </Carousel> */}
           </Grid>
         </Grid>
         <Replies reviews={reviews} open={open} handleClose={handleClose} />

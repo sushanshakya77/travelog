@@ -1,8 +1,6 @@
 import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 import Post from '../model/postModel';
-import User from '../model/userModel';
 import * as express from 'express';
-import { IUser } from './user';
 
 export const createPost = async (
   req: express.Request,
@@ -84,7 +82,7 @@ export const getAllPosts = async (
 ) => {
   try {
     const posts = await Post.find()
-      .populate('postedBy', '_id username firstName lastName')
+      .populate('postedBy', '_id username firstName lastName profilePicture')
       .populate('destination', '_id title')
       .sort({ createdAt: -1 });
     return res.status(200).json(posts);
@@ -111,7 +109,7 @@ export const likePost = async (req, res) => {
   }
 };
 
-export const getSinglePost = async (req, res) => {
+export const getPostByUser = async (req, res) => {
   try {
     await Post.findById(req.params.id)
       .then((data) => {
@@ -125,38 +123,14 @@ export const getSinglePost = async (req, res) => {
   }
 };
 
-// export const getTimelinePosts = async (req, res) => {
-//   try {
-//     const currentUser = await User.findById(req.params.userId);
-//     const userPosts = await Post.find({ userId: currentUser._id });
-//     const friendPosts = await Promise.all(
-//       currentUser.followings.map((friendId) => {
-//         return Post.find({ userId: friendId });
-//       })
-//     );
-//     res.status(200).json(userPosts.concat(...friendPosts));
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// };
-export const getTimelinePosts = async (req, res) => {
-  Post.find()
-    .populate('postedBy', '_id name')
-    .populate('comments.postedBy', '_id name')
-    .sort('-createdAt')
-    .then((posts) => {
-      res.json({ posts });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
 export const getUserPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ postedBy: req.session.user._id });
-    res.status(200).json(posts);
+    const posts = await Post.find({ postedBy: req.params.id })
+      .populate('postedBy', '_id username firstName lastName')
+      .populate('destination', '_id title')
+      .sort({ createdAt: -1 });
+    return res.status(200).json(posts);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 };

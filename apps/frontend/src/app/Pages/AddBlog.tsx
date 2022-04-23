@@ -27,7 +27,6 @@ const AddBlog = () => {
 
   const onSubmit: SubmitHandler<IBlog> = async (data) => {
     await axios.post('/api/blogs', data).then((res) => {
-      navigate('/blogs');
       enqueueSnackbar('Blog successfully added!', {
         variant: 'success',
         autoHideDuration: 3000,
@@ -36,6 +35,7 @@ const AddBlog = () => {
           horizontal: 'left',
         },
       });
+      navigate(`/blogs`);
     });
   };
   const { data: subDestinationData } = useQuery<ISubDestination[]>(

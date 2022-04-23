@@ -5,6 +5,7 @@ import {
   Edit,
   Event,
   Favorite,
+  FavoriteBorder,
   LocationOnOutlined,
   MoreVert,
   Settings,
@@ -44,7 +45,10 @@ import AddProfile from '../Components/AddProfile';
 import EditProfile from '../Components/EditProfile';
 import ResetPassword from '../Components/ResetPassword';
 import { IBlog } from '../models/Blogs';
+import { IPost } from '../models/Post';
+import { Status } from '../models/Trips';
 import { IUser } from '../models/User';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const theme = createTheme({
   palette: {
@@ -89,27 +93,44 @@ function a11yProps(index: number) {
 }
 
 const UserInfo = () => {
-  const { data: userInfoData, refetch } = useQuery<IUser>(
-    'userInfo',
-    async () => await axios.get('api/userInfo').then((res) => res.data)
-  );
+  const [isLiked, setIsLiked] = useState(false);
+
+  const likeHandler = (post: IPost) => {
+    try {
+      axios.put(`/api/posts/${post._id}/like`).then(() => postRefetch());
+    } catch (err) {
+      console.log(err);
+    }
+    setIsLiked(!isLiked);
+  };
+  const handleDelete = async (id: string) => {
+    console.log(id);
+    await axios.delete(`/api/posts/delete/${id}`).then(() => postRefetch());
+  };
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);
   //add skeleton loading
   const [loading, setLoading] = useState(false);
-
   const { reset } = useForm<IUser>();
+  const { user } = useAuthentication();
 
+  const { data: userInfoData, refetch } = useQuery<IUser>(
+    'userInfo',
+    async () => await axios.get('api/userInfo').then((res) => res.data)
+  );
+  const { data: postsData, refetch: postRefetch } = useQuery<IPost[]>(
+    'userposts',
+    () => axios.get(`/api/posts/profile/${user._id}`).then((res) => res.data)
+  );
   const handleClickOpen = () => {
     setOpen(true);
-    reset();
+
     handleCloseMenu();
   };
 
   const handleClose = () => {
     setOpen(false);
-    reset();
   };
   const handleFormClose = () => {
     setForm(false);
@@ -204,6 +225,7 @@ const UserInfo = () => {
                       // src={userInfoData?.profilePicture}
                       // src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
                       // src="https://source.unsplash.com/random"
+                      src={`http://localhost:3333/${user.profilePicture}`}
                       sx={{
                         height: '128px',
                         width: '128px',
@@ -358,50 +380,117 @@ const UserInfo = () => {
             </Grid>
             <Grid item xs={9.5}>
               <TabPanel value={value} index={0}>
-                <Card
-                  sx={{
-                    width: '100%',
-                    borderRadius: '6px',
-                    mt: '-20px',
-                    mx: 'auto',
-                  }}
-                  elevation={0}
-                >
-                  <CardHeader
-                    avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
-                    action={
-                      <IconButton aria-label="settings">
-                        <MoreVert />
-                      </IconButton>
-                    }
-                    title={
-                      userInfoData?.firstName +
-                      ' ' +
-                      userInfoData?.lastName +
-                      ' was in '
-                    }
-                    subheader={dayjs().format('MMMM DD YYYY, h:mm:ss a')}
-                  />
-                  <CardMedia
-                    component="img"
-                    height="20"
-                    image="https://source.unsplash.com/random"
-                    alt="random"
-                    sx={{
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
+                {postsData?.map((post) => (
+                  // <Grid item xs={12} md={8}>
+                  <Card
+                    sx={{ width: '100%', borderRadius: '6px', mt: '-24px' }}
+                    elevation={0}
+                    key={post._id}
+                  >
+                    <CardHeader
+                      avatar={<Avatar></Avatar>}
+                      action={
+                        <IconButton aria-label="settings" onClick={handleClick}>
+                          <MoreVert />
+                        </IconButton>
+                      }
+                      title={`${post.postedBy.firstName}
+                    ${post.postedBy.lastName} 
+                    was in ${post.destination.title}`}
+                      subheader={dayjs(post.createdAt).format(
+                        'MMMM DD YYYY, h:mm a'
+                      )}
+                    />
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={openMenu}
+                      onClose={handleCloseMenu}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      <MenuItem onClick={() => handleDelete(post._id)}>
+                        Delete Post
+                      </MenuItem>
+                    </Menu>
+                    <CardMedia
+                      component="img"
+                      height="20"
+                      image={`http://localhost:3333/${post.img}`}
+                      alt="random"
+                      sx={{
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                    <CardContent>
+                      {post?.postedBy?.username}: "{post.caption}"
+                      <Typography variant="body2" component="div">
+                        Liked by: {post.likes.length}
+                      </Typography>
+                    </CardContent>
+                    <CardActions disableSpacing>
+                      {isLiked || post.likes.includes(user._id as never) ? (
+                        <IconButton aria-label="add to favorites">
+                          <Favorite
+                            sx={{ color: '#fd4444' }}
+                            onClick={() => likeHandler(post)}
+                          />
+                        </IconButton>
+                      ) : (
+                        <IconButton aria-label="add to favorites">
+                          <FavoriteBorder onClick={() => likeHandler(post)} />
+                        </IconButton>
+                      )}
+
+                      {/* <IconButton aria-label="share">
+                    <ChatOutlined />
+                  </IconButton>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
                     }}
-                  />
-                  <CardContent>
-                    {userInfoData?.username}
-                    <Typography variant="body2">pray</Typography>
-                  </CardContent>
-                  <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <Favorite />
-                    </IconButton>
-                  </CardActions>
-                </Card>
+                  >
+                    <TextField
+                      size="small"
+                      margin="dense"
+                      placeholder="Reply to this comment"
+                      {...register('replyText')}
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton onClick={handleSubmit(onSubmit)}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="icon icon-tabler icon-tabler-brand-telegram"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="#2c3e50"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+                            </svg>
+                          </IconButton>
+                        ),
+                      }}
+                    />
+                  </div> */}
+                    </CardActions>
+                  </Card>
+                  // </Grid>
+                ))}
               </TabPanel>
               <TabPanel value={value} index={1}>
                 <Card
@@ -432,8 +521,68 @@ const UserInfo = () => {
                             }}
                           >
                             <Typography variant="h6">{blog.title}</Typography>
-                            <Typography variant="body2" sx={{ ml: '8px' }}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                ml: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
                               by {blog.postedBy.username}
+                              {blog.status === Status.Public ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="icon icon-tabler icon-tabler-world"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="#2c3e50"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <circle cx="12" cy="12" r="9" />
+                                  <line x1="3.6" y1="9" x2="20.4" y2="9" />
+                                  <line x1="3.6" y1="15" x2="20.4" y2="15" />
+                                  <path d="M11.5 3a17 17 0 0 0 0 18" />
+                                  <path d="M12.5 3a17 17 0 0 1 0 18" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="icon icon-tabler icon-tabler-lock"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="#fc1313"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <rect
+                                    x="5"
+                                    y="11"
+                                    width="14"
+                                    height="10"
+                                    rx="2"
+                                  />
+                                  <circle cx="12" cy="16" r="1" />
+                                  <path d="M8 11v-4a4 4 0 0 1 8 0v4" />
+                                </svg>
+                              )}
                             </Typography>
                           </div>
                           <Typography
@@ -452,14 +601,11 @@ const UserInfo = () => {
                             style={{
                               backgroundSize: 'cover',
                               height: '100px',
-                              width: '100px',
+                              width: '150px',
                               overflow: 'hidden',
                             }}
                           >
-                            <img
-                              src="https://source.unsplash.com/random"
-                              alt="gg"
-                            />
+                            <img src={blog.img} alt="gg" />
                           </div>
                         </Grid>
                       </Grid>

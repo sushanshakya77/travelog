@@ -53,11 +53,11 @@ const SearchBlogs = () => {
                     style={{
                       backgroundSize: 'cover',
                       height: '100px',
-                      width: '100px',
+                      width: '200px',
                       overflow: 'hidden',
                     }}
                   >
-                    <img src="https://source.unsplash.com/random" alt="gg" />
+                    <img src={blog.img} alt="gg" />
                   </div>
                 </Grid>
               </Grid>

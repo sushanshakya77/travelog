@@ -58,7 +58,6 @@ export const reviewDestination: RequestHandler = async (req, res) => {
     req.params.id,
     {
       $push: { reviews: review },
-      $set: { 'reviews.$.replies': reply },
       // 'reviews.replies': reply,
     },
     { new: true }
@@ -74,7 +73,7 @@ export const reviewDestination: RequestHandler = async (req, res) => {
 export const getDestinationById: RequestHandler = async (req, res) => {
   const { id } = req.params;
   await Destinations.findById(id)
-    .populate('reviews.postedBy', '_id username')
+    .populate('reviews.postedBy', '_id username profilePicture')
     .then((data) => {
       res.json(data);
     })

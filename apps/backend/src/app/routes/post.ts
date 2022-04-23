@@ -1,12 +1,9 @@
 import { getAllPosts } from './../controller/post';
 import * as express from 'express';
 import multer = require('multer');
-import path = require('path');
 import {
   createPost,
   deletePost,
-  getSinglePost,
-  getTimelinePosts,
   getUserPosts,
   likePost,
   updatePost,
@@ -58,14 +55,8 @@ router.delete('/delete/:id', deletePost);
 router.put('/:id/like', likePost);
 //get a post
 
-router.get('/:id', getSinglePost);
-
-//get timeline posts
-
-router.get('/timeline/:userId', getTimelinePosts);
-
 //get user's all posts
 
-router.get('/profile/:username', getUserPosts);
+router.get('/profile/:id', getUserPosts);
 
 export default router;

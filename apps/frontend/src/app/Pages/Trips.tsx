@@ -59,7 +59,6 @@ const Trips = () => {
               sx={{
                 height: '250px',
                 width: '100%',
-                '$:hover': { backgroundColor: '#00ADB5' },
                 borderRadius: '10px',
               }}
               disableElevation

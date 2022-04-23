@@ -25,6 +25,7 @@ export const getUserInfo: express.RequestHandler = async (
     'currentCity',
     'dob',
     'description',
+    'profilePicture',
     'createdAt',
   ]);
   return res.status(200).json(user);
@@ -46,15 +47,15 @@ export const updateUserInfo: express.RequestHandler = async (
   }
 };
 
-//create a new user
 export const uploadProfile: express.RequestHandler = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const image = `images/profilePicture/${req?.file?.filename}`;
+    console.log(req.file.filename);
     const addProfile = await User.findByIdAndUpdate(req.params.id, {
-      $push: { profilePicture: image },
+      profilePicture: image,
     });
 
     return res.status(200).json(addProfile);

@@ -23,6 +23,7 @@ import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IUser } from '../models/User';
 import dayjs from 'dayjs';
+import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 interface IProps {
   open: boolean;
@@ -55,6 +56,7 @@ export default function EditProfile({
   });
   const { refetch } = useQuery<IUser>('userInfo');
   const [isLoading, setIsLoading] = React.useState(false);
+  const { user } = useAuthentication();
   const onSubmit: SubmitHandler<IUser> = async (data) => {
     setIsLoading(true);
     await axios
@@ -126,7 +128,7 @@ export default function EditProfile({
               }
             >
               <Avatar
-                src=""
+                src={`http://localhost:3333/${user.profilePicture}`}
                 sx={{
                   height: '120px',
                   width: '120px',

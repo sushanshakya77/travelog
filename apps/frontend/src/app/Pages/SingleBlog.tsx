@@ -64,7 +64,10 @@ const SingleBlog = () => {
 
   const { data: blogData, refetch: blogRefetch } = useQuery<IBlog>(
     'blogsid',
-    () => axios.get(`api/blogs/${id}`).then((res) => res.data)
+    () => axios.get(`api/blogs/${id}`).then((res) => res.data),
+    {
+      refetchInterval: 1000,
+    }
   );
   console.log(blogData);
   const { data: blogUserData, refetch: blogUserRefetch } = useQuery<IBlog[]>(

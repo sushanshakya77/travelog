@@ -142,7 +142,10 @@ const Explore = () => {
                 onSubmit={handleSubmit(onSubmit)}
               >
                 <Toolbar>
-                  <Avatar sx={{ ml: '-10px', mr: '10px' }}></Avatar>
+                  <Avatar
+                    sx={{ ml: '-10px', mr: '10px' }}
+                    src={`http://localhost:3333/${user.profilePicture}`}
+                  ></Avatar>
                   <div style={{ flexGrow: '1' }} />
                   <ControlledTextField
                     Component={RedditTextField}
@@ -233,7 +236,12 @@ const Explore = () => {
                 elevation={0}
               >
                 <CardHeader
-                  avatar={<Avatar sx={{ bgcolor: red[500] }}>S</Avatar>}
+                  avatar={
+                    <Avatar
+                      sx={{ bgcolor: red[500] }}
+                      src={`http://localhost:3333/${user.profilePicture}`}
+                    ></Avatar>
+                  }
                   title={userInfoData?.username}
                 />
                 <CardContent>
@@ -267,7 +275,11 @@ const Explore = () => {
             <Grid item xs={12} md={8} key={post._id}>
               <Card sx={{ width: '100%', borderRadius: '6px' }} elevation={0}>
                 <CardHeader
-                  avatar={<Avatar></Avatar>}
+                  avatar={
+                    <Avatar
+                      src={`http://localhost:3333/${post.postedBy.profilePicture}`}
+                    ></Avatar>
+                  }
                   action={
                     <IconButton aria-label="settings" onClick={handleClick}>
                       <MoreVert />

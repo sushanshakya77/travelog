@@ -25,7 +25,10 @@ export const updateBlog: express.RequestHandler = async (req, res) => {
 
 export const getAllBlogs: express.RequestHandler = async (req, res) => {
   try {
-    const blogs = await Blog.find().populate('postedBy', '_id username');
+    const blogs = await Blog.find().populate(
+      'postedBy',
+      '_id username profilePicture'
+    );
     return res.status(200).json(blogs);
   } catch (err) {
     return res.status(500).json(err);
@@ -71,10 +74,11 @@ export const getBlogsByUserId: express.RequestHandler = async (req, res) => {
 export const reviewBlog: express.RequestHandler = async (req, res) => {
   const user = req.session.user;
   const review = {
-    reviewText: req.body.reviews,
+    reviewRating: req.body.reviewRating,
+    reviewText: req.body.reviewText,
     postedBy: user._id,
   };
-  console.log(review);
+  console.log(req.body);
   await Blog.findByIdAndUpdate(
     req.params.id,
     {

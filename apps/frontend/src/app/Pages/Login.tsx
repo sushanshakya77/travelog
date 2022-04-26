@@ -83,9 +83,9 @@ export default function Login() {
     await axios
       .post('api/auth/login', data)
       .then(() => {
+        setHasError(false);
         setAuthState('loggedIn');
         window.location.reload();
-        setHasError(false);
         enqueueSnackbar('Signed In!', {
           variant: 'success',
           autoHideDuration: 4000,

@@ -124,28 +124,7 @@ const Home = () => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  <Typography variant="h6">Blog title</Typography>
-                  <Typography variant="body2" sx={{ ml: '8px' }}>
-                    by prisma{' '}
-                  </Typography>
-                </div>
-                <Typography variant="body1">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos
-                  animi soluta tenetur rem natus, hic, reiciendis eligendi quos
-                  aliquam facere cumque voluptate nostrum excepturi qui, quidem
-                  dolor delectus at harum.
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <div
-                  style={{
-                    backgroundSize: 'cover',
-                    height: '100px',
-                    width: '100px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <img src="https://source.unsplash.com/random" alt="gg" />
+                  <Typography variant="h6">No Result found!</Typography>
                 </div>
               </Grid>
             </Grid>

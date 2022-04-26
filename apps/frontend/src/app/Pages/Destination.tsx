@@ -17,6 +17,8 @@ import {
   Grid,
   IconButton,
   IconContainerProps,
+  Menu,
+  MenuItem,
   Rating,
   TextField,
   Typography,
@@ -132,6 +134,21 @@ const Destination = () => {
     },
     [destinationData]
   );
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const openMenu = Boolean(anchorEl);
+  const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDelete = async (reviewId: string) => {
+    await axios
+      .patch(`api/destinations/review/delete/${id}/${reviewId}`)
+      .then(() => destinationRefetch());
+  };
 
   return (
     <div>
@@ -362,7 +379,7 @@ const Destination = () => {
                 <HoverCard
                   sx={{ padding: '26px', position: 'relative' }}
                   elevation={0}
-                  onClick={() => handleClickOpen(review)}
+                  // onClick={() => handleClickOpen(review)}
                 >
                   <div
                     style={{
@@ -378,9 +395,24 @@ const Destination = () => {
                     ></Avatar>
                     <IconButton
                       sx={{ float: 'right', position: 'absolute', right: 16 }}
+                      onClick={handleClickMenu}
                     >
                       <MoreVert />
                     </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={openMenu}
+                      onClose={handleCloseMenu}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      {/* <MenuItem onClick={handleClickMenu}>Edit Review</MenuItem> */}
+                      <MenuItem onClick={() => handleDelete(review._id)}>
+                        Delete Review
+                      </MenuItem>
+                    </Menu>
                   </div>
                   <div
                     style={{

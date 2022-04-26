@@ -34,6 +34,7 @@ import { HoverCard } from './Home';
 import { IconContainer } from './Destination';
 import { IReview } from '../models/Destination';
 import { useSnackbar } from 'notistack';
+import Replies from '../Components/Replies';
 
 const SingleBlog = () => {
   const { id } = useParams();
@@ -64,10 +65,7 @@ const SingleBlog = () => {
 
   const { data: blogData, refetch: blogRefetch } = useQuery<IBlog>(
     'blogsid',
-    () => axios.get(`api/blogs/${id}`).then((res) => res.data),
-    {
-      refetchInterval: 1000,
-    }
+    () => axios.get(`api/blogs/${id}`).then((res) => res.data)
   );
   console.log(blogData);
   const { data: blogUserData, refetch: blogUserRefetch } = useQuery<IBlog[]>(
@@ -75,10 +73,7 @@ const SingleBlog = () => {
     () =>
       axios
         .get(`/api/blogs/user/${blogData?.postedBy?._id}`)
-        .then((res) => res.data),
-    {
-      refetchInterval: 100,
-    }
+        .then((res) => res.data)
   );
 
   const {
@@ -88,7 +83,16 @@ const SingleBlog = () => {
     reset,
     formState: { errors },
   } = useForm<IReview>({});
+  const [openReview, setOpenReview] = React.useState(false);
+  const [reviews, setreviews] = React.useState<IReview>();
+  const handleClickOpenReview = (data: IReview) => {
+    setOpenReview(true);
+    setreviews(data);
+  };
 
+  const handleCloseReview = () => {
+    setOpenReview(false);
+  };
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<IReview> = async (data) => {
     await axios
@@ -138,7 +142,10 @@ const SingleBlog = () => {
           <Grid item xs={12} sx={{ display: 'flex', alignContent: 'center' }}>
             <Grid container item xs={11}>
               <Grid item xs={1}>
-                <Avatar sx={{ width: 46, height: 46 }} />
+                <Avatar
+                  sx={{ width: 46, height: 46 }}
+                  src={`http://localhost:3333/${blogData?.postedBy.profilePicture}`}
+                />
               </Grid>
               <Grid item xs={11}>
                 <Typography variant="body1">
@@ -202,32 +209,14 @@ const SingleBlog = () => {
           <Grid item xs={12} sx={{ mt: '20px' }}>
             <Typography variant="body1">{blogData?.description}</Typography>
           </Grid>
-          {blogData?.trip && (
-            <Grid item xs={12}>
-              <Typography variant="h6">Days of trips</Typography>
-              {blogData?.trip?.days?.map((day, index) => (
-                <Accordion>
-                  <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls="panel2a-content"
-                    id="panel2a-header"
-                  >
-                    <Typography>
-                      Day {index + 1}: {day.title}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>{day.description}</Typography>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </Grid>
-          )}
         </Grid>
         <Grid item xs={4}>
           <Grid item xs={12} sx={{ padding: '30px' }}>
             <Grid item xs={12}>
-              <Avatar sx={{ width: 78, height: 78, mx: 'auto' }} />
+              <Avatar
+                sx={{ width: 78, height: 78, mx: 'auto' }}
+                src={`http://localhost:3333/${blogData?.postedBy.profilePicture}`}
+              />
             </Grid>
             <Grid item xs={12}>
               <div
@@ -336,6 +325,29 @@ const SingleBlog = () => {
                 </Card>
               </Grid>
             )}
+            {blogData?.trip && (
+              <Grid item xs={12} sx={{ py: '24px' }}>
+                <Typography variant="h6" sx={{ padding: '12px' }}>
+                  Days of trips
+                </Typography>
+                {blogData?.trip?.days?.map((day, index) => (
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMore />}
+                      aria-controls="panel2a-content"
+                      id="panel2a-header"
+                    >
+                      <Typography>
+                        Day {index + 1}: {day.title}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>{day.description}</Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>{' '}
@@ -386,6 +398,7 @@ const SingleBlog = () => {
             <HoverCard
               sx={{ padding: '26px', position: 'relative' }}
               elevation={0}
+              onClick={() => handleClickOpenReview(review)}
             >
               <div
                 style={{
@@ -396,7 +409,9 @@ const SingleBlog = () => {
                 }}
                 key={review._id}
               >
-                <Avatar></Avatar>
+                <Avatar
+                  src={`http://localhost:3333/${review.postedBy.profilePicture}`}
+                ></Avatar>
                 <IconButton
                   sx={{ float: 'right', position: 'absolute', right: 16 }}
                 >
@@ -476,6 +491,11 @@ const SingleBlog = () => {
                 />
               </div>
             </HoverCard>
+            <Replies
+              reviews={reviews}
+              open={openReview}
+              handleClose={handleCloseReview}
+            />
           </Grid>
         ))}
       </Grid>

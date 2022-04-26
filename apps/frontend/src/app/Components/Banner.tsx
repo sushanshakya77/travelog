@@ -178,13 +178,45 @@ export default function Banner({ setSearchDestination }: IBannerProps) {
                     bgcolor: 'white',
                     outline: 'none',
                     mt: '10px',
-                    ml: '-10px',
+                    ml: '-15px',
                     width: '300px',
+                    borderRadius: '25px',
+                    zIndex: 999,
+                    '& .MuiOutlinedInput-root:hover': {
+                      '& > fieldset': {
+                        border: 'none',
+                      },
+                    },
+                    '.MuiOutlinedInput-root': {
+                      border: 'none',
+                    },
+                    '&:hover': {
+                      bgcolor: 'white',
+                    },
+                    '&: MuiFilledInput-root': {
+                      backgroundColor: 'white',
+                      borderRadius: '25px',
+                      border: '1px solid #e0e0e0',
+                      '&:hover': {
+                        backgroundColor: 'white',
+                      },
+                    },
                   }}
                   renderInput={(params) => (
-                    <RedditTextField
+                    <TextField
                       {...params}
-                      label="Search"
+                      placeholder="Search"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start">
+                              <Search />
+                            </InputAdornment>
+                            {params.InputProps.startAdornment}
+                          </>
+                        ),
+                      }}
                       inputProps={{
                         ...params.inputProps,
                         autoComplete: 'disabled',

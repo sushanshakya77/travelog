@@ -11,6 +11,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import axios from 'axios';
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useQuery } from 'react-query';
 import { IUser } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
@@ -26,13 +27,11 @@ const Transition = React.forwardRef(function Transition(
 interface IProps {
   openProfile: boolean;
   handleCloseProfile: () => void;
-  userInfo: IUser;
 }
 
 export default function AddProfile({
   openProfile,
   handleCloseProfile,
-  userInfo,
 }: IProps) {
   const {
     control,
@@ -46,7 +45,7 @@ export default function AddProfile({
 
   const [image, setImage] = React.useState<File>();
   const { user } = useAuthentication();
-
+  const { refetch } = useQuery<IUser>('userInfo');
   const formData = new FormData();
   const onSubmit: SubmitHandler<IUser> = async (data) => {
     console.log(image);
@@ -56,6 +55,7 @@ export default function AddProfile({
       .then((res) => {
         console.log(res);
         handleCloseProfile();
+        refetch();
       });
   };
   console.log(watch('profilePicture'));
@@ -81,6 +81,7 @@ export default function AddProfile({
                 id="icon"
                 name="profilePicture"
                 accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
+                style={{ display: 'none' }}
                 onChange={(e) => {
                   const fileList = e.target.files;
                   if (!fileList) {
@@ -98,19 +99,25 @@ export default function AddProfile({
                   justifyContent: 'center',
                 }}
               >
-                <AddCircleOutlineOutlined />
-                <Typography
-                  variant="h6"
-                  align="center"
-                  sx={{
-                    my: '100px',
-                    textTransform: 'none',
-                    ml: '5px',
-                    lineHeight: '1.2',
-                  }}
-                >
-                  Add Photo
-                </Typography>
+                {image ? (
+                  <div>added</div>
+                ) : (
+                  <>
+                    <AddCircleOutlineOutlined />
+                    <Typography
+                      variant="h6"
+                      align="center"
+                      sx={{
+                        my: '100px',
+                        textTransform: 'none',
+                        ml: '5px',
+                        lineHeight: '1.2',
+                      }}
+                    >
+                      Add Photo
+                    </Typography>
+                  </>
+                )}
               </div>
             </label>
           </Button>

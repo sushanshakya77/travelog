@@ -35,9 +35,6 @@ app.use('/api/posts', post);
 app.use('/api/trip', trip);
 app.use('/api/blogs', blogs);
 
-// app.use(express.static('public'));
-// app.use(express.static(path.join(__dirname, '..', '/client')));
-
 const port = 3333;
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`);

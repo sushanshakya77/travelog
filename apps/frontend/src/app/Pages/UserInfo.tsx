@@ -115,7 +115,11 @@ const UserInfo = () => {
   const { reset } = useForm<IUser>();
   const { user } = useAuthentication();
 
-  const { data: userInfoData, refetch } = useQuery<IUser>(
+  const {
+    data: userInfoData,
+    refetch,
+    isLoading,
+  } = useQuery<IUser>(
     'userInfo',
     async () => await axios.get('api/userInfo').then((res) => res.data)
   );
@@ -225,7 +229,7 @@ const UserInfo = () => {
                       // src={userInfoData?.profilePicture}
                       // src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
                       // src="https://source.unsplash.com/random"
-                      src={`http://localhost:3333/${user.profilePicture}`}
+                      src={`http://localhost:3333/${userInfoData?.profilePicture}`}
                       sx={{
                         height: '128px',
                         width: '128px',
@@ -233,38 +237,37 @@ const UserInfo = () => {
                     />
                   </Badge>
                 </Grid>
-                {userInfoData && (
+                {(userInfoData || openProfile) && (
                   <AddProfile
                     openProfile={openProfile}
                     handleCloseProfile={handleCloseProfile}
-                    userInfo={userInfoData}
                   />
                 )}
                 <Grid item xs={8.5}>
-                  {/* {loading ? (
-                  <Skeleton animation="wave" />
-                ) : ( */}
-                  <>
-                    <Typography
-                      sx={{
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                        lineHeight: '28px',
-                      }}
-                    >
-                      {userInfoData?.firstName} {userInfoData?.lastName}
-                    </Typography>
+                  {isLoading ? (
+                    <Skeleton animation="wave" width="25px" />
+                  ) : (
+                    <>
+                      <Typography
+                        sx={{
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          lineHeight: '28px',
+                        }}
+                      >
+                        {userInfoData?.firstName} {userInfoData?.lastName}
+                      </Typography>
 
-                    <Typography
-                      sx={{
-                        fontSize: '14px',
-                        lineHeight: '18px',
-                      }}
-                    >
-                      {userInfoData?.username && `@${userInfoData?.username}`}
-                    </Typography>
-                  </>
-                  {/* )} */}
+                      <Typography
+                        sx={{
+                          fontSize: '14px',
+                          lineHeight: '18px',
+                        }}
+                      >
+                        {userInfoData?.username && `@${userInfoData?.username}`}
+                      </Typography>
+                    </>
+                  )}
                 </Grid>
                 <Grid item xs={1.4}>
                   <ThemeProvider theme={theme}>
@@ -388,7 +391,11 @@ const UserInfo = () => {
                     key={post._id}
                   >
                     <CardHeader
-                      avatar={<Avatar></Avatar>}
+                      avatar={
+                        <Avatar
+                          src={`http://localhost:3333/${userInfoData?.profilePicture}`}
+                        ></Avatar>
+                      }
                       action={
                         <IconButton aria-label="settings" onClick={handleClick}>
                           <MoreVert />

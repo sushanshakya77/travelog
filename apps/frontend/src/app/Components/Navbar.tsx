@@ -77,6 +77,17 @@ function Navbar() {
   const { data: userInfoData } = useQuery<IUser>('userInfo', () =>
     axios.get('api/userInfo').then((res) => res.data)
   );
+  const [anchorElNoti, setAnchorElNoti] = React.useState<null | HTMLElement>(
+    null
+  );
+  const openNoti = Boolean(anchorElNoti);
+  const handleClickNoti = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNoti(event.currentTarget);
+  };
+  const handleCloseNoti = () => {
+    setAnchorElNoti(null);
+  };
+
   return (
     <div>
       <StyledAppBar elevation={0} color="transparent">
@@ -176,6 +187,7 @@ function Navbar() {
             <Button
               color="inherit"
               sx={{ borderRadius: '14px' }}
+              onClick={handleClickNoti}
               startIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -199,6 +211,98 @@ function Navbar() {
             >
               Alerts
             </Button>
+            <Menu
+              anchorEl={anchorElNoti}
+              id="account-menu"
+              open={openNoti}
+              onClose={handleCloseNoti}
+              onClick={handleCloseNoti}
+              sx={{ maxWidth: '350px' }}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              {(userInfoData?.dob as unknown as number) === Date.now() && (
+                <MenuItem>
+                  <ListItemIcon>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="icon icon-tabler icon-tabler-confetti"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="#009988"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 5h2" />
+                      <path d="M5 4v2" />
+                      <path d="M11.5 4l-.5 2" />
+                      <path d="M18 5h2" />
+                      <path d="M19 4v2" />
+                      <path d="M15 9l-1 1" />
+                      <path d="M18 13l2 -.5" />
+                      <path d="M18 19h2" />
+                      <path d="M19 18v2" />
+                      <path d="M14 16.518l-6.518 -6.518l-4.39 9.58a1.003 1.003 0 0 0 1.329 1.329l9.579 -4.39z" />
+                    </svg>
+                  </ListItemIcon>
+                  🎉Happy Birthday! {userInfoData?.firstName},<br />
+                  We wish you a happy birthday! <br />
+                  🎉
+                </MenuItem>
+              )}
+              <MenuItem>
+                <ListItemIcon>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-trending-up"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="#009988"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <polyline points="3 17 9 11 13 15 21 7" />
+                    <polyline points="14 7 21 7 21 14" />
+                  </svg>
+                </ListItemIcon>
+                Trending Destination of the day
+                <br /> - Boudha
+              </MenuItem>
+            </Menu>
             <Tooltip title="Account">
               <IconButton
                 color="inherit"
@@ -210,7 +314,7 @@ function Navbar() {
               >
                 <Avatar
                   sx={{ width: 32, height: 32 }}
-                  src={`http://localhost:3333/${user.profilePicture}`}
+                  src={`http://localhost:3333/${userInfoData?.profilePicture}`}
                 ></Avatar>
               </IconButton>
             </Tooltip>

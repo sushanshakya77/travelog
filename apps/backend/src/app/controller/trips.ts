@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import Trip, { Status } from '../model/tripModel';
+import Trip from '../model/tripModel';
 import { refreshTokenCheck } from './../../../../../libs/refresh-token-verify';
 
 export const createTrip: RequestHandler = async (req, res) => {
@@ -60,7 +60,7 @@ export const updateTrip: RequestHandler = async (req, res) => {
     try {
       const updatedTrip = await Trip.findByIdAndUpdate(
         req.params.id,
-        req.body,
+        { ...req.body, $set: { status: req.body.status } },
         { new: true }
       );
       res.status(200).json(updatedTrip);

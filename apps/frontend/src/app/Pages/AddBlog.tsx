@@ -20,7 +20,12 @@ import { Roles } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 
 const AddBlog = () => {
-  const { control, handleSubmit, register } = useForm<IBlog>();
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<IBlog>();
   const { user } = useAuthentication();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -53,6 +58,9 @@ const AddBlog = () => {
             label="Title"
             control={control}
             fullWidth
+            rules={{ required: 'Title is required' }}
+            error={!!errors.title}
+            helperText={errors.title && errors.title.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -86,13 +94,21 @@ const AddBlog = () => {
                 </IconButton>
               ),
             }}
+            rules={{ required: 'Image is required' }}
+            error={!!errors.img}
+            helperText={errors.img && errors.img.message}
           />
         </Grid>
         {user?.role === Roles.ADMIN && (
           <Grid item xs={12}>
             <Controller
               render={({ field }) => (
-                <RedditTextField label="Categories" fullWidth select {...field}>
+                <RedditTextField
+                  label="Categories(Only By admin)"
+                  fullWidth
+                  select
+                  {...field}
+                >
                   {['Featured', 'Popular'].map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -118,7 +134,7 @@ const AddBlog = () => {
                   renderInput={(params) => (
                     <RedditTextField
                       {...params}
-                      label="Search"
+                      label="Destination(Optional)"
                       inputProps={{
                         ...params.inputProps,
                         autoComplete: 'disabled',
@@ -136,7 +152,14 @@ const AddBlog = () => {
         <Grid item xs={12} md={6}>
           <Controller
             render={({ field }) => (
-              <RedditTextField label="Categories" fullWidth select {...field}>
+              <RedditTextField
+                label="Status"
+                fullWidth
+                select
+                error={!!errors.status}
+                helperText={errors.status && 'Status is required!'}
+                {...field}
+              >
                 {['Public', 'Private'].map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
@@ -159,6 +182,7 @@ const AddBlog = () => {
                 renderInput={(params) => (
                   <RedditTextField
                     {...params}
+                    required
                     label="Tags"
                     inputProps={{
                       ...params.inputProps,
@@ -182,6 +206,9 @@ const AddBlog = () => {
             multiline
             fullWidth
             rows={18}
+            rules={{ required: 'Description is required' }}
+            error={!!errors.description}
+            helperText={errors.description && errors.description.message}
           />
         </Grid>
         <Grid item xs={12}>

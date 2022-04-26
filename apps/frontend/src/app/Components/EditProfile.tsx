@@ -79,15 +79,7 @@ export default function EditProfile({
     []
   );
   return (
-    <Dialog
-      PaperComponent={(props) => (
-        <Paper {...(props as never)} component={'form'}></Paper>
-      )}
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <Dialog open={open} onClose={handleClose}>
       {isLoading && <LinearProgress />}
       <DialogTitle>Edit Profile</DialogTitle>
       <DialogContent>
@@ -119,7 +111,7 @@ export default function EditProfile({
                         type="file"
                         accept=".jpg, .jpeg, .png, .gif, .bmp, .webp"
                         name="profilePicture"
-                        // style={{ display: 'none' }}
+                        style={{ display: 'none' }}
                       />
                       <Edit sx={{ fontSize: '20px' }} />
                     </label>
@@ -242,7 +234,11 @@ export default function EditProfile({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" type="submit">
+        <Button
+          variant="contained"
+          type="submit"
+          onClick={handleSubmit(onSubmit)}
+        >
           Save
         </Button>
       </DialogActions>

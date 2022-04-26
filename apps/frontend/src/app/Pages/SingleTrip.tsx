@@ -356,7 +356,6 @@ const SingleTrip = () => {
                           onChange={(_, data) => field.onChange(data)}
                         />
                       )}
-                      rules={{ required: 'Destination is required' }}
                       control={control}
                       name={`days.${index}.destination`}
                     />

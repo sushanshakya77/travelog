@@ -25,12 +25,13 @@ import React, { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import Replies from '../Components/Replies';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IBlog } from '../models/Blogs';
 import { IReview, ISubDestination } from '../models/Destination';
-import { ITrip } from '../models/Trips';
+import { ITrip, Status } from '../models/Trips';
 import { IUser } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 import { HoverCard } from './Home';
@@ -183,68 +184,76 @@ const SubDestination = () => {
             </Typography>
           </div>
         </Grid>
-        {blogData === [] && (
+        {blogData && (
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="h5">
                 Blogs related to the Destination:
               </Typography>
             </Grid>
-            {blogData?.map((trip, index) => (
-              <Grid item xs={12} sm={8} md={4}>
-                <HoverCard
-                  sx={{ mt: '15px', position: 'relative' }}
-                  elevation={0}
-                  key={trip._id}
-                >
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image="https://source.unsplash.com/random"
-                      alt="gg"
-                      sx={{
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        filter: 'brightness(50%)',
-                        height: '250px',
-                        width: '500px',
-                        transition: '0.3s ease-in-out',
-                        top: 0,
-                        '&:hover': {
-                          filter: 'brightness(80%)',
-                        },
-                      }}
-                    />
-                    <Avatar
-                      sx={{
-                        zIndex: 9,
-                        top: 24,
-                        right: 24,
-                        position: 'absolute',
-                        boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                        WebkitBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                        MozBoxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
-                      }}
-                    ></Avatar>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      sx={{
-                        zIndex: 9,
-                        bottom: 24,
-                        left: 24,
-                        position: 'absolute',
-                        color: 'white',
-                      }}
-                      component="div"
-                    >
-                      {trip.title}
-                    </Typography>
-                  </CardActionArea>
-                </HoverCard>
-              </Grid>
-            ))}
+            {blogData?.map(
+              (blog, index) =>
+                blog.status === Status.Public && (
+                  <Grid item xs={12} sm={8} md={4}>
+                    <Link to={`/singleBlog/${blog._id}`}>
+                      <HoverCard
+                        sx={{ mt: '15px', position: 'relative' }}
+                        elevation={0}
+                        key={blog._id}
+                      >
+                        <CardActionArea>
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={blog.img}
+                            alt="gg"
+                            sx={{
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              filter: 'brightness(50%)',
+                              height: '250px',
+                              width: '500px',
+                              transition: '0.3s ease-in-out',
+                              top: 0,
+                              '&:hover': {
+                                filter: 'brightness(80%)',
+                              },
+                            }}
+                          />
+                          <Avatar
+                            sx={{
+                              zIndex: 9,
+                              top: 24,
+                              right: 24,
+                              position: 'absolute',
+                              boxShadow: '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                              WebkitBoxShadow:
+                                '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                              MozBoxShadow:
+                                '-2px 1px 40px 1px rgba(0,0,0,0.76)',
+                            }}
+                            src={`http://localhost:3333/${blog.postedBy.profilePicture}`}
+                          ></Avatar>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            sx={{
+                              zIndex: 9,
+                              bottom: 24,
+                              left: 24,
+                              position: 'absolute',
+                              color: 'white',
+                            }}
+                            component="div"
+                          >
+                            {blog.title}
+                          </Typography>
+                        </CardActionArea>
+                      </HoverCard>
+                    </Link>
+                  </Grid>
+                )
+            )}
           </Grid>
         )}
 

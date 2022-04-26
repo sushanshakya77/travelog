@@ -31,6 +31,6 @@ export const useAuthentication = () => {
         setAuthState('loggedIn');
       })
       .catch(() => setAuthState('loggedOut'));
-  }, [setAuthState, setToken]);
+  }, [setAuthState, setToken, setUser]);
   return { token, authState, setAuthState, fetchAuthState, user };
 };

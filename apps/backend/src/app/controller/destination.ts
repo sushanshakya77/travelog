@@ -70,6 +70,22 @@ export const reviewDestination: RequestHandler = async (req, res) => {
     });
 };
 
+export const deleteReview: RequestHandler = async (req, res) => {
+  await Destinations.findByIdAndUpdate(
+    req.params.id,
+    {
+      $pull: { reviews: { _id: req.params.reviewId } },
+    },
+    { new: true }
+  )
+    .then((res) => {
+      return res.status(200).json(res);
+    })
+    .catch((err) => {
+      return res.status(422).json(err);
+    });
+};
+
 export const getDestinationById: RequestHandler = async (req, res) => {
   const { id } = req.params;
   await Destinations.findById(id)

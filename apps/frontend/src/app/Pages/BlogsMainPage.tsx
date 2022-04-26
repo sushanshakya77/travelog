@@ -25,6 +25,7 @@ const BlogsMainPage = () => {
   const { data: allBlogData } = useQuery<IBlog[]>('allblogs', () =>
     axios.get(`api/blogs/all`).then((res) => res.data)
   );
+
   return (
     <div>
       <Grid container sx={{ px: '40px' }} spacing={2}>
@@ -51,8 +52,8 @@ const BlogsMainPage = () => {
 
         {allBlogData?.slice(0, 2).map(
           (blog, index) =>
-            (blog.categories === Categories.Featured ||
-              blog.status === Status.Public) && (
+            blog.categories === Categories.Featured &&
+            blog.status === Status.Public && (
               <Grid item xs={12} sm={6} md={6} key={blog._id}>
                 <Link to={`/singleBlog/${blog._id}`}>
                   <Card sx={{ mt: '15px' }} elevation={0}>
@@ -123,77 +124,58 @@ const BlogsMainPage = () => {
             }}
             elevation={0}
           >
-            <Divider sx={{ mb: '15px' }} />
-            <Grid container>
-              <Grid item xs={10}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <Typography variant="h6">Blog title</Typography>
-                  <Typography variant="body2" sx={{ ml: '8px' }}>
-                    by prisma{' '}
-                  </Typography>
-                </div>
-                <Typography variant="body1">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos
-                  animi soluta tenetur rem natus, hic, reiciendis eligendi quos
-                  aliquam facere cumque voluptate nostrum excepturi qui, quidem
-                  dolor delectus at harum.
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <div
-                  style={{
-                    backgroundSize: 'cover',
-                    height: '100px',
-                    width: '100px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <img src="https://source.unsplash.com/random" alt="gg" />
-                </div>
-              </Grid>
-            </Grid>
+            {allBlogData?.slice(2, 4).map(
+              (blog) =>
+                blog.categories === Categories.Popular &&
+                blog.status === Status.Public && (
+                  <>
+                    <Divider sx={{ my: '15px' }} />
+                    <Link to={`/singleBlog/${blog._id}`}>
+                      <Grid
+                        container
+                        key={blog.title}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#DEF2F1',
+                          },
+                        }}
+                      >
+                        <Grid item xs={10}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              flexWrap: 'wrap',
+                            }}
+                          >
+                            <Typography variant="h6">{blog.title}</Typography>
+                            <Typography variant="body2" sx={{ ml: '8px' }}>
+                              by {blog.postedBy.username}
+                            </Typography>
+                          </div>
+                          <Typography variant="body1">
+                            {blog.description.slice(0, 150)}...
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <div
+                            style={{
+                              backgroundSize: 'cover',
+                              height: '100px',
+                              width: '100px',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <img src={blog.img} alt="gg" />
+                          </div>
+                        </Grid>
+                      </Grid>
+                    </Link>
+                  </>
+                )
+            )}
+
             <Divider sx={{ my: '15px' }} />
-            <Grid container>
-              <Grid item xs={10}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <Typography variant="h6">Blog title</Typography>
-                  <Typography variant="body2" sx={{ ml: '8px' }}>
-                    by prisma{' '}
-                  </Typography>
-                </div>
-                <Typography variant="body1">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos
-                  animi soluta tenetur rem natus, hic, reiciendis eligendi quos
-                  aliquam facere cumque voluptate nostrum excepturi qui, quidem
-                  dolor delectus at harum.
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <div
-                  style={{
-                    backgroundSize: 'cover',
-                    height: '100px',
-                    width: '100px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <img src="https://source.unsplash.com/random" alt="gg" />
-                </div>
-              </Grid>
-            </Grid>
-            <Divider sx={{ mt: '15px' }} />
           </Card>
         </Grid>
         <Grid

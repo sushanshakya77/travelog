@@ -9,8 +9,11 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import {
   Avatar,
+  Backdrop,
+  Card,
   Grid,
   IconButton,
+  Paper,
   TextField,
   Typography,
   Zoom,
@@ -36,6 +39,15 @@ interface IRepliesProps {
   open: boolean;
 }
 
+const StyledPaper = styled(Paper)`
+  background: rgba(255, 255, 255, 0.856);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 10px;
+  border-bottom: 1px solid rgba(153, 149, 149, 0.18);
+`;
+
 export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
   console.log(reviews);
   const {
@@ -59,14 +71,19 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
         console.log(err);
       });
   };
+
   return (
     <div>
       <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
+        PaperComponent={(props) => (
+          <StyledPaper {...(props as never)}></StyledPaper>
+        )}
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
+        sx={{ background: 'transparent' }}
       >
         <DialogTitle>Replies</DialogTitle>
         <DialogContent>
@@ -79,14 +96,32 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
                   flexWrap: 'wrap',
                 }}
               >
-                <Avatar></Avatar>
-                <Typography variant="h6"> "{reviews?.reviewText}"</Typography>
-                <Typography variant="h6">
+                <Avatar
+                  src={`http://localhost:3333/${reviews?.postedBy?.profilePicture}`}
+                ></Avatar>
+                <Typography variant="h6" sx={{ ml: '20px' }}>
                   {' '}
-                  {reviews?.postedBy?.username}
+                  "{reviews?.reviewText}"
                 </Typography>
               </div>
             </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ ml: '40px', my: '10px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Avatar
+                src={`http://localhost:3333/${reviews?.postedBy?.profilePicture}`}
+              ></Avatar>
+              <Typography variant="body1" sx={{ ml: '20px' }}>
+                {' '}
+                "Yes, I agree with your review"
+              </Typography>
+            </div>
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -120,8 +155,7 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose}>Agree</Button>
+          <Button onClick={handleClose}>Close</Button>
         </DialogActions>
       </Dialog>
     </div>

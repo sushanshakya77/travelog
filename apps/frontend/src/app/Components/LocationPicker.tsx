@@ -16,6 +16,7 @@ import axios from 'axios';
 import { IDestination, ISubDestination } from '../models/Destination';
 import { ITrip, Status } from '../models/Trips';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
+import { IBlog } from '../models/Blogs';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -58,10 +59,6 @@ export default function LocationPickerDialog({
       await axios.get(`api/trip/user/${user._id}`).then((res) => res.data)
   );
 
-  const { data: subDestinationData } = useQuery<ISubDestination[]>(
-    'subDestinations',
-    () => axios.get('api/subDestinations').then((res) => res.data)
-  );
   const onSubmit: SubmitHandler<IData> = (data) => {
     setDestination?.(data.destination._id);
     setTripForBlog?.(data.trip._id);

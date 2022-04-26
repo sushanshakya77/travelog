@@ -39,7 +39,7 @@ export const getBlogsByUser: express.RequestHandler = async (req, res) => {
   try {
     const blogs = await Blog.find({ postedBy: req.session.user._id }).populate(
       'postedBy',
-      '_id username'
+      '_id username profilePicture'
     );
     return res.status(200).json(blogs);
   } catch (err) {
@@ -51,9 +51,9 @@ export const getBlogById: express.RequestHandler = async (req, res) => {
     const blog = await Blog.findById(req.params.id)
       .populate(
         'postedBy',
-        '_id firstName lastName username description currentCity '
+        '_id firstName lastName username description currentCity profilePicture '
       )
-      .populate('reviews.postedBy', '_id username')
+      .populate('reviews.postedBy', '_id username profilePicture')
       .populate('trip', ' _id title desc days')
       .populate('trip.days', ' _id title description ');
     return res.status(200).json(blog);

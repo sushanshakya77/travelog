@@ -97,7 +97,7 @@ const Trips = () => {
                   <CardMedia
                     component="img"
                     height="140"
-                    image="https://source.unsplash.com/random"
+                    image="https://source.unsplash.com/collection/4854228/nepal"
                     alt="green iguana"
                     sx={{
                       backgroundSize: 'cover',

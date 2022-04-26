@@ -7,9 +7,18 @@ export enum Categories {
 
 const blogSchema = new mongoose.Schema(
   {
-    title: String,
-    img: String,
-    description: String,
+    title: {
+      type: String,
+      required: true,
+    },
+    img: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     reviews: [
       {
@@ -45,6 +54,7 @@ const blogSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: Object.values(Status),
+      required: true,
     },
     destination: {
       type: mongoose.Schema.Types.ObjectId,

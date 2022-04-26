@@ -204,7 +204,8 @@ export default function Register() {
                     rules={{
                       pattern: {
                         value: phoneNumberRegex,
-                        message: 'Invalid Phone Number',
+                        message:
+                          'Invalid Phone Number! Must be 10 digits and only numbers',
                       },
                     }}
                     label="Phone Number*"

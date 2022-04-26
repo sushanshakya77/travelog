@@ -25,10 +25,12 @@ import { HoverCard } from './Home';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 const MainHomePage = () => {
   const { user } = useAuthentication();
+
   const { data: destinationData } = useQuery<IDestination[]>(
     'destinations',
     () => axios.get('api/destinations').then((res) => res.data)
   );
+
   const { data: subDestinationData } = useQuery<ISubDestination[]>(
     'subDestinations',
     () => axios.get('api/subDestinations').then((res) => res.data)

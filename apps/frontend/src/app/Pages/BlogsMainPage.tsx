@@ -36,13 +36,6 @@ const BlogsMainPage = () => {
           >
             Featured Blogs:
           </Typography>
-          {/* <Link to="addBlog">
-          <Button
-            sx={{ textTransform: 'none', color: '#2c3e50' }}
-          >
-            Add Your Blog
-          </Button>{' '}
-        </Link> */}
           <Grid xs={12}>
             <Typography variant="body2" sx={{ fontSize: '15px' }}>
               Explore what peole are saying about the world.
@@ -80,9 +73,6 @@ const BlogsMainPage = () => {
                         variant="h6"
                         sx={{
                           zIndex: 9,
-                          // bottom: 24,
-                          // left: 24,
-                          // position: 'absolute',
                           color: 'black',
                           textAlign: 'center',
                         }}
@@ -101,9 +91,6 @@ const BlogsMainPage = () => {
               </Grid>
             )
         )}
-        {/* {allBlogData?.map(
-      (blog) => blog.categories === Categories.Popular && <div>hi</div>
-    )} */}
       </Grid>
       <Grid container sx={{ px: '40px' }} spacing={2}>
         <Grid item xs={12}>
@@ -258,7 +245,7 @@ const BlogsMainPage = () => {
               </Typography>
             </Toolbar>
           </Grid>
-          {allBlogData?.slice(0, 4).map((blog) => (
+          {allBlogData?.map((blog) => (
             <Grid item xs={12} sm={6} md={3}>
               <Link to={`/singleBlog/${blog._id}`}>
                 <Card

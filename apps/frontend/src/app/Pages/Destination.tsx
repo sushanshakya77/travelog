@@ -126,7 +126,6 @@ const Destination = () => {
       });
   };
 
-  //average from [3,4,5]
   const average = useCallback(
     (arr: number[]) => {
       const sum = arr.reduce((a, b) => a + b, 0);
@@ -134,6 +133,7 @@ const Destination = () => {
     },
     [destinationData]
   );
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const openMenu = Boolean(anchorEl);
@@ -175,7 +175,7 @@ const Destination = () => {
               {destinationData &&
                 average(
                   destinationData.reviews.map((r) => r.reviewRating as number)
-                )}
+                ).toFixed(1)}
             </Typography>
           </Grid>
           <Typography variant="h6">Categories:</Typography>

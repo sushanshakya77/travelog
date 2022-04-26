@@ -1,16 +1,9 @@
 import styled from '@emotion/styled';
-import {
-  AccountCircle,
-  Book,
-  CircleNotifications,
-  ExitToApp,
-  Feed,
-  Logout,
-  PersonAdd,
-} from '@mui/icons-material';
+import { Logout } from '@mui/icons-material';
 import {
   AppBar,
   Avatar,
+  Badge,
   Button,
   Container,
   Divider,
@@ -26,11 +19,13 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { IUser, Roles } from '../models/User';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
+import dayjs from 'dayjs';
+import { IReview, ISubDestination } from '../models/Destination';
 
 const StyledAppBar = styled(AppBar)`
   background: rgba(255, 255, 255, 0.25);
@@ -87,6 +82,11 @@ function Navbar() {
   const handleCloseNoti = () => {
     setAnchorElNoti(null);
   };
+  const { data: subDestinationData } = useQuery<ISubDestination[]>(
+    'subDestinations',
+    () => axios.get('api/subDestinations').then((res) => res.data)
+  );
+  console.log(dayjs(userInfoData?.dob).format('YYYY-MM-DD'));
 
   return (
     <div>
@@ -184,33 +184,40 @@ function Navbar() {
                 Trips
               </Button>
             </Link>
-            <Button
-              color="inherit"
-              sx={{ borderRadius: '14px' }}
-              onClick={handleClickNoti}
-              startIcon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-bell-ringing"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="#2c3e50"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                  <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                  <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
-                  <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
-                </svg>
-              }
+            <Badge
+              color="error"
+              variant="dot"
+              invisible={userInfoData?.dob !== dayjs().format('YYYY-MM-DD')}
             >
-              Alerts
-            </Button>
+              <Button
+                color="inherit"
+                sx={{ borderRadius: '14px' }}
+                onClick={handleClickNoti}
+                startIcon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-bell-ringing"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="#2c3e50"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                    <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+                    <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+                  </svg>
+                }
+              >
+                Alerts
+              </Button>
+            </Badge>
+
             <Menu
               anchorEl={anchorElNoti}
               id="account-menu"
@@ -247,7 +254,7 @@ function Navbar() {
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              {(userInfoData?.dob as unknown as number) === Date.now() && (
+              {userInfoData?.dob === dayjs().format('YYYY-MM-DD') && (
                 <MenuItem>
                   <ListItemIcon>
                     <svg

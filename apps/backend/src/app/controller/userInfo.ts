@@ -58,7 +58,7 @@ export const uploadProfile: express.RequestHandler = async (
       profilePicture: image,
     });
 
-    return res.status(200).json(addProfile);
+    return res.status(200).json('Profile Picture Uploaded');
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);

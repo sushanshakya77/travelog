@@ -70,10 +70,7 @@ const Explore = () => {
   const {
     control,
     handleSubmit,
-    watch,
     reset,
-    register,
-    setValue,
     formState: { errors },
   } = useForm<IPost>();
 
@@ -331,7 +328,6 @@ const Explore = () => {
                       <FavoriteBorder onClick={() => likeHandler(post)} />
                     </IconButton>
                   )}
-
                   {/* <IconButton aria-label="share">
                     <ChatOutlined />
                   </IconButton>

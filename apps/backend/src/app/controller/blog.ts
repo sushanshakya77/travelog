@@ -118,7 +118,7 @@ export const getAllBlogsByDestinationId: express.RequestHandler = async (
     const blogs = await Blog.find({
       destination: req.params.id,
       status: Status.Public,
-    });
+    }).populate('postedBy', '_id username profilePicture');
     return res.status(200).json(blogs);
   } catch (err) {
     return res.status(500).json(err);

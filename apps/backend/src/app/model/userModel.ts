@@ -22,7 +22,7 @@ const usersSchema = new mongoose.Schema({
 
   currentCity: String,
   description: String,
-  dob: Date,
+  dob: String,
   password: { type: String, required: true },
 });
 

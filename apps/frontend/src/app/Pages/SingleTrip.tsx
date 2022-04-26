@@ -131,22 +131,7 @@ const SingleTrip = () => {
                   onClick={() => {
                     setPopup(true);
                   }}
-                >
-                  {/* {popup && (
-                    <Popup
-                      longitude={day.destination.longitude ?? 0}
-                      latitude={day.destination.latitude ?? 0}
-                      anchor="bottom"
-                      onClose={() => {
-                        setPopup(false);
-                      }}
-                    >
-                      <Typography variant="h6">
-                        {day.destination.title}
-                      </Typography>
-                    </Popup>
-                  )} */}
-                </Marker>
+                ></Marker>
               ))
             : watch('days')?.map((day, index) => (
                 <Marker

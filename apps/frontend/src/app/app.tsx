@@ -34,7 +34,6 @@ export function App() {
   useEffect(() => {
     fetchAuthState();
   }, [fetchAuthState]);
-  // console.log(authState);
 
   if (authState === 'uncertain')
     return (

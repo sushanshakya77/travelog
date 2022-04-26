@@ -110,8 +110,6 @@ const UserInfo = () => {
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);
-  //add skeleton loading
-  const [loading, setLoading] = useState(false);
   const { reset } = useForm<IUser>();
   const { user } = useAuthentication();
 
@@ -171,7 +169,6 @@ const UserInfo = () => {
         item
         xs={12}
         sx={{
-          // backgroundImage: 'url(https://source.unsplash.com/random)',
           backgroundImage: 'url(https://wallpaperaccess.com/full/959294.jpg)',
           backgroundRepeat: 'no-repeat',
           backgroundColor: (t) =>
@@ -195,7 +192,6 @@ const UserInfo = () => {
                 width: '100%',
                 padding: '25px',
                 pb: '0px',
-                // bgcolor: '#fcf0f0',
                 borderRadius: '8px',
               }}
               elevation={0}
@@ -226,9 +222,6 @@ const UserInfo = () => {
                     }
                   >
                     <Avatar
-                      // src={userInfoData?.profilePicture}
-                      // src="http://images.firstpost.com/wp-content/uploads/2014/02/shrek_380.gif?impolicy=website&width=1200&height=800"
-                      // src="https://source.unsplash.com/random"
                       src={`http://localhost:3333/${userInfoData?.profilePicture}`}
                       sx={{
                         height: '128px',
@@ -450,50 +443,6 @@ const UserInfo = () => {
                           <FavoriteBorder onClick={() => likeHandler(post)} />
                         </IconButton>
                       )}
-
-                      {/* <IconButton aria-label="share">
-                    <ChatOutlined />
-                  </IconButton>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <TextField
-                      size="small"
-                      margin="dense"
-                      placeholder="Reply to this comment"
-                      {...register('replyText')}
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton onClick={handleSubmit(onSubmit)}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="icon icon-tabler icon-tabler-brand-telegram"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="#2c3e50"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
-                            </svg>
-                          </IconButton>
-                        ),
-                      }}
-                    />
-                  </div> */}
                     </CardActions>
                   </Card>
                   // </Grid>

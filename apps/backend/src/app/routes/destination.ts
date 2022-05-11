@@ -7,6 +7,7 @@ import {
   getDestinationById,
   reviewDestination,
   updateDestination,
+  updateReview,
 } from '../controller/destination';
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.get('/', getDestination);
 router.get('/:id', getDestinationById);
 router.patch('/update/:id', updateDestination);
 router.patch('/review/:id', reviewDestination);
+router.patch('/review/reply/:id', updateReview);
 router.patch('/review/delete/:id/:reviewId', deleteReview);
 router.delete('/delete/:id', deleteDestination);
 

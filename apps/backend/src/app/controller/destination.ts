@@ -1,5 +1,6 @@
+import { updateBlog } from './blog';
 import { RequestHandler } from 'express';
-import Destinations from '../model/destinationModel';
+import Destinations, { IReview } from '../model/destinationModel';
 
 //create new destination
 export const createDestination: RequestHandler = async (req, res) => {
@@ -38,6 +39,30 @@ export const getDestination: RequestHandler = async (req, res) => {
     });
 };
 
+//update review
+export const updateReview: RequestHandler = async (req, res) => {
+  try {
+    const { user } = req.session;
+    const reviewid = req.params.id;
+    const reply = [
+      {
+        replyText: req.body.replyText,
+        postedBy: user._id,
+      },
+    ];
+
+    const updateReview = await Destinations.findOneAndUpdate(
+      { 'reviews._id': reviewid },
+      { $push: { 'reviews.$.replies': reply } }
+    );
+
+    // const updateReview = await findReview.update({ replies: replies });
+    return res.status(200).json(updateReview);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 //update destination
 export const reviewDestination: RequestHandler = async (req, res) => {
   const user = req.session.user;
@@ -54,11 +79,13 @@ export const reviewDestination: RequestHandler = async (req, res) => {
   };
 
   console.log(reply);
+  const repl = await Destinations.findOne({ _id: req.params.id });
+  console.log(repl);
+
   await Destinations.findByIdAndUpdate(
     req.params.id,
     {
       $push: { reviews: review },
-      // 'reviews.replies': reply,
     },
     { new: true }
   )
@@ -90,6 +117,7 @@ export const getDestinationById: RequestHandler = async (req, res) => {
   const { id } = req.params;
   await Destinations.findById(id)
     .populate('reviews.postedBy', '_id username profilePicture')
+    .populate('reviews.replies.postedBy', '_id username profilePicture')
     .then((data) => {
       res.json(data);
     })

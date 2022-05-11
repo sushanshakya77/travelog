@@ -159,6 +159,17 @@ const UserInfo = () => {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
+
+  const [anchorElSettings, setAnchorElSettings] =
+    React.useState<null | HTMLElement>(null);
+  const openSettings = Boolean(anchorElSettings);
+  const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElSettings(event.currentTarget);
+  };
+  const handleCloseMenuSettings = () => {
+    setAnchorElSettings(null);
+  };
+
   const { data: blogData, refetch: blogRefetch } = useQuery<IBlog[]>(
     'blogs',
     () => axios.get(`api/blogs`).then((res) => res.data)
@@ -179,6 +190,9 @@ const UserInfo = () => {
           backgroundSize: 'cover',
           height: '350px',
           backgroundPosition: 'center',
+          '&:hover': {
+            filter: 'brightness(0.8)',
+          },
         }}
       />
 
@@ -285,14 +299,14 @@ const UserInfo = () => {
                   )}
                 </Grid>
                 <Grid item xs>
-                  <IconButton onClick={handleClick}>
+                  <IconButton onClick={handleClickSettings}>
                     <Settings />
                   </IconButton>
                   <Menu
                     id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={openMenu}
-                    onClose={handleCloseMenu}
+                    anchorEl={anchorElSettings}
+                    open={openSettings}
+                    onClose={handleCloseMenuSettings}
                     MenuListProps={{
                       'aria-labelledby': 'basic-button',
                     }}

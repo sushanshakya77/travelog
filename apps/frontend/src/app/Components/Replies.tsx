@@ -18,11 +18,12 @@ import {
   Typography,
   Zoom,
 } from '@mui/material';
-import { IReply, IReview } from '../models/Destination';
+import { IDestination, IReply, IReview } from '../models/Destination';
 import styled from '@emotion/styled';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useParams } from 'react-router';
+import { useQuery } from 'react-query';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -58,12 +59,11 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
     register,
     formState: { errors },
   } = useForm<IReply>({});
-  const { id } = useParams();
 
   const onSubmit: SubmitHandler<IReply> = async (data) => {
     console.log(data);
     await axios
-      .patch(`api/destinations/review/${id}`, data)
+      .patch(`api/destinations/review/reply/${reviews?._id}`, data)
       .then((res) => {
         console.log(res);
       })
@@ -106,30 +106,33 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
               </div>
             </Grid>
           </Grid>
-          <Grid item xs={12} sx={{ ml: '40px', my: '10px' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Avatar
-                src={`http://localhost:3333/${reviews?.postedBy?.profilePicture}`}
-              ></Avatar>
-              <Typography variant="body1" sx={{ ml: '20px' }}>
-                {' '}
-                "Yes, I agree with your review"
-              </Typography>
-            </div>
-          </Grid>
+          {reviews?.replies?.map((reply) => (
+            <Grid item xs={12} sx={{ ml: '40px', my: '10px' }} key={reply._id}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Avatar
+                  src={`http://localhost:3333/${reply?.postedBy?.profilePicture}`}
+                ></Avatar>
+                <Typography variant="body1" sx={{ ml: '20px' }}>
+                  {' '}
+                  "{reply?.replyText}"
+                </Typography>
+              </div>
+            </Grid>
+          ))}
+
           <Grid item xs={12}>
             <TextField
               size="small"
               margin="dense"
               fullWidth
               placeholder="Reply to this comment"
-              {...register('replyText')}
+              {...register(`replyText`)}
               InputProps={{
                 endAdornment: (
                   <IconButton onClick={handleSubmit(onSubmit)}>

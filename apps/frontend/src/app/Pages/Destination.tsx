@@ -98,10 +98,10 @@ const Destination = () => {
   const { data: destinationData, refetch: destinationRefetch } =
     useQuery<IDestination>(
       'specificDestination',
-      () => axios.get(`api/destinations/${id}`).then((res) => res.data),
-      {
-        refetchInterval: 1000,
-      }
+      () => axios.get(`api/destinations/${id}`).then((res) => res.data)
+      // {
+      //   refetchInterval: 1000,
+      // }
     );
   const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
     axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
@@ -379,7 +379,7 @@ const Destination = () => {
                 <HoverCard
                   sx={{ padding: '26px', position: 'relative' }}
                   elevation={0}
-                  // onClick={() => handleClickOpen(review)}
+                  onClick={() => handleClickOpen(review)}
                 >
                   <div
                     style={{
@@ -453,7 +453,7 @@ const Destination = () => {
                       "{review?.reviewText}"
                     </Typography>
                   </div>
-                  {/* <div
+                  <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -465,7 +465,7 @@ const Destination = () => {
                       size="small"
                       margin="dense"
                       placeholder="Reply to this comment"
-                      {...register('replyText')}
+                      {...register(`replies.${index + 1}.replyText`)}
                       InputProps={{
                         endAdornment: (
                           <IconButton onClick={handleSubmit(onSubmit)}>
@@ -492,7 +492,7 @@ const Destination = () => {
                         ),
                       }}
                     />
-                  </div> */}
+                  </div>
                 </HoverCard>
               </Grid>
             ))}

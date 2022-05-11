@@ -1,8 +1,22 @@
 import * as mongoose from 'mongoose';
 
-enum Roles {
-  'ADMIN' = 'ADMIN',
+export enum Roles {
   'USER' = 'USER',
+  'ADMIN' = 'ADMIN',
+}
+
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  currentCity: string;
+  description: string;
+  profilePicture: any;
+  dob: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const usersSchema = new mongoose.Schema({

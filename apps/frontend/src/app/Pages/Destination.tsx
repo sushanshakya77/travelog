@@ -26,6 +26,7 @@ import {
 import axios from 'axios';
 import React, { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import 'react-multi-carousel/lib/styles.css';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -33,13 +34,9 @@ import Replies from '../Components/Replies';
 import ControlledTextField from '../ControlledComponent/ControlledTextField';
 import { RedditTextField } from '../ControlledComponent/RedditTextField';
 import { IBlog } from '../models/Blogs';
-import { IDestination, IReply, IReview } from '../models/Destination';
-import { ITrip } from '../models/Trips';
-import { IUser } from '../models/User';
+import { IDestination, IReview } from '../models/Destination';
 import { useAuthentication } from '../useAuthentication/useAuthentication';
 import { HoverCard } from './Home';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
 
 const customIcons: {
   [index: string]: {
@@ -98,20 +95,17 @@ const Destination = () => {
   const { data: destinationData, refetch: destinationRefetch } =
     useQuery<IDestination>(
       'specificDestination',
-      () => axios.get(`api/destinations/${id}`).then((res) => res.data)
-      // {
-      //   refetchInterval: 1000,
-      // }
+      () => axios.get(`api/destinations/${id}`).then((res) => res.data),
+      {
+        refetchInterval: open ? false : 1000,
+      }
     );
   const { data: blogData } = useQuery<IBlog[]>('blogsDestination', () =>
     axios.get(`api/blogs/destination/${id}`).then((res) => res.data)
   );
   console.log(blogData);
+  const fromDestination = true;
   // console.log(destinationData?.reviews.postedBy.username);
-  const { data: userInfoData } = useQuery<IUser>(
-    'userInfo',
-    async () => await axios.get('api/userInfo').then((res) => res.data)
-  );
 
   const onSubmit: SubmitHandler<IReview> = async (data) => {
     console.log(data);
@@ -139,9 +133,11 @@ const Destination = () => {
   const openMenu = Boolean(anchorEl);
   const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    setOpen(false);
   };
   const handleCloseMenu = () => {
     setAnchorEl(null);
+    setOpen(false);
   };
 
   const handleDelete = async (reviewId: string) => {
@@ -159,16 +155,23 @@ const Destination = () => {
           </Grid>
           <Grid item container xs={12}>
             <Grid item xs={12}>
-              <Rating
-                readOnly
-                value={
-                  destinationData &&
-                  average(
-                    destinationData.reviews.map((r) => r.reviewRating as number)
-                  )
-                }
-                precision={0.5}
-              />
+              {destinationData &&
+                average(
+                  destinationData.reviews.map((r) => r.reviewRating as number)
+                ) && (
+                  <Rating
+                    readOnly
+                    value={
+                      destinationData?.reviews &&
+                      average(
+                        destinationData.reviews.map(
+                          (r) => r.reviewRating as number
+                        )
+                      )
+                    }
+                    precision={0.5}
+                  />
+                )}
             </Grid>
             <Typography variant="h6" sx={{ marginTop: '4px' }}>
               Rating:{' '}
@@ -329,57 +332,16 @@ const Destination = () => {
                 }}
               />
             </Grid>
-            {/* <Carousel
-              additionalTransfrom={0}
-              arrows
-              autoPlaySpeed={3000}
-              centerMode={false}
-              containerClass="container"
-              dotListClass=""
-              draggable
-              focusOnSelect={false}
-              infinite={false}
-              keyBoardControl
-              minimumTouchDrag={80}
-              renderButtonGroupOutside={false}
-              renderDotsOutside={false}
-              responsive={{
-                desktop: {
-                  breakpoint: {
-                    max: 3000,
-                    min: 1024,
-                  },
-                  items: 3,
-                  partialVisibilityGutter: 40,
-                },
-                mobile: {
-                  breakpoint: {
-                    max: 464,
-                    min: 0,
-                  },
-                  items: 1,
-                  partialVisibilityGutter: 30,
-                },
-                tablet: {
-                  breakpoint: {
-                    max: 1024,
-                    min: 464,
-                  },
-                  items: 2,
-                  partialVisibilityGutter: 30,
-                },
-              }}
-              showDots={false}
-              sliderClass=""
-              slidesToSlide={1}
-              swipeable
-            > */}
+
             {destinationData?.reviews?.map((review, index) => (
               <Grid item xs={12} mt="10px" md={4}>
                 <HoverCard
                   sx={{ padding: '26px', position: 'relative' }}
                   elevation={0}
-                  onClick={() => handleClickOpen(review)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClickOpen(review);
+                  }}
                 >
                   <div
                     style={{
@@ -395,7 +357,10 @@ const Destination = () => {
                     ></Avatar>
                     <IconButton
                       sx={{ float: 'right', position: 'absolute', right: 16 }}
-                      onClick={handleClickMenu}
+                      onClick={(e) => {
+                        handleClickMenu(e);
+                        e.stopPropagation();
+                      }}
                     >
                       <MoreVert />
                     </IconButton>
@@ -409,7 +374,12 @@ const Destination = () => {
                       }}
                     >
                       {/* <MenuItem onClick={handleClickMenu}>Edit Review</MenuItem> */}
-                      <MenuItem onClick={() => handleDelete(review._id)}>
+                      <MenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(review._id);
+                        }}
+                      >
                         Delete Review
                       </MenuItem>
                     </Menu>
@@ -468,7 +438,12 @@ const Destination = () => {
                       {...register(`replies.${index + 1}.replyText`)}
                       InputProps={{
                         endAdornment: (
-                          <IconButton onClick={handleSubmit(onSubmit)}>
+                          <IconButton
+                            onClick={(e) => {
+                              handleSubmit(onSubmit);
+                              e.stopPropagation();
+                            }}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="icon icon-tabler icon-tabler-brand-telegram"
@@ -499,7 +474,12 @@ const Destination = () => {
             {/* </Carousel> */}
           </Grid>
         </Grid>
-        <Replies reviews={reviews} open={open} handleClose={handleClose} />
+        <Replies
+          reviews={reviews}
+          open={open}
+          handleClose={handleClose}
+          fromDestination={fromDestination}
+        />
       </Container>
     </div>
   );

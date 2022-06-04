@@ -1,6 +1,5 @@
-import { updateBlog } from './blog';
 import { RequestHandler } from 'express';
-import Destinations, { IReview } from '../model/destinationModel';
+import Destinations from '../model/destinationModel';
 
 //create new destination
 export const createDestination: RequestHandler = async (req, res) => {
@@ -66,21 +65,12 @@ export const updateReview: RequestHandler = async (req, res) => {
 //update destination
 export const reviewDestination: RequestHandler = async (req, res) => {
   const user = req.session.user;
-  const reply = [
-    {
-      replyText: req.body.replyText,
-      postedBy: user._id,
-    },
-  ];
+
   const review = {
     reviewRating: req.body.reviewRating,
     reviewText: req.body.reviewText,
     postedBy: user._id,
   };
-
-  console.log(reply);
-  const repl = await Destinations.findOne({ _id: req.params.id });
-  console.log(repl);
 
   await Destinations.findByIdAndUpdate(
     req.params.id,

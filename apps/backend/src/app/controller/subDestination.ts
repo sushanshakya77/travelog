@@ -31,6 +31,29 @@ export const updateSubDestination: RequestHandler = async (req, res) => {
     res.status(500).json(err);
   }
 };
+//update review
+export const updateReview: RequestHandler = async (req, res) => {
+  try {
+    const { user } = req.session;
+    const reviewid = req.params.id;
+    const reply = [
+      {
+        replyText: req.body.replyText,
+        postedBy: user._id,
+      },
+    ];
+
+    const updateReview = await SubDestinations.findOneAndUpdate(
+      { 'reviews._id': reviewid },
+      { $push: { 'reviews.$.replies': reply } }
+    );
+
+    // const updateReview = await findReview.update({ replies: replies });
+    return res.status(200).json(updateReview);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
 export const getSubDestination: RequestHandler = async (req, res) => {
   await SubDestinations.find()
@@ -46,23 +69,23 @@ export const getSubDestination: RequestHandler = async (req, res) => {
 //update destination
 export const reviewSubDestination: RequestHandler = async (req, res) => {
   const user = req.session.user;
-  const reply = [
-    {
-      replyText: req.body.replyText,
-      postedBy: user._id,
-    },
-  ];
+
   const review = {
     reviewRating: req.body.reviewRating,
     reviewText: req.body.reviewText,
     postedBy: user._id,
   };
 
-  console.log(req.body);
-  await SubDestinations.findByIdAndUpdate(req.params.id, {
-    reviews: review,
-    // 'reviews.replies': reply,
-  })
+  const repl = await SubDestinations.findOne({ _id: req.params.id });
+  console.log(repl);
+
+  await SubDestinations.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: { reviews: review },
+    },
+    { new: true }
+  )
     .then((res) => {
       return res.status(500).json(res);
     })
@@ -74,7 +97,8 @@ export const reviewSubDestination: RequestHandler = async (req, res) => {
 export const getSubDestinationById: RequestHandler = async (req, res) => {
   const { id } = req.params;
   await SubDestinations.findById(id)
-    .populate('reviews.postedBy', '_id username')
+    .populate('reviews.postedBy', '_id username profilePicture')
+    .populate('reviews.replies.postedBy', '_id username profilePicture')
     .then((data) => {
       res.json(data);
     })

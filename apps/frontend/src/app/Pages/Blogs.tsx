@@ -1,22 +1,11 @@
-import { Add } from '@mui/icons-material';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Divider,
-  Fab,
-  Grid,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-import axios from 'axios';
-import React from 'react';
-import { useQuery } from 'react-query';
+import { Grid, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router';
-import { Categories, IBlog } from '../models/Blogs';
 
 const Blogs = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div>
       <Grid container>

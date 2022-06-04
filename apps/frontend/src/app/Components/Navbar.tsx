@@ -88,6 +88,14 @@ function Navbar() {
   );
   console.log(dayjs(userInfoData?.dob).format('YYYY-MM-DD'));
 
+  const average = useCallback(
+    (arr: number[]) => {
+      const sum = arr.reduce((a, b) => a + b, 0);
+      return sum / arr.length;
+    },
+    [subDestinationData]
+  );
+
   return (
     <div>
       <StyledAppBar elevation={0} color="transparent">
@@ -307,7 +315,20 @@ function Navbar() {
                   </svg>
                 </ListItemIcon>
                 Trending Destination of the day
-                <br /> - Boudha
+                <br /> -{' '}
+                {/* {subDestinationData
+                  ?.filter(
+                    (d) =>
+                      average(
+                        d.reviews.map((r) => r.reviewRating as number)
+                      ).toFixed(1) === '5'
+                  )
+                  .map((d) => d.title)
+                  .join(', ')} */}
+                {subDestinationData
+                  ?.filter((d) => d.rating === 5)
+                  .map((d) => d.title)
+                  .join(', ')}
               </MenuItem>
             </Menu>
             <Tooltip title="Account">

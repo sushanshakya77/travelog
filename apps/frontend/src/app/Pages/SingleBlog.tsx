@@ -455,7 +455,7 @@ const SingleBlog = () => {
               >
                 <Typography variant="body1">"{review?.reviewText}"</Typography>
               </div>
-              <div
+              {/* <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -489,7 +489,7 @@ const SingleBlog = () => {
                     ),
                   }}
                 />
-              </div>
+              </div> */}
             </HoverCard>
             <Replies
               reviews={reviews}

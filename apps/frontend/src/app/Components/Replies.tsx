@@ -18,12 +18,22 @@ import {
   Typography,
   Zoom,
 } from '@mui/material';
-import { IDestination, IReply, IReview } from '../models/Destination';
+import {
+  IDestination,
+  IReply,
+  IReview,
+  ISubDestination,
+} from '../models/Destination';
 import styled from '@emotion/styled';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { useQuery } from 'react-query';
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  useQuery,
+} from 'react-query';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -38,6 +48,7 @@ interface IRepliesProps {
   reviews?: IReview;
   handleClose: () => void;
   open: boolean;
+  fromDestination?: boolean;
 }
 
 const StyledPaper = styled(Paper)`
@@ -49,8 +60,12 @@ const StyledPaper = styled(Paper)`
   border-bottom: 1px solid rgba(153, 149, 149, 0.18);
 `;
 
-export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
-  console.log(reviews);
+export default function Replies({
+  reviews,
+  handleClose,
+  open,
+  fromDestination,
+}: IRepliesProps) {
   const {
     control,
     handleSubmit,
@@ -59,17 +74,47 @@ export default function Replies({ reviews, handleClose, open }: IRepliesProps) {
     register,
     formState: { errors },
   } = useForm<IReply>({});
+  const { id } = useParams();
+
+  // const { refetch: subDestinationRefetch } = useQuery<ISubDestination>(
+  //   'specificsubDestination'
+  // );
+  console.log(reviews);
+
+  const { refetch: destinationRefetch } = useQuery<IDestination>(
+    'specificDestination',
+    async () =>
+      await axios.get(`api/destinations/${id}`).then((res) => res.data)
+  );
+  const { refetch: subDestinationRefetch } = useQuery<IDestination>(
+    'specificsubDestination',
+    async () =>
+      await axios.get(`api/subDestinations/${id}`).then((res) => res.data)
+  );
 
   const onSubmit: SubmitHandler<IReply> = async (data) => {
     console.log(data);
-    await axios
-      .patch(`api/destinations/review/reply/${reviews?._id}`, data)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (fromDestination) {
+      await axios
+        .patch(`api/destinations/review/reply/${reviews?._id}`, data)
+        .then((res) => {
+          console.log(res);
+          destinationRefetch();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      await axios
+        .patch(`api/subDestinations/review/reply/${reviews?._id}`, data)
+        .then((res) => {
+          console.log(res);
+          subDestinationRefetch();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (

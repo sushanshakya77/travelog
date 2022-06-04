@@ -284,7 +284,7 @@ const MainHomePage = () => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            {subDestinationData?.slice(0, 3).map((content: IDestination) => (
+            {subDestinationData?.slice(0, 6).map((content: IDestination) => (
               <Grid item xs={12} sm={6} md={4}>
                 <Link
                   to={`subDestinations/${content._id}`}

@@ -14,6 +14,7 @@ import Blogs from './Pages/Blogs';
 import BlogsMainPage from './Pages/BlogsMainPage';
 import Destination from './Pages/Destination';
 import Explore from './Pages/Explore';
+import ForgotPassword from './Pages/ForgotPassword';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
@@ -74,6 +75,7 @@ export function App() {
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
       </Routes>
     );
 }

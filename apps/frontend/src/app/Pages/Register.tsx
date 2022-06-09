@@ -282,7 +282,12 @@ export default function Register() {
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
-                  <Link to="/login">Already have an account? Sign in</Link>
+                  <Link
+                    style={{ textDecoration: 'underline', color: '#255bc6' }}
+                    to="/login"
+                  >
+                    Already have an account? Sign in
+                  </Link>
                 </Grid>
               </Grid>
             </Box>{' '}

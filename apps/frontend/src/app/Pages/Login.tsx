@@ -185,11 +185,21 @@ export default function Login() {
             </Button>
 
             <Grid container>
-              {/* <Grid item xs>
-                <Link to="/login">Forgot password?</Link>
-              </Grid> */}
+              <Grid item xs>
+                <Link
+                  style={{ textDecoration: 'underline', color: '#255bc6' }}
+                  to="/forgot-password"
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
               <Grid item>
-                <Link to="/register">{"Don't have an account? Sign Up"}</Link>
+                <Link
+                  style={{ textDecoration: 'underline', color: '#255bc6' }}
+                  to="/register"
+                >
+                  {"Don't have an account? Sign Up"}
+                </Link>
               </Grid>
             </Grid>
             <Copyright sx={{ mt: 5 }} />

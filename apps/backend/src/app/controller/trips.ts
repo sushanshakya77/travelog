@@ -60,7 +60,7 @@ export const updateTrip: RequestHandler = async (req, res) => {
     try {
       const updatedTrip = await Trip.findByIdAndUpdate(
         req.params.id,
-        { ...req.body, $set: { status: req.body.status } },
+        { $set: { status: req.body.status } },
         { new: true }
       );
       res.status(200).json(updatedTrip);

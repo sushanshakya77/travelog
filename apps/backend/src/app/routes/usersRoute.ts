@@ -1,5 +1,6 @@
 import * as express from 'express';
 import {
+  forgotPasswordController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -11,6 +12,7 @@ const router = express.Router();
 router.post('/login', loginController);
 router.post('/register', registerController);
 router.get('/refreshtoken', refreshTokenController);
+router.post('/forgotPassword', forgotPasswordController);
 router.post('/logout', logoutController);
 
 export default router;

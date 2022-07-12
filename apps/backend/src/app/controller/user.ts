@@ -24,6 +24,7 @@ export interface IUser {
 }
 export interface payloadData {
   username: string;
+  email: string;
 }
 
 export const loginController: express.RequestHandler = async (
@@ -150,10 +151,10 @@ export const forgotPasswordController: express.RequestHandler = async (
       return res.status(404).send('User not found');
     }
     const token = jwt.sign(
-      { username: user.username },
+      { username: user.username, email: user.email },
       process.env.ACCESS_TOKEN as string,
       {
-        expiresIn: '1h',
+        expiresIn: '4h',
       }
     );
 
@@ -166,7 +167,7 @@ export const forgotPasswordController: express.RequestHandler = async (
       secure: true,
       auth: {
         user: 'sushanshakya77@gmail.com',
-        pass: 'Mmsmnt9505',
+        pass: 'vbszwsxqxctwokrz',
       },
     });
 
@@ -174,14 +175,46 @@ export const forgotPasswordController: express.RequestHandler = async (
       from: 'sushanshakya77@gmail.com',
       to: email,
       subject: 'Reset Password',
-      text: `Please click on the link to reset your password: ${url}`,
+      html: `<h2>Click below to reset your password</h2>
+          <button><a href="${url}">Reset Password</a></button>
+      `,
     };
 
-    transporter.sendMail(mailOptions);
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info);
+      }
+    });
 
     return res.status(200).send('Email sent');
   } catch (err) {
     console.log(err);
+    return res.status(500).send('Error sending email');
+  }
+};
+
+export const resetPasswordController: express.RequestHandler = async (
+  req,
+  res
+) => {
+  try {
+    const { password } = req.body;
+    const token = req.params.token;
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string);
+    const email = (decoded as payloadData).email;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    const encryptedPassword = await argon2.hash(password);
+    user.password = encryptedPassword;
+    await user.save();
+    return res.status(200).send('Password changed');
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Error changing password');
   }
 };
 
